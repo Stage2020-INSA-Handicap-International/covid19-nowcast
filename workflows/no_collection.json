@@ -1,13 +1,13 @@
 [
     {
-        "function": "covid19_nowcast.streaming.data_storage.connect_database"
+        "function": "covid19_nowcast.streaming.storage.connect_database"
     },
     {
-        "function": "covid19_nowcast.streaming.data_storage.tweets.save",
+        "function": "covid19_nowcast.streaming.storage.tweets.save",
         "params": {"tweets":[{"id_str":"1","user":"LeonFroux"},{"id_str":"2","user":"NapTheNap"}]}
     },
     {
-        "function": "covid19_nowcast.streaming.data_storage.tweets.get",
+        "function": "covid19_nowcast.streaming.storage.tweets.get",
         "params": {}
     }
 ]

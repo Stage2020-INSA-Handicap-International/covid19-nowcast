@@ -1,6 +1,6 @@
 import pymongo
-from covid19_nowcast.streaming.data_storage.config_mongodb import *
-from covid19_nowcast.streaming.data_storage import tweets 
+from covid19_nowcast.streaming.storage.config_mongodb import *
+from covid19_nowcast.streaming.storage import tweets 
 
 def init_database(connection_url=connection_url, db_name=db_name):
     db=pymongo.MongoClient(connection_url)[db_name]

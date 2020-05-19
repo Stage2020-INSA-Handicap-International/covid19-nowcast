@@ -1,2 +1,2 @@
-import covid19_nowcast.streaming.data_collection
-import covid19_nowcast.streaming.data_storage
+import covid19_nowcast.streaming.collection
+import covid19_nowcast.streaming.storage

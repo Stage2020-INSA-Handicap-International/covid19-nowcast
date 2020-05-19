@@ -4,6 +4,7 @@ from types import ModuleType
 
 import covid19_nowcast.streaming
 import covid19_nowcast.analysis
+import covid19_nowcast.evaluation
 import covid19_nowcast.user_interface
 
 def __main__(workflow_path="workflows/default.json", input_data_path=None, output_data_path=None):
