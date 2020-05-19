@@ -1,0 +1,16 @@
+[
+    {
+        "function": "streaming.data_storage.test_depth",
+        "params": {
+            "test_param": 1,
+            "test_param_2": "b"
+        }
+    },
+    {
+        "function": "streaming.test",
+        "params": {
+            "test_param": "1",
+            "test_param_2": "[i+1 for i in range(10)]"
+        }
+    }
+]
