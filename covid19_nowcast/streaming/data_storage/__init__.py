@@ -1,3 +1,12 @@
-def test_depth(data, test_param, test_param_2):
-    print("Test_Depth", data, test_param, test_param_2)
-    return "Depth"
+import pymongo
+from covid19_nowcast.streaming.data_storage.config_mongodb import *
+from covid19_nowcast.streaming.data_storage import tweets 
+
+def init_database(connection_url=connection_url, db_name=db_name):
+    db=pymongo.MongoClient(connection_url)[db_name]
+    tweets.init_collection(db)
+    return {"db":db}
+
+def connect_database(connection_url=connection_url, db_name=db_name):
+    db=pymongo.MongoClient(connection_url)[db_name]
+    return {"db":db}
