@@ -4,10 +4,59 @@
     },
     {
         "function": "covid19_nowcast.streaming.storage.tweets.save",
-        "params": {"tweets":[{"id_str":"1","user":"LeonFroux"},{"id_str":"2","user":"NapTheNap"}]}
+        "params": {
+            "tweets": [
+                {
+                    "id_str": "1",
+                    "created_at": "Wed Oct 10 20:19:24 +0000 2018",
+                    "user": {
+                        "name": "LeonFroux",
+                        "derived": {
+                            "locations": [{
+                                "country_code": "FR"
+                            }]
+                        },
+                        "id_str": "1"
+                    }
+                },
+                {
+                    "id_str": "2",
+                    "created_at": "Wed Oct 11 21:19:24 +0000 2018",
+                    "user": {
+                        "name": "NapTheNap",
+                        "id_str": "2"
+                    }
+                },
+                {
+                    "id_str": "5",
+                    "created_at": "Wed Oct 11 20:19:24 +0000 2018",
+                    "user": {
+                        "name": "LeonFroux",
+                        "derived": {
+                            "locations": [{
+                                "country_code": "FR"
+                            }]
+                        },
+                        "id_str": "1"
+                    }
+                }
+            ]
+        }
     },
     {
         "function": "covid19_nowcast.streaming.storage.tweets.get",
+        "params": {}
+    },
+    {
+        "function": "covid19_nowcast.analysis.volume.user_count",
+        "params": {}
+    },
+    {
+        "function": "covid19_nowcast.analysis.volume.tweets_per_day",
+        "params": {}
+    },
+    {
+        "function": "covid19_nowcast.analysis.volume.tweets_per_country",
         "params": {}
     }
 ]
