@@ -19,9 +19,14 @@ def __main__(workflow_path="workflows/default.json", input_data_path=None, outpu
     with open(workflow_path, "r") as workflow:
         workflow=workflow.read()
         workflow=json.loads(workflow)
-        for step in workflow:
-            params = step.get("params", {})
-            data = {**data, **resolve_function(step["function"])(**{**data, **params})}
+        for command in workflow:
+            cmd, instr = list(command.items())[0]
+            if cmd == "function":
+                data = {**data, **resolve_function(instr)(**data)}
+            elif cmd == "add-params":
+                data = {**data, **instr}
+            elif cmd == "rm-params":
+                pass
 
     if output_data_path is not None:
         with open(output_data_path, "w") as data_file:

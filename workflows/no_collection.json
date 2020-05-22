@@ -3,8 +3,7 @@
         "function": "covid19_nowcast.streaming.storage.connect_database"
     },
     {
-        "function": "covid19_nowcast.streaming.storage.tweets.save",
-        "params": {
+        "add-params": {
             "tweets": [
                 {
                     "id_str": "1",
@@ -12,9 +11,11 @@
                     "user": {
                         "name": "LeonFroux",
                         "derived": {
-                            "locations": [{
-                                "country_code": "SEN"
-                            }]
+                            "locations": [
+                                {
+                                    "country_code": "SEN"
+                                }
+                            ]
                         },
                         "id_str": "1"
                     }
@@ -28,14 +29,16 @@
                     }
                 },
                 {
-                    "id_str": "5",
+                    "id_str": "7",
                     "created_at": "Wed Oct 11 20:19:24 +0000 2018",
                     "user": {
                         "name": "LeonFroux",
                         "derived": {
-                            "locations": [{
-                                "country_code": "KEN"
-                            }]
+                            "locations": [
+                                {
+                                    "country_code": "MLI"
+                                }
+                            ]
                         },
                         "id_str": "1"
                     }
@@ -44,19 +47,19 @@
         }
     },
     {
-        "function": "covid19_nowcast.streaming.storage.tweets.get",
-        "params": {}
+        "function": "covid19_nowcast.streaming.storage.tweets.save"
+    },
+
+    {
+        "function": "covid19_nowcast.streaming.storage.tweets.get"
     },
     {
-        "function": "covid19_nowcast.analysis.volume.user_count",
-        "params": {}
+        "function": "covid19_nowcast.analysis.volume.user_count"
     },
     {
-        "function": "covid19_nowcast.analysis.volume.tweets_per_day",
-        "params": {}
+        "function": "covid19_nowcast.analysis.volume.tweets_per_day"
     },
     {
-        "function": "covid19_nowcast.analysis.volume.tweets_per_country",
-        "params": {}
+        "function": "covid19_nowcast.analysis.volume.tweets_per_country"
     }
 ]
