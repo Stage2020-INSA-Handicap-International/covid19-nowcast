@@ -1,0 +1,22 @@
+[
+    {
+        "function": "covid19_nowcast.streaming.storage.connect_database"
+    },
+    {
+        "function": "covid19_nowcast.streaming.collection.covid19_api.get_country",
+        "params": {"countries":["senegal", "mali", "kenya"]}
+    },
+    {
+        "function": "covid19_nowcast.streaming.collection.countries_api.get_countries",
+        "params": {"countries":["senegal", "mali", "kenya"]}
+    },
+    {
+        "function": "covid19_nowcast.streaming.storage.tweets.get",
+        "params": {}
+    },    
+    {
+        "function": "covid19_nowcast.analysis.volume.tweets_per_country_normalised_on_pop",
+        "params": {}
+    }
+
+]

@@ -15,6 +15,6 @@ def save(tweets,db, tweets_col_name=tweets_col_name):
             print(tweet, "is already in database")
     return {}
 
-def get(db, tweets_col_name=tweets_col_name):
+def get(db, tweets_col_name=tweets_col_name, **kwargs):
 
-    return {"tweets":list(db[tweets_col_name].find({},{ "_id": 0 }))}
+    return {"tweets":list(db[tweets_col_name].find({},{ "_id": 0 })), **kwargs}

@@ -1,4 +1,7 @@
 import covid19_nowcast.streaming.collection.tweets
+import covid19_nowcast.streaming.collection.countries_api
+import covid19_nowcast.streaming.collection.covid19_api
+
 from covid19_nowcast.streaming.collection.config_auth_twitter import *
 import twitter
 
