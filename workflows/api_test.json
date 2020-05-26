@@ -1,0 +1,35 @@
+[
+    {
+        "function": "covid19_nowcast.streaming.storage.connect_database"
+    },
+    {
+        "add-params": {
+            "filepath":"../COVID-19-TweetIDs/2020-04/coronavirus-tweet-id-2020-04-04-02.jsonl"
+        }
+    },
+    {
+        "function": "covid19_nowcast.streaming.collection.tweets.get_from_file"
+    },
+    {
+        "add-params": {
+            "countries": [
+                "senegal",
+                "mali",
+                "kenya"
+            ]
+        }
+    },
+    {
+        "function": "covid19_nowcast.streaming.collection.covid19_api.get_country"
+    },
+
+    {
+        "function": "covid19_nowcast.streaming.collection.countries_api.get_countries"
+    },
+    {
+        "function": "covid19_nowcast.analysis.volume.tweets_per_country_normalised_on_pop"
+    },
+    {
+        "function": "covid19_nowcast.analysis.volume.tweets_timeline"
+    }
+]

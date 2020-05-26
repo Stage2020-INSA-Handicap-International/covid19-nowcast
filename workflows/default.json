@@ -1,0 +1,13 @@
+[
+    {
+        "function": "streaming.collection.authenticate"
+    },
+    {
+        "add-params": {
+            "terms": "#Sénégal"
+        }
+    },
+    {
+        "function": "streaming.collection.tweets.search_from_terms"
+    }
+]
