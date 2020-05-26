@@ -43,7 +43,7 @@ def __main__(workflow_path="workflows/default.json", input_data_path=None, outpu
         with open(output_data_path, "w") as data_file:
             if data is None:
                 data = ""
-            data_file.write(json.dumps(data))
+            data_file.write(json.dumps(data, indent=4))
     return data
 
 def resolve_function(path):

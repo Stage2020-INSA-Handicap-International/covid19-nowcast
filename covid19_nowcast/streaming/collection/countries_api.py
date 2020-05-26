@@ -1,7 +1,7 @@
 import requests
 import json
 from covid19_nowcast import util
-def get_countries(countries, entries = ["alpha3Code", "name"], **kwargs):
+def get_countries_info(countries, entries = ["alpha3Code", "name"], **kwargs):
     """
     Searches restcountries.eu for country infos
     Input:

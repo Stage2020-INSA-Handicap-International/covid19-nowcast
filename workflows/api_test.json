@@ -24,7 +24,7 @@
     },
 
     {
-        "function": "covid19_nowcast.streaming.collection.countries_api.get_countries"
+        "function": "covid19_nowcast.streaming.collection.countries_api.get_countries_info"
     },
     {
         "function": "covid19_nowcast.analysis.volume.tweets_per_country_normalised_on_pop"

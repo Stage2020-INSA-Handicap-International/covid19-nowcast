@@ -1,5 +1,8 @@
 import json
+import urllib
 from covid19_nowcast import util
+from covid19_nowcast.streaming.collection import crawler_twitter
+
 def search_from_terms(api, term, **kwargs):
     """
     Gets tweets from Twitter's api which are result from *raw_query*
@@ -26,7 +29,7 @@ def search_from_geocode(api, geocode, **kwargs):
 
 def search_from_raw_query(api, raw_query, **kwargs):
     """
-    Gets tweets from Twitter's api which are result from *raw_query*
+    Gets tweets from Twitter's api which are results from *raw_query*
     Input:
         - api: an Twitter api object from the python-twitter module
         - raw_query: a string corresponding to a raw Twitter query
@@ -34,6 +37,19 @@ def search_from_raw_query(api, raw_query, **kwargs):
         - tweets: a list of tweets, results of the Twitter request
     """
     tweets=api.GetSearch(raw_query=raw_query)
+    return {"tweets":tweets}
+
+def crawl_from_raw_query(raw_query, count, **kwargs):
+    """
+    Crawl tweets from Twitter which are results from *raw_query*
+    Input:
+        - api: an Twitter api object from the python-twitter module
+        - raw_query: a string corresponding to a raw Twitter query
+    Output:
+        - tweets: a list of tweets, results of the Twitter request
+    """
+    formatted_query = urllib.parse.quote(raw_query, safe='')
+    tweets=crawler_twitter.search(raw_query="/search?q="+formatted_query+"&f=live", count=count)
     return {"tweets":tweets}
 
 def get_from_file(filepath, **kwargs):
