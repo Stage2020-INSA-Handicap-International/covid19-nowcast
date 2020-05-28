@@ -1,13 +1,15 @@
 import json
 import sys
 from types import ModuleType
+import copy
 
 import covid19_nowcast.streaming
 import covid19_nowcast.analysis
 import covid19_nowcast.evaluation
 import covid19_nowcast.user_interface
+from covid19_nowcast import util
 
-def __main__(workflow_path="workflows/default.json", input_data_path=None, output_data_path=None):
+def __main__(workflow_path="workflows/default.json", workflow_list=None, data={}, input_data_path=None, output_data_path=None):
     """
     Entry point for using the covid19-nowcaster
     Input:
@@ -17,33 +19,90 @@ def __main__(workflow_path="workflows/default.json", input_data_path=None, outpu
     Output:
         - data: all entries remaining at the end of execution as a dictionary
     """
-    data={}
+    #data=copy.deepcopy(data)
+
     if input_data_path is not None:
         with open(input_data_path, "r") as data_file:
             data = json.loads(data_file.read())
+            
+    if workflow_list is None:
+        with open(workflow_path, "r") as workflow:
+            workflow_list=workflow.read()
+            workflow_list=json.loads(workflow_list)
+    
+    for command in workflow_list:
+        cmd, instr = list(command.items())[0]
+        if cmd == "workflow":
+            params=instr.get("params", list(data.keys()))
+            sub_data={param:data["params"] for param in params}
+            if instr.get("path"):
+                data={**data,**__main__(workflow_path=instr["path"], data=sub_data)}
+            else:
+                data={**data,**__main__(workflow_list=instr["instructions"], data=sub_data)}
+        elif cmd == "function":
+            data = {**data, **resolve_function(instr)(**data)} # execute function with data and concatenate resulting entries with old data
+        elif cmd == "add-params":
+            data = {**data, **instr} # concatenate new entries with old data
+        elif cmd == "remove-params":
+            for src in instr:
+                data.pop(src) # remove entry
+        elif cmd == "filter-params":
+            data=util.filter_keys(data,instr["params"], instr.get("keep", True))
+        elif cmd == "rename-params":
+            for src, dest in instr.items():
+                if data.get(src) is not None:
+                    data[dest] = data.pop(src) # replace old entry name with new one
+        elif cmd == "import-params":
+            path=instr["path"]
 
-    with open(workflow_path, "r") as workflow:
-        workflow=workflow.read()
-        workflow=json.loads(workflow)
-        for command in workflow:
-            cmd, instr = list(command.items())[0]
-            if cmd == "function":
-                data = {**data, **resolve_function(instr)(**data)} # execute function with data and concatenate resulting entries with old data
-            elif cmd == "add-params":
-                data = {**data, **instr} # concatenate new entries with old data
-            elif cmd == "remove-params":
-                for src in instr:
-                    data.pop(src) # remove entry
-            elif cmd == "rename-params":
-                for src, dest in instr.items():
-                    if data.get(src) is not None:
-                        data[dest] = data.pop(src) # replace old entry name with new one
+            into=None
+            with open(path, "r") as file:
+                into=eval(file.read())
+
+            dst=instr.get("dst")
+            if dst is not None:
+                data[dst]=into
+            else:
+                data={**data, **into}
+
+        elif cmd == "export-params":
+            path=instr.get("file_path")
+            params=instr.get("params")
+            try:
+                with open(path,"w") as file:
+                    json.dump({param:data[param] for param in params}, file, indent=4)
+            except TypeError:
+                raise(TypeError("Path should be a string and Params a list of strings"))
+            except KeyError:
+                raise(TypeError("Queried parameter is not currently in the data"))
+
+        elif cmd == "pack-params":
+            params=instr["params"]
+            dst=instr["dst"]
+            data={**data, **{dst:{param:data[param] for param in params}}}
+            
+        elif cmd == "unpack-params":
+            src=instr["src"]
+            params=instr.get("params", src.keys())
+            data={**data, **{param:src[param] for param in params}}
+            
+        elif cmd == "display-params":
+            if instr == {}:
+                print(data)
+            else:
+                for param in instr:
+                    print(data[param])
+        
+        elif cmd == "display-entries":
+            print(data.keys())
+        elif cmd == "pause":
+            input("Wainting for input to continue")
 
     if output_data_path is not None:
         with open(output_data_path, "w") as data_file:
             if data is None:
                 data = ""
-            data_file.write(json.dumps(data, indent=4))
+            json.dump(data, data_file, indent=4)
     return data
 
 def resolve_function(path):
