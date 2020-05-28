@@ -1,7 +1,7 @@
 [
     {
         "import-params": {
-            "path": "../Datasets/corpus1p5M.json"
+            "path": "../Datasets/corpus1p6M.json"
         }
     },
     {
@@ -30,7 +30,7 @@
     },
     {
         "rename-params": {
-            "tweets_text": "unlabeled_set"
+            "tweets_text": "texts_list"
         }
     },
     {

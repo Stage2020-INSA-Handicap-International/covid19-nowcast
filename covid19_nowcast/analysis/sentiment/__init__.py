@@ -14,7 +14,7 @@ def train_classifier(texts_list, labels, **kwargs):
 
 def classify(sentiment_classifier, texts_list, **kwargs):
     predicted = sentiment_classifier.predict(texts_list)
-    return {"sentiment_labels":list(predicted)}
+    return {"sentiment_labels":list(map(int,list(predicted)))}
 
 def tweets_to_text(tweets, **kwargs):
     tweets_text=[tweet["full_text"] for tweet in tweets]
