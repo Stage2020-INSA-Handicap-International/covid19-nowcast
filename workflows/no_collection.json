@@ -47,6 +47,11 @@
         }
     },
     {
+        "add-params":{
+            "country":"senegal"
+        }
+    },
+    {
         "function": "covid19_nowcast.streaming.storage.tweets.save"
     },
 
@@ -61,5 +66,11 @@
     },
     {
         "function": "covid19_nowcast.analysis.volume.tweets_per_country"
+    },
+    {
+        "display-params":{}
+    },
+    {
+        "remove-params":["db"]
     }
 ]

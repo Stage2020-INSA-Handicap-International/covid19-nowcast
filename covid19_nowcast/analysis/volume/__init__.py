@@ -13,6 +13,7 @@ def user_count(tweets, country, analyses={}, **kwargs):
         - analyses: container dictionary for analyses with an added entry "user_count"
     """
     user_set={tweet["user"]["id_str"] for tweet in tweets}
+    analyses["user_count"]=analyses.get("user_count", {})
     analyses["user_count"][country]=len(user_set)
     return {"analyses":analyses}
 
@@ -62,7 +63,7 @@ def tweets_per_country_normalised_on_pop(tweets, country, countries_info, analys
 
     return {"analyses":analyses}
 
-def tweets_timeline(tweets, country, countries_covid19, analyses, **kwargs):
+def tweets_timeline(tweets, country, countries_covid19, analyses={}, **kwargs):
     """
     Concatenates infos on each day's Covid-19 situation in a country and the number of tweets that day
     Input:
