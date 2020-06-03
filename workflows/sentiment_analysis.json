@@ -1,0 +1,71 @@
+[
+    {
+        "import-params": {
+            "path": "../Datasets/corpus1p6M.json"
+        }
+    },
+    {
+        "display-entries": {}
+    },
+    {
+        "rename-params": {
+            "tweets": "texts_list"
+        }
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.train_classifier"
+    },
+    {
+        "add-params": {
+            "country": "senegal",
+            "raw_query": "#Sénégal",
+            "count": 100
+        }
+    },
+    {
+        "function": "covid19_nowcast.streaming.collection.tweets.crawl_from_raw_query"
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.tweets_to_text"
+    },
+    {
+        "rename-params": {
+            "tweets_text": "texts_list"
+        }
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.classify"
+    },
+    {
+        "remove-params": [
+            "sentiment_classifier"
+        ]
+    },
+    {
+        "display-entries": {}
+    },
+    {
+        "pack-params": {
+            "params": [
+                "tweets",
+                "sentiment_labels"
+            ],
+            "dst": "labeled_tweets"
+        }
+    },
+    {
+        "display-params": [
+            "labeled_tweets"
+        ]
+    },
+    {
+        "pause": {}
+    },
+    {
+        "filter-params": {
+            "params": [
+                "labeled_tweets"
+            ]
+        }
+    }
+]

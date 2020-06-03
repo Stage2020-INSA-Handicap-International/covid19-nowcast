@@ -30,7 +30,7 @@ class Preprocessor(object):
 
     #Tokenization, Lowercasing, Lemmatization, Stopword Removal
     @staticmethod
-    def preprocess(tweets_list):
+    def preprocess(tweets_list, **kwargs):
         nlp = spacy.load("en_core_web_sm")
         tokens = []
         for i in range(len(tweets_list)):
@@ -38,9 +38,9 @@ class Preprocessor(object):
             #for token in doc:
                 #print(token,token.pos_,token.lemma_,token.is_stop)
             #Remove stop words and non-alpha words
-            tweet_tokens = [token for token in doc if (not token.is_stop and token.is_alpha)]
+            tweet_tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha)]
             tokens.append(tweet_tokens)
-        return tokens
+        return {"preprocessed_tweets":tokens}
 
     #Normalization (e.g 'b4' -> 'before')
     #Two common approaches :

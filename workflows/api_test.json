@@ -12,24 +12,21 @@
     },
     {
         "add-params": {
-            "countries": [
-                "senegal",
-                "mali",
-                "kenya"
-            ]
+            "country": "senegal",
+            "countries":["senegal", "mali", "kenya"]
         }
     },
     {
-        "function": "covid19_nowcast.streaming.collection.covid19_api.get_country"
+        "function": "covid19_nowcast.streaming.collection.covid19_api.get_countries_info"
     },
 
     {
         "function": "covid19_nowcast.streaming.collection.countries_api.get_countries_info"
     },
     {
-        "function": "covid19_nowcast.analysis.volume.tweets_per_country_normalised_on_pop"
+        "function": "covid19_nowcast.analysis.volume.tweets_timeline"
     },
     {
-        "function": "covid19_nowcast.analysis.volume.tweets_timeline"
+        "remove-params":["db"]
     }
 ]
