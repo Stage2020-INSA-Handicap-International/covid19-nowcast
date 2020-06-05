@@ -1,2 +1,2 @@
-import covid19_nowcast.analysis.volume
-import covid19_nowcast.analysis.sentiment
+import analysis.volume
+import analysis.sentiment

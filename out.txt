@@ -1,0 +1,35 @@
+[{'query': '#Sénégal', 'count': 1, 'tweets': 
+[{'created_at': 'Fri Jun 05 10:04:47 +0000 2020', 'id_str': '1268814680690167808', 'full_text': 'A three-year investigation into the trade
+ in rosewood between #Senegal, #Gambia and #China by @EIAEnvironment has uncovered what the agency describes as "u
+ nprecedented evidence on a series of major forest crimes." buff.ly/2UpTben pic.twitter.com/KBWAAf9AoC', 'user': {'name': 
+ 'GIJN Africa', 'screen_name': 'gijnAfrica'}}]}, 
+ 
+ {'query': '#Sénégal', 'count': 2, 'tweets': 
+ [{'created_at': 'Fri Jun 05 10:04:48 +0000 2020', 'id_str': '1268814680690167808', 
+ 'full_text': 'A three-year investigation into the trade in rosewood between #Senegal, #Gambia and #China by @EIAEnvironment has unc
+ overed what the agency describes as "unprecedented evidence on a series of major forest crimes." buff.ly/2UpTben pic.twit
+ ter.com/KBWAAf9AoC', 'user': {'name': 'GIJN Africa', 'screen_name': 'gijnAfrica'}}, 
+ {'created_at': 'Fri Jun 05 10:04:48 +0000 2020', 'id_str': '1268804478133768192', 'full_text': 'Senegalese wrestling is a 
+ type of folk wrestling traditionally performed by the Serer people and now a national sport in Senegal and parts of The Gamb
+ ia and is part of a larger West African form of traditional wrestling....📷@dioufsarah...#Africa #WestAfrica #Senegal pic.twi
+ tter.com/92PGcJ4FpJ', 'user': {'name': 'Afrikan Phoenix', 'screen_name': 'AfrikanPhoenix'}}]}, 
+ 
+ {'query': '#COVID-19', 'count': 1, 'tweets': [{'created_at': 'Fri Jun 05 10:04:48 +0000 2020', 'id_str': '1268806183747375104', 
+ 'full_text': 'the police said they arrested protestors because they might aggravate the covid-19 situation.the protestors:          
+     the police: pic.twitter.com/0QFN7hiBG4', 'user': {'name': 'Chad Booc 🔥', 'screen_name': 'KasamangChad'}}]}, 
+     {'query': '#COVID-19', 'count': 2, 'tweets': [{'created_at': 'Fri Jun 05 10:04:49 +0000 2020', 'id_str': '1268806183747375104', '
+     full_text': 'the police said they arrested protestors because they might aggravate the covid-19 situation.the protestors:            
+       the police: pic.twitter.com/0QFN7hiBG4', 'user': {'name': 'Chad Booc 🔥', 'screen_name': 'KasamangChad'}}, 
+{'created_at': 'Fri Jun 05 10:04:49 +0000 2020', 'id_str': '1268806990479994880', 'full_text': "Our death toll is tragic, bu
+t there is so much wrong with this graph.'Daily Covid-19 deaths' - false. Many of these happened days ago Countries record thin
+gs differently - Spain's system artificially reduces their number.We're also 2/3 weeks behind most of these countries. pic.twitter
+.com/GgS3gX51lt", 'user': {'name': 'Professor Karol Sikora', 'screen_name': 'ProfKarolSikora'}}]}, 
+
+{'query': '#Mali', 'count': 1, 'tweets': [{'created_at': 'Fri Jun 05 10:04:50 +0000 2020', 'id_str': '1268815119389265920
+', 'full_text': 'When #coronavirus was first detected in #Mali, Aissa expanded the scope of her media liaison work to
+ ensure her community was receiving reliable and relevant information about the pandemic and how to avoid infection. Learn 
+ more: ow.ly/RosA50zWGIt pic.twitter.com/Lit91Ivjmq', 'user': {'name': 'Seefar', 'screen_name': 'seefar_org'}}]}, 
+ 
+ {'query': '#Kenya', 'count': 1, 'tweets': [{'created_at': 'Sun May 31 00:00:00 +0000 2020', 'id_str': '1267212204962701323', 'full_tex
+ t': 'Where is this beautiful safari lodge located?The top is like a bird nest.#Kenya pic.twitter.com/Gw88yBOSpA', 'us
+ er': {'name': 'Safari Live', 'screen_name': 'SafariLive24'}}]}]

@@ -14,3 +14,6 @@ def filter_keys(aDict, entries, toKeep=True):
     for key in toRemove:
         del aDict[key]
     return aDict
+
+def add_params(**kwargs):
+    return tuple(kwargs.values())

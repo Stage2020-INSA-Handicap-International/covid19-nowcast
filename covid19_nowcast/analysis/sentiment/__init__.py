@@ -10,12 +10,12 @@ def train_classifier(texts_list, labels, **kwargs):
                          ('tfidf', TfidfTransformer()),
                          ('clf', MultinomialNB()),])
     text_clf = text_clf.fit(texts_list, labels)
-    return {"sentiment_classifier":text_clf}
+    return text_clf
 
 def classify(sentiment_classifier, texts_list, **kwargs):
     predicted = sentiment_classifier.predict(texts_list)
-    return {"sentiment_labels":list(map(int,list(predicted)))}
+    return list(map(str,list(predicted)))
 
 def tweets_to_text(tweets, **kwargs):
     tweets_text=[tweet["full_text"] for tweet in tweets]
-    return {"tweets_text":tweets_text}
+    return tweets_text
