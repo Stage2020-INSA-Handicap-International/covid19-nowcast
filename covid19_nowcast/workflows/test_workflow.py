@@ -6,17 +6,16 @@ import util
 from streaming import collection
 pipeline=Pipeline([
     [
+        Step(util.add_params,params=[
+                {"query":"#Mali", "count":1},
+                {"query":"#Kenya", "count":2}
+            ], 
+            outputs=["query", "count"]),
         Step(util.add_params,
             params=PG({
                 "query":["#Sénégal","#COVID-19"], 
-                "count":[1,2]
+                "count":range(10,20,5)
             }), 
-            outputs=["query", "count"]
-        ),
-        Step(util.add_params,params=[
-                {"query":"#Mali", "count":1},
-                {"query":"#Kenya", "count":1}
-            ], 
             outputs=["query", "count"])
     ],
     Step(collection.tweets.crawl_from_raw_query,args=["query", "count"],outputs="tweets")

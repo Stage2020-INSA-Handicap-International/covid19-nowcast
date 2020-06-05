@@ -1,9 +1,9 @@
 from datetime import datetime
-
+import pprint
 class Data(dict):
     @staticmethod
     def from_dict(parameter_list):
-        pass
+        return Data(parameter_list)
 
     def to_dict(self, parameter_list):
         return super()
@@ -15,10 +15,10 @@ class Data(dict):
     def to_file(self, parameter_list):
         pass
 
-    def __init__(self, iterable):
-        super().__init__(iterable)
-        self.generated_through = []
-        self.last_modified_at = datetime.now()
+    def __init__(self, data={}, generated_through=[], last_modified_at=datetime.now()):
+        super().__init__(data)
+        self.generated_through = generated_through
+        self.last_modified_at = last_modified_at
 
     def __getitem__(self, key):
         return super().__getitem__(key)
@@ -28,7 +28,7 @@ class Data(dict):
         return super().__setitem__(key, value)
 
     def __repr__(self):
-        return super().__repr__()
+        return "Data(\n\tdata = "+super().__repr__()+", \n\tgenerated_through = "+str(self.generated_through)+", \n\tlast_modified = "+str(self.last_modified_at)+"\n)"
     
     def __str__(self):
         return super().__str__()

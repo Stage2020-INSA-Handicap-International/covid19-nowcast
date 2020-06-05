@@ -48,7 +48,6 @@ class Step():
         self.keep_inputs=keep_inputs
 
     def run(self, data_containers):
-        print(data_containers)
         # Collecting input values from container
         variants_containers=[]
         for data_container in data_containers:
@@ -93,3 +92,6 @@ class Step():
 
         data_containers=variants_containers
         return data_containers
+
+    def __repr__(self):
+        return "Step(function = "+str(self.function.__name__)+", args = "+ str(self.args) + ", nargs = " + str(self.nargs) + ", outputs = "+ str(self.outputs) + ", params = " + str(self.params) + ", keep_inputs = "+str(self.keep_inputs)+")"
