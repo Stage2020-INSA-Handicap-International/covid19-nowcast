@@ -20,7 +20,7 @@ def train_CNB_classifier(texts_list, labels, **kwargs):
                          ('tfidf', TfidfTransformer()),
                          ('clf', ComplementNB()),])
     text_clf = text_clf.fit(texts_list, labels)
-    return {"sentiment_classifier":text_clf}
+    return text_clf
 
 def train_SVM_classifier(texts_list, labels, **kwargs):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english", min_df=0.000005, max_df=0.7, ngram_range=(1,1))),
@@ -28,14 +28,14 @@ def train_SVM_classifier(texts_list, labels, **kwargs):
                          ('clf', SGDClassifier(loss='log', penalty='l2',alpha=1e-3, verbose=True, n_jobs=-1)),
                         ])
     text_clf = text_clf.fit(texts_list, labels)
-    return {"sentiment_classifier":text_clf}
+    return text_clf
 
 def train_RF_classifier(texts_list, labels, **kwargs):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english")),
                          ('tfidf', TfidfTransformer()),
                          ('clf-rf', RandomForestClassifier(n_estimators=200, n_jobs=-1, random_state=0, verbose=10)),])
     text_clf = text_clf.fit(texts_list, labels)
-    return {"sentiment_classifier":text_clf}
+    return text_clf
 
 def classify(sentiment_classifier, texts_list, return_type="class",**kwargs):
     predicted = []
@@ -46,11 +46,11 @@ def classify(sentiment_classifier, texts_list, return_type="class",**kwargs):
             predicted = list(map(list,list(sentiment_classifier.predict_proba(texts_list))))
         except:
             predicted = list(map(list,list(sentiment_classifier.decision_function(texts_list))))
-    return {"sentiment_labels":predicted}
+    return predicted
 
 def tweets_to_text(tweets, **kwargs):
     tweets_text=[tweet["full_text"] for tweet in tweets]
-    return {"tweets_text":tweets_text}
+    return tweets_text
 
 def get_coeffs(sentiment_classifier, **kwargs):
     coeffs=[]
@@ -61,7 +61,7 @@ def get_coeffs(sentiment_classifier, **kwargs):
             if hasattr(sentiment_classifier["clf"], "feature_count_"):
                 infos["count"]=[float(classes[index]) for classes in sentiment_classifier["clf"].feature_count_]
             coeffs.append(infos)
-    return {"coeffs":coeffs}
+    return coeffs
     
 def spellcheck(texts_list, **kwargs):
     import pkg_resources
@@ -80,4 +80,4 @@ def spellcheck(texts_list, **kwargs):
     # max edit distance per lookup (per single word, not per whole input string)
     texts_list = [sym_spell.lookup_compound(text, max_edit_distance=2) for text in texts_list]
 
-    return {"texts_list":texts_list}
+    return texts_list
