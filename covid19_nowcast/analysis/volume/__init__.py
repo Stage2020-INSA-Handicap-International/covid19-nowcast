@@ -15,7 +15,7 @@ def user_count(tweets, country, analyses={}, **kwargs):
     user_set={tweet["user"]["id_str"] for tweet in tweets}
     analyses["user_count"]=analyses.get("user_count", {})
     analyses["user_count"][country]=len(user_set)
-    return {"analyses":analyses}
+    return analyses
 
 def tweets_per_day(tweets, country, analyses={}, **kwargs):
     """
@@ -29,7 +29,7 @@ def tweets_per_day(tweets, country, analyses={}, **kwargs):
     date_set=Counter(datetime.strftime(datetime.date(datetime.strptime(tweet["created_at"], '%a %b %d %H:%M:%S %z %Y')),'%b %d %Y') for tweet in tweets)
     analyses["tweets_per_day"]=analyses.get("tweets_per_day", {})
     analyses["tweets_per_day"][country]=date_set
-    return {"analyses":analyses}
+    return analyses
 
 def tweets_per_country(tweets, country, analyses={}, **kwargs):
     """
@@ -42,7 +42,7 @@ def tweets_per_country(tweets, country, analyses={}, **kwargs):
     """
     analyses["tweets_per_country"]=analyses.get("tweets_per_country", {})
     analyses["tweets_per_country"][country]=len(tweets)
-    return {"analyses":analyses}
+    return analyses
 
 def tweets_per_country_normalised_on_pop(tweets, country, countries_info, analyses={}, **kwargs):
     """
@@ -61,7 +61,7 @@ def tweets_per_country_normalised_on_pop(tweets, country, countries_info, analys
     analyses["tweets_per_country_normalised_on_pop"]=analyses.get("tweets_per_country_normalised_on_pop", {})
     analyses["tweets_per_country_normalised_on_pop"][country]=date_set
 
-    return {"analyses":analyses}
+    return analyses
 
 def tweets_timeline(tweets, country, countries_covid19, analyses={}, **kwargs):
     """
@@ -80,4 +80,4 @@ def tweets_timeline(tweets, country, countries_covid19, analyses={}, **kwargs):
         if situation["Date"] in date_set:# TODO and correct country:
             timeline[country][situation["Date"]]={**situation,"tweet_count":date_set[situation["Date"]]}
     analyses["timeline"]=timeline
-    return {"analyses":analyses}
+    return analyses

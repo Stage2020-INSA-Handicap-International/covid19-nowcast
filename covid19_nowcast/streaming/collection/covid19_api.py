@@ -1,7 +1,7 @@
 import requests
 import json
 from datetime import datetime
-from covid19_nowcast import util
+import util
 def get_countries_info(countries, entries = ["Date", "Confirmed", "Deaths", "Recovered", "Active"], **kwargs):
     """
     Searches api.covid19api.com for COVID-19 cases
@@ -17,4 +17,4 @@ def get_countries_info(countries, entries = ["Date", "Confirmed", "Deaths", "Rec
         for situation in country:
             situation["Date"]= datetime.strftime(datetime.date(datetime.strptime(situation["Date"], '%Y-%m-%dT%H:%M:%SZ')),'%b %d %Y')
             situation = util.filter_keys(situation,entries)
-    return {"countries_covid19":country_info}
+    return country_info

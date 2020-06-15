@@ -1,1 +1,1 @@
-import covid19_nowcast.streaming.preparation.preprocessor
+import streaming.preparation.preprocessor

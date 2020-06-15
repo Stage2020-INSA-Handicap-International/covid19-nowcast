@@ -13,7 +13,7 @@ def train_MNB_classifier(texts_list, labels, **kwargs):
                          ('tfidf', TfidfTransformer()),
                          ('clf', MultinomialNB()),])
     text_clf = text_clf.fit(texts_list, labels)
-    return {"sentiment_classifier":text_clf}
+    return text_clf
 
 def train_CNB_classifier(texts_list, labels, **kwargs):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english")),

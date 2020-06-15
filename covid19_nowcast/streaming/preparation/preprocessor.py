@@ -40,7 +40,7 @@ class Preprocessor(object):
             #Remove stop words and non-alpha words
             tweet_tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha)]
             tokens.append(tweet_tokens)
-        return {"preprocessed_tweets":tokens}
+        return tokens
 
     #Normalization (e.g 'b4' -> 'before')
     #Two common approaches :

@@ -1,3 +1,3 @@
-import covid19_nowcast.streaming.collection
-import covid19_nowcast.streaming.storage
-import covid19_nowcast.streaming.preparation
+import streaming.collection
+import streaming.storage
+import streaming.preparation
