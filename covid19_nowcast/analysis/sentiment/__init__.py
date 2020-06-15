@@ -8,21 +8,21 @@ from sklearn.pipeline import Pipeline
 import numpy as np
 import spacy
 
-def train_MNB_classifier(texts_list, labels, **kwargs):
+def train_MNB_classifier(texts_list, labels):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english", min_df=0.000005, max_df=0.7, ngram_range=(1,1))),
                          ('tfidf', TfidfTransformer()),
                          ('clf', MultinomialNB()),])
     text_clf = text_clf.fit(texts_list, labels)
     return text_clf
 
-def train_CNB_classifier(texts_list, labels, **kwargs):
+def train_CNB_classifier(texts_list, labels):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english")),
                          ('tfidf', TfidfTransformer()),
                          ('clf', ComplementNB()),])
     text_clf = text_clf.fit(texts_list, labels)
     return text_clf
 
-def train_SVM_classifier(texts_list, labels, **kwargs):
+def train_SVM_classifier(texts_list, labels):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english", min_df=0.000005, max_df=0.7, ngram_range=(1,1))),
                          ('tfidf', TfidfTransformer()),
                          ('clf', SGDClassifier(loss='log', penalty='l2',alpha=1e-3, verbose=True, n_jobs=-1)),
@@ -30,14 +30,14 @@ def train_SVM_classifier(texts_list, labels, **kwargs):
     text_clf = text_clf.fit(texts_list, labels)
     return text_clf
 
-def train_RF_classifier(texts_list, labels, **kwargs):
+def train_RF_classifier(texts_list, labels):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english")),
                          ('tfidf', TfidfTransformer()),
                          ('clf-rf', RandomForestClassifier(n_estimators=200, n_jobs=-1, random_state=0, verbose=10)),])
     text_clf = text_clf.fit(texts_list, labels)
     return text_clf
 
-def classify(sentiment_classifier, texts_list, return_type="class",**kwargs):
+def classify(sentiment_classifier, texts_list, return_type="class"):
     predicted = []
     if return_type=="class":
         predicted = list(map(str,list(sentiment_classifier.predict(texts_list))))
@@ -48,11 +48,11 @@ def classify(sentiment_classifier, texts_list, return_type="class",**kwargs):
             predicted = list(map(list,list(sentiment_classifier.decision_function(texts_list))))
     return predicted
 
-def tweets_to_text(tweets, **kwargs):
+def tweets_to_text(tweets):
     tweets_text=[tweet["full_text"] for tweet in tweets]
     return tweets_text
 
-def get_coeffs(sentiment_classifier, **kwargs):
+def get_coeffs(sentiment_classifier):
     coeffs=[]
     for class_idx, class_ID in enumerate(sentiment_classifier["clf"].coef_):
         class_name=str(sentiment_classifier["clf"].classes_[class_idx])
@@ -63,7 +63,7 @@ def get_coeffs(sentiment_classifier, **kwargs):
             coeffs.append(infos)
     return coeffs
     
-def spellcheck(texts_list, **kwargs):
+def spellcheck(texts_list):
     import pkg_resources
     from symspellpy import SymSpell, Verbosity
 
