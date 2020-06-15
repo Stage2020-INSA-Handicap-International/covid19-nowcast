@@ -60,11 +60,6 @@ def get_from_file(filepath, **kwargs):
     Output:
         - tweets: a list of tweets imported from the file 
     """
-    tweets=[]
     with open(filepath, "r") as file:
-        for line in file.readlines():
-            tweet=json.loads(line)
-            tweet["user"]=util.filter_keys(tweet["user"], ["name", "location"])
-            tweet = util.filter_keys(tweet, ["created_at", "user"])
-            tweets.append(tweet)
-    return tweets
+        return json.load(file)
+
