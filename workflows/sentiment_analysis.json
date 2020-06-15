@@ -1,7 +1,7 @@
 [
     {
         "import-params": {
-            "path": "../Datasets/corpus1p6M.json"
+            "path": "../Datasets/preprocLabeledDict1p6M.json"
         }
     },
     {
@@ -9,21 +9,41 @@
     },
     {
         "rename-params": {
-            "tweets": "texts_list"
+            "tweets": "texts_list",
+            "sentiment":"labels"
         }
     },
     {
-        "function": "covid19_nowcast.analysis.sentiment.train_classifier"
+        "function": "covid19_nowcast.analysis.sentiment.train_MNB_classifier"
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.get_coeffs"
+    },
+    {
+        "rename-params": {
+            "coeffs":"NB_coeffs",
+            "sentiment_classifier": "NB_classifier"
+        }
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.train_SVM_classifier"
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.get_coeffs"
+    },
+    {
+        "rename-params": {
+            "coeffs":"SVM_coeffs",
+            "sentiment_classifier": "SVM_classifier"
+        }
     },
     {
         "add-params": {
-            "country": "senegal",
-            "raw_query": "#Sénégal",
-            "count": 100
+            "filepath": "../Datasets/2020_Kenya_preprocDict.json"
         }
     },
     {
-        "function": "covid19_nowcast.streaming.collection.tweets.crawl_from_raw_query"
+        "function": "covid19_nowcast.streaming.collection.tweets.get_from_file"
     },
     {
         "function": "covid19_nowcast.analysis.sentiment.tweets_to_text"
@@ -34,29 +54,78 @@
         }
     },
     {
+        "rename-params": {
+            "SVM_classifier": "sentiment_classifier"
+        }
+    },
+    {
         "function": "covid19_nowcast.analysis.sentiment.classify"
     },
     {
-        "remove-params": [
-            "sentiment_classifier"
-        ]
+        "rename-params": {
+            "sentiment_labels": "SVM_labels"
+        }
     },
     {
-        "display-entries": {}
+        "rename-params": {
+            "sentiment_classifier":"SVM_classifier",
+            "NB_classifier": "sentiment_classifier"
+        }
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.classify"
+    },
+    {
+        "rename-params": {
+            "sentiment_labels": "NB_labels"
+        }
+    },
+    {
+        "add-params":{
+            "return_type":"proba"
+        }
+    },
+    {
+        "rename-params": {
+            "sentiment_classifier":"NB_classifier",
+            "SVM_classifier": "sentiment_classifier"
+        }
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.classify"
+    },
+    {
+        "rename-params": {
+            "sentiment_labels": "SVM_proba"
+        }
+    },
+    {
+        "rename-params": {
+            "sentiment_classifier":"SVM_classifier",
+            "NB_classifier": "sentiment_classifier"
+        }
+    },
+    {
+        "function": "covid19_nowcast.analysis.sentiment.classify"
+    },
+    {
+        "rename-params": {
+            "sentiment_labels": "NB_proba"
+        }
     },
     {
         "pack-params": {
             "params": [
                 "tweets",
-                "sentiment_labels"
+                "NB_labels",
+                "NB_proba",
+                "NB_coeffs",
+                "SVM_labels",
+                "SVM_proba",
+                "SVM_coeffs"
             ],
             "dst": "labeled_tweets"
         }
-    },
-    {
-        "display-params": [
-            "labeled_tweets"
-        ]
     },
     {
         "pause": {}
