@@ -2,15 +2,22 @@ from workflow.data import Data
 import inspect
 import types
 import copy
-
+import datetime
+import util
+import itertools
 class Step():
 
-    def __init__(self, function, args=None, nargs=None, outputs=None, params=[{}], keep_inputs=True):
+    def __init__(self, function, args=None, nargs=None, outputs=None, params=[{}], keep_inputs=True, name="Step", export_path=None):
         super().__init__()
 
-        assert function is not None and callable(function)
-        self.name=function.__name__
-        self.function = function
+        assert function is not None and (callable(function) or type(function) is list)
+        if type(function) is list:
+            self.function = function
+        else:
+            self.function = [function]
+
+        assert type(name) is str
+        self.name=name
 
         self.args=[]
         if args is not None:
@@ -29,8 +36,9 @@ class Step():
                 assert type(input_key) is str
             self.args.extend(nargs)
 
-        self.outputs=[]
+        self.outputs=None
         if outputs is not None:
+            self.outputs=[]
             if type(outputs) is str:
                 self.outputs.append(outputs)
             else:
@@ -47,7 +55,11 @@ class Step():
         assert type(keep_inputs) is bool
         self.keep_inputs=keep_inputs
 
+        assert export_path is None or type(export_path) is str
+        self.export_path = export_path
+
     def run(self, data_containers):
+        print(self)
         # Collecting input values from container
         variants_containers=[]
         for data_container in data_containers:
@@ -58,40 +70,63 @@ class Step():
             nargs={}
             for input_key in self.nargs:
                 nargs[input_key]=data_container[input_key]
+            
+            backup_params=self.params
+            if isinstance(self.params, types.GeneratorType) or isinstance(self.params,itertools._tee):
+                self.params, backup_params = itertools.tee(self.params)
 
             for param_variant in self.params:
                 variant_container=copy.deepcopy(data_container)
                 for param_key in param_variant:
                     nargs[param_key]=param_variant[param_key]
                 # Running function and collecting outputs
-                output= self.function(*args, **nargs)
+                for funct in self.function:
+                    funct_container=variant_container
+                    if len(self.function)>1:
+                        funct_container=copy.deepcopy(variant_container)
+                    
+                    output = funct(*args, **nargs)
 
-                # Storing outputs in container
-                if type(output) is tuple:
-                    assert len(output) == len(self.outputs)
-                    for index, output_key  in enumerate(self.outputs):
-                        variant_container[output_key]=output[index]
-                else:
-                    assert len(self.outputs)==1
-                    variant_container[self.outputs[0]]=output
+                    if not self.keep_inputs:
+                        for input_key in self.args:
+                            del funct_container[input_key]
+                        for input_key in self.nargs:
+                            del funct_container[input_key]
 
-                if not self.keep_inputs:
-                    for input_key in self.args:
-                        del variant_container[input_key]
-                    for input_key in self.nargs:
-                        del variant_container[input_key]
+                    if self.outputs is not None:
+                        # Storing outputs in container
+                        if type(output) is tuple:
+                            assert len(output) == len(self.outputs)
+                        elif output is not None:
+                            assert len(self.outputs)==1
+                            output=[output]
 
-                # Log the specific step infos in Data container
-                mem_params=self.params
-                self.params=param_variant
-                step_variant=copy.deepcopy(self)
-                self.params=mem_params
-                variant_container.append_step(step_variant)
+                        for index, output_key  in enumerate(self.outputs):
+                            funct_container[output_key]=output[index]
+ 
+                    # Log the specific step infos in Data container
+                    mem_params=self.params
+                    mem_functs=self.function
+                    self.params=param_variant
+                    if isinstance(funct, types.LambdaType) and funct.__name__ == "<lambda>":
+                        self.function=[util.lambda_function]
+                    else:
+                        self.function=[funct]
+                    step_variant=copy.deepcopy(self)
+                    self.params=mem_params
+                    self.function=mem_functs
+                    funct_container.append_step(step_variant)
 
-                variants_containers.append(variant_container)
+                    if self.export_path is not None:
+                        path=funct_container.get_desc_name(self.export_path)
+                        util.export_param(funct_container.to_dict(),path)
+                        util.export_param(funct_container.to_dict(),path, pickle=True)
+                    variants_containers.append(funct_container)
 
+                #generator is exhausted => resuscitate it
+                self.params=backup_params
         data_containers=variants_containers
         return data_containers
 
     def __repr__(self):
-        return "Step(function = "+str(self.function.__name__)+", args = "+ str(self.args) + ", nargs = " + str(self.nargs) + ", outputs = "+ str(self.outputs) + ", params = " + str(self.params) + ", keep_inputs = "+str(self.keep_inputs)+")"
+        return "Step(function = "+str([funct.__name__ for funct in self.function])+", args = "+ str(self.args) + ", nargs = " + str(self.nargs) + ", outputs = "+ str(self.outputs) + ", params = " + str(self.params) + ", keep_inputs = "+str(self.keep_inputs)+", name = "+self.name+")"

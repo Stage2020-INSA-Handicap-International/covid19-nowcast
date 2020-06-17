@@ -8,6 +8,10 @@ from sklearn.pipeline import Pipeline
 import numpy as np
 import spacy
 
+def train_classifier(pipeline, texts_list, labels):
+    pipeline = pipeline.fit(texts_list, labels)
+    return pipeline
+
 def train_MNB_classifier(texts_list, labels):
     text_clf = Pipeline([('vect', CountVectorizer(stop_words="english", min_df=0.000005, max_df=0.7, ngram_range=(1,1))),
                          ('tfidf', TfidfTransformer()),

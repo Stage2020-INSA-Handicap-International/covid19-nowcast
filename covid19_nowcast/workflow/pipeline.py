@@ -14,7 +14,7 @@ class Pipeline():
         for step in self.steps:
             if type(step) is list:
                 data_variants = [step_variant.run(copy.deepcopy(data_containers)) for step_variant in step] # deepcopy for different subworkflow dataspaces
-                
+
                 # Flatten containers lists created by variants
                 data_containers=[]
                 for data_variant in data_variants:
