@@ -13,7 +13,7 @@ from sklearn.pipeline import Pipeline as SKPipeline
 pipeline=Pipeline([
             Step(
                 util.add_params,
-                params=PG({"stop_words":"english", "min_df":[x/10000 for x in range(0,11,2)], "max_df":0.7, "ngram_range":[(1,1),(1,2)]}),
+                params=PG({"stop_words":"english", "min_df":[x/100000 for x in range(1,2)], "max_df":0.7, "ngram_range":[(1,1)]}),
                 outputs=["stop_words","min_df", "max_df", "ngram_range"],
                 name="clsf_par"
             ),
@@ -49,7 +49,7 @@ pipeline=Pipeline([
                 analysis.sentiment.get_coeffs,
                 args=["classifier"],
                 outputs=["coeffs"],
-                export_path="./output/coeffs_<classifier.param[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
+                export_path="output/coeff_<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
             ),
             Step(
                 util.remove_params,

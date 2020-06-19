@@ -58,12 +58,18 @@ def tweets_to_text(tweets):
 
 def get_coeffs(sentiment_classifier):
     coeffs=[]
-    for class_idx, class_ID in enumerate(sentiment_classifier["clf"].coef_):
+    coeff_location=None
+    if hasattr(sentiment_classifier["clf"], "feature_log_prob_"):
+        print("feature")
+        coeff_location=sentiment_classifier["clf"].feature_log_prob_
+    else:
+        coeff_location=sentiment_classifier["clf"].coef_
+    for class_idx, class_ID in enumerate(coeff_location):
         class_name=str(sentiment_classifier["clf"].classes_[class_idx])
         for index, name in enumerate(sentiment_classifier["vect"].get_feature_names()):
             infos={"class":class_name, "word":name, "log_proba":float(class_ID[index])}
             if hasattr(sentiment_classifier["clf"], "feature_count_"):
-                infos["count"]=[float(classes[index]) for classes in sentiment_classifier["clf"].feature_count_]
+                infos["count"]=[float(classes[index][class_idx]) for classes in sentiment_classifier["clf"].feature_count_]
             coeffs.append(infos)
     return coeffs
     

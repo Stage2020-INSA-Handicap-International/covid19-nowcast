@@ -89,9 +89,9 @@ class Step():
 
                     if not self.keep_inputs:
                         for input_key in self.args:
-                            del funct_container[input_key]
+                            funct_container.pop(input_key)
                         for input_key in self.nargs:
-                            del funct_container[input_key]
+                            funct_container.pop(input_key)
 
                     if self.outputs is not None:
                         # Storing outputs in container
