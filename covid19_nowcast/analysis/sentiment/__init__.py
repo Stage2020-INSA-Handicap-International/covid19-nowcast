@@ -69,7 +69,7 @@ def get_coeffs(sentiment_classifier):
         for index, name in enumerate(sentiment_classifier["vect"].get_feature_names()):
             infos={"class":class_name, "word":name, "log_proba":float(class_ID[index])}
             if hasattr(sentiment_classifier["clf"], "feature_count_"):
-                infos["count"]=[float(classes[index][class_idx]) for classes in sentiment_classifier["clf"].feature_count_]
+                infos["count"]=[float(classes[index]) for classes in sentiment_classifier["clf"].feature_count_][class_idx]
             coeffs.append(infos)
     return coeffs
     
