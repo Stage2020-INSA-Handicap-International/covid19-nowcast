@@ -9,6 +9,9 @@ def iterable(obj):
         return True
 
 def parameter_grid(dictionary, remaining_keys=None):
+    """
+    A generator which iterates on and returns all possible combinations of values in iterables in *dictionary*.
+    """
     if remaining_keys is None:
         remaining_keys=list(dictionary.keys())
     if remaining_keys == []:

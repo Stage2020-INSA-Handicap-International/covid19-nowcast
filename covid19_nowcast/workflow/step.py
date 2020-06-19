@@ -6,8 +6,24 @@ import datetime
 import util
 import itertools
 class Step():
-
+    """
+    Represents indivisible actions in the workflow. 
+    A single step instance can define different executions variants which will be executed in parallel and generate their own dataspace.
+    """
     def __init__(self, function, args=None, nargs=None, outputs=None, read_only_outputs=set(), params=[{}], keep_inputs=True, name="Step", export_path=None):
+        """
+        function: a callable function or a list of callables. Each one will be executed in *run* and each one will generate a data variant;
+        args: positional arguments of the function;
+        nargs: named arguments of the function;
+        outputs: key strings where to store function outputs.
+        read_only_outputs:  key strings set (only keys present in *outputs*) which declares which outputs shan't be modified later in execution.
+                            Prevents unnecessary copies of large read_only data;
+        params: named function arguments which are defined in the workflow itself (not results from execution) and won't be stored in the execution data;
+        keep_inputs: boolean defining whether to keep inputs in the data container after the step execution;
+        name: a name for that step;
+        export_path: a string defining a filepath to output the data. This string may contain variable field which will be resolved during execution. See *Data.to_file* for more infos.
+        """
+        
         super().__init__()
 
         assert function is not None and (callable(function) or type(function) is list)
@@ -65,11 +81,6 @@ class Step():
         print(self)
         # Collecting input values from container
         variants_containers=[]
-
-        #in case steps *run* can be called multiple times + commented section at the end of the method
-        #backup_params=self.params
-        #if isinstance(self.params, types.GeneratorType) or isinstance(self.params,itertools._tee):
-        #    self.params, backup_params = itertools.tee(self.params)
 
         for param_variant in self.params:
             args=[]
@@ -130,17 +141,11 @@ class Step():
                     funct_container.append_step(step_variant)
 
                     if self.export_path is not None:
-                        path=funct_container.get_desc_name(self.export_path)
-                        util.export_param(funct_container.to_dict(),path)
-                        util.export_param(funct_container.to_dict(),path, pickle=True)
+                        funct_container.to_file(self.export_path)
 
                     variants_containers.append(funct_container)
 
-        #generator is exhausted => resuscitate it
-        #self.params=backup_params
-
-        data_containers=variants_containers
-        return data_containers
+        return variants_containers
 
     def __repr__(self):
         return "Step(function = "+str([funct.__name__ for funct in self.function])+", args = "+ str(self.args) + ", nargs = " + str(self.nargs) + ", outputs = "+ str(self.outputs) + ", params = " + str(self.params) + ", keep_inputs = "+str(self.keep_inputs)+", name = "+self.name+")"

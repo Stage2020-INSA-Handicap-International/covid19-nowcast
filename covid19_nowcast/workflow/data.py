@@ -1,10 +1,20 @@
 from datetime import datetime
 import re 
 import copy
-
+import util
 class Data(dict):
+    """
+    Stores execution informations, including the latest data and the steps it was *generated_through*.
+    Some data may be declared read_only, which means it will be copied by reference instead of by value when using Data.rel_deep_copy.
+    Access is done like a dictionary for data and like a list for steps in *generated_through*.
+    """
     @staticmethod
     def rel_deep_copy(data):
+        """
+        Returns a relatively deep copy of the contents of *data*, meaning only read/write data will be deep-copied.
+        Large read_only data should be declared as such in *read_only*, so as to limit unnecessary data duplication and speed up execution.
+        rel_deep_copy uses copy.deepcopy except for read_only keys which are directly referenced.
+        """
         copied_data=Data()
         copied_data.generated_through=copy.deepcopy(data.generated_through)
         for key in data.keys():
@@ -26,8 +36,14 @@ class Data(dict):
     def from_file(parameter_list):
         pass
 
-    def to_file(self, parameter_list):
-        pass
+    def to_file(self, filepath):
+        """
+        Writes data at filepath after resolving the true filepath depending on variable fields with *get_desc_name*.
+        """
+        path=self.get_desc_name(filepath)
+        util.export_param(self.to_dict(),path)
+        util.export_param(self.to_dict(),path, pickle=True)
+        util.export_param(self,path+".DATA", pickle=True)
 
     def __init__(self, data={}, generated_through=[], last_modified_at=datetime.now()):
         super().__init__(data)
@@ -57,6 +73,10 @@ class Data(dict):
         self.last_modified_at = datetime.now()
 
     def get_desc_name(self, name_format="</>"):
+        """
+        Generates a name from a string containing variable fields inside '<'&'>'s. Those fields will be replaced with data or steps information.
+        See *find_data* for more information on accepted formats.
+        """
         final_name=""
         field = re.search(r"<[a-zA-Z0-9_\\.,\[\]/]*>",name_format)
         left, target, right = "","",""
@@ -76,8 +96,12 @@ class Data(dict):
     
     def find_data(self, data):
         """
-        data[<keyone>,<keytwo>,<keythree>,...]
-        step_name.{function|params[<keyone>,<keytwo>,<keythree>]}
+        Generates a name from a string and available data & steps infos.
+        A name can be generated for key:value in self, or a specific step's function/parameters
+
+        Accepted string inputs are:
+        data[<keyone>,<keytwo>,<keythree>,...] to output keyone=v1,keytwo=v2,keythree=v3
+        step_name.{function|params[<keyone>,<keytwo>,<keythree>]} to output the step's function name or its parameters, the latter in the same format as for data keys.
         """
         match=re.search(r"^data\[[,a-zA-Z0-9_]*\]",data)
         if match is not None:

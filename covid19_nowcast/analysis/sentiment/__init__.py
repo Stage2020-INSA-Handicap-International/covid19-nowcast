@@ -60,7 +60,6 @@ def get_coeffs(sentiment_classifier):
     coeffs=[]
     coeff_location=None
     if hasattr(sentiment_classifier["clf"], "feature_log_prob_"):
-        print("feature")
         coeff_location=sentiment_classifier["clf"].feature_log_prob_
     else:
         coeff_location=sentiment_classifier["clf"].coef_
