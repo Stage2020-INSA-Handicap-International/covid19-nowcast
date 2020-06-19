@@ -13,7 +13,7 @@ from sklearn.pipeline import Pipeline as SKPipeline
 pipeline=Pipeline([
             Step(
                 util.add_params,
-                params=PG({"stop_words":"english", "min_df":[x/100000 for x in range(1,2)], "max_df":0.7, "ngram_range":[(1,1)]}),
+                params=PG({"stop_words":"english", "min_df":[x/100000 for x in range(1,10)], "max_df":0.7, "ngram_range":[(1,1), (1,2)]}),
                 outputs=["stop_words","min_df", "max_df", "ngram_range"],
                 name="clsf_par"
             ),
@@ -37,7 +37,8 @@ pipeline=Pipeline([
             Step(
                 util.import_params, 
                 params={"filepath":"../Datasets/preprocLabeledDict1p6M.json", "unpack":True},
-                outputs=["tweets","labels"]
+                outputs=["tweets","labels"],
+                read_only_outputs={"tweets","labels"}
             ),
             Step(analysis.sentiment.train_classifier, 
                 args=["classifier","tweets", "labels"], 

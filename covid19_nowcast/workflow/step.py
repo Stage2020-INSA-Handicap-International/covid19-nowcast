@@ -7,7 +7,7 @@ import util
 import itertools
 class Step():
 
-    def __init__(self, function, args=None, nargs=None, outputs=None, params=[{}], keep_inputs=True, name="Step", export_path=None):
+    def __init__(self, function, args=None, nargs=None, outputs=None, read_only_outputs=set(), params=[{}], keep_inputs=True, name="Step", export_path=None):
         super().__init__()
 
         assert function is not None and (callable(function) or type(function) is list)
@@ -47,6 +47,9 @@ class Step():
                     assert type(input_key) is str
                 self.outputs.extend(outputs)
 
+        assert type(read_only_outputs) is set and (read_only_outputs == [] or all([type(output) is str for output in read_only_outputs])) 
+        self.read_only_outputs=read_only_outputs
+
         assert type(params) is dict or type(params) is list or isinstance(params, types.GeneratorType)
         if type(params) is dict:
             self.params=[params]
@@ -62,30 +65,37 @@ class Step():
         print(self)
         # Collecting input values from container
         variants_containers=[]
-        for data_container in data_containers:
+
+        #in case steps *run* can be called multiple times + commented section at the end of the method
+        #backup_params=self.params
+        #if isinstance(self.params, types.GeneratorType) or isinstance(self.params,itertools._tee):
+        #    self.params, backup_params = itertools.tee(self.params)
+
+        for param_variant in self.params:
             args=[]
-            for input_key in self.args:
-                args.append(data_container[input_key])
-
             nargs={}
-            for input_key in self.nargs:
-                nargs[input_key]=data_container[input_key]
-            
-            backup_params=self.params
-            if isinstance(self.params, types.GeneratorType) or isinstance(self.params,itertools._tee):
-                self.params, backup_params = itertools.tee(self.params)
+            for param_key in param_variant:
+                nargs[param_key]=param_variant[param_key]
 
-            for param_variant in self.params:
-                variant_container=copy.deepcopy(data_container)
-                for param_key in param_variant:
-                    nargs[param_key]=param_variant[param_key]
-                # Running function and collecting outputs
-                for funct in self.function:
-                    funct_container=variant_container
-                    if len(self.function)>1:
-                        funct_container=copy.deepcopy(variant_container)
-                    
+            # Running function and collecting outputs
+            for funct in self.function:
+
+                output = None
+                if self.args == [] and self.nargs=={}:
                     output = funct(*args, **nargs)
+
+                for data_container in data_containers:
+                    for input_key in self.nargs:
+                        nargs[input_key]=data_container[input_key]
+
+                    args=[]
+                    for input_key in self.args:
+                        args.append(data_container[input_key])
+
+                    funct_container=Data.rel_deep_copy(data_container)
+                    
+                    if self.args != [] or self.nargs!={}:
+                        output = funct(*args, **nargs)
 
                     if not self.keep_inputs:
                         for input_key in self.args:
@@ -103,7 +113,9 @@ class Step():
 
                         for index, output_key  in enumerate(self.outputs):
                             funct_container[output_key]=output[index]
- 
+                        
+                        funct_container.read_only.union(self.read_only_outputs)
+
                     # Log the specific step infos in Data container
                     mem_params=self.params
                     mem_functs=self.function
@@ -121,10 +133,12 @@ class Step():
                         path=funct_container.get_desc_name(self.export_path)
                         util.export_param(funct_container.to_dict(),path)
                         util.export_param(funct_container.to_dict(),path, pickle=True)
+
                     variants_containers.append(funct_container)
 
-                #generator is exhausted => resuscitate it
-                self.params=backup_params
+        #generator is exhausted => resuscitate it
+        #self.params=backup_params
+
         data_containers=variants_containers
         return data_containers
 

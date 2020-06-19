@@ -1,7 +1,20 @@
 from datetime import datetime
 import re 
+import copy
 
 class Data(dict):
+    @staticmethod
+    def rel_deep_copy(data):
+        copied_data=Data()
+        copied_data.generated_through=copy.deepcopy(data.generated_through)
+        for key in data.keys():
+            if key not in data.read_only:
+                copied_data[key]=copy.deepcopy(data[key])
+            else:
+                print(key)
+                copied_data[key]=data[key]
+        return copied_data
+
     @staticmethod
     def from_dict(parameter_list):
         return Data(parameter_list)
@@ -20,16 +33,21 @@ class Data(dict):
         super().__init__(data)
         self.generated_through = generated_through
         self.last_modified_at = last_modified_at
+        self.read_only=set()
 
     def __getitem__(self, key):
         return super().__getitem__(key)
 
     def __setitem__(self, key, value):
+        if type(key) is not str :
+            raise TypeError("Data keys must be strings.")
+        if key in self.keys() and key in self.read_only:
+            raise AttributeError("Attribute "+str(key)+" is read-only.")
         self.last_modified_at = datetime.now()
         return super().__setitem__(key, value)
 
     def __repr__(self):
-        return "Data(\n\tdata = "+super().__repr__()+", \n\tgenerated_through = "+str(self.generated_through)+", \n\tlast_modified = \""+str(self.last_modified_at)+"\"\n)"
+        return "Data(\n\tdata = "+super().__repr__()+", \n\tread_only = "+str(self.read_only)+", \n\tgenerated_through = "+str(self.generated_through)+", \n\tlast_modified = \""+str(self.last_modified_at)+"\"\n)"
     
     def __str__(self):
         return super().__str__()
