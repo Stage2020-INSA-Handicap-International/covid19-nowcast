@@ -25,6 +25,14 @@ class Preprocessor(object):
     #Faire un jupyter notebook avec des visualisations des résultats selon le preprocessing qu'on fait de manière à voir les plus pertinents
     # la visualisation peut se faire à travers des word frequencies par ex
 
+    @staticmethod
+    def identity_tokenizer(text):
+        return text
+
+    @staticmethod
+    def identity_preprocessor(text):
+        return text
+
     #Tokenization, Lowercasing, Lemmatization, Stopword Removal
     @staticmethod
     def preprocess(tweets_list):

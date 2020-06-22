@@ -51,7 +51,10 @@ class TopicClassifier(object):
         tfidf_vectorizer = TfidfVectorizer(max_df=0.95,
             min_df=2,
             max_features=None,
-            stop_words='english')
+            stop_words=None,
+            lowercase=False,
+            tokenizer=Preprocessor.identity_tokenizer,
+            preprocessor=Preprocessor.identity_preprocessor)
         tfidf_matrix = tfidf_vectorizer.fit_transform(tokens)
         tfidf_feature_names = tfidf_vectorizer.get_feature_names()
         return tfidf_matrix,tfidf_feature_names
@@ -77,7 +80,5 @@ class TopicClassifier(object):
         for topic_idx, topic in enumerate(model.components_):
             print("Topic {} :".format(topic_idx), " ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]))
 
-
-
-
-
+    #TODO : Pour tester la pertinence des topics : regrouper les mots d'un topic et chercher les tweets qui contiennnent ces mots
+    # pour voir si le thème est effectivement celui suggéré

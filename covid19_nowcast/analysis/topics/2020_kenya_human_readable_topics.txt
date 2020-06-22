@@ -1,0 +1,94 @@
+DISCLAIMER :
+1 - L'analyse est centrée sur le point de vue citoyen. Je ne fais pas rentrer dans mes catégories les tweets des médias et/ou du gouvernement
+2 - Les sujets catégorisés à travers les tweets ne sont en aucun cas une représentation de la société dans sa réalité sociale entière.
+3 - Les exemples de tweets sont volontairement très expressifs. Les sujets qu'ils évoquent sont bien représentatifs d'une partie non
+    négligeable du corpus, mais leur niveau de sentimentalité ne l'est pas nécessairement (à reformuler de façon plus simple).
+    L'analyse des sentiments devrait montrer la vraie distribution des sentiments sur tout le corpus
+4 - Les topics que je ne cite pas volontairement :
+        - Tout ce qui est remerciement au personnel soignant
+        - Tout ce qui est décompte du nb officiel de cas
+        - Tout ce qui est infos officielles : dons au Kenya (IMF, World Bank, etc), annonces du gouvernement,
+
+
+JAN - - - - - - - - - - - - - -
+Nb of tweets :  45
+Human Topic interpretation :
+Topic 0 : Les citoyens demandent la suspension des vols en provenance et à destination de la Chine (quid de guangzhou ? certains demandent de rapatrier les kenyans en Chine)
+Topic 1 : bof, pas très clair, un peu pareil que le 0 : peur du virus, mention du nb de cas en Chine, mention des frérots à guangzhou
+Topic 2 : un peu pareil : besoin de bloquer les vols avec la chine, le kenya est pas prêt à gérer le virus comme la Chine, on a déjà assez de problèmes (malaria, locust, debts), ramenez les frérots de guangzhou
+Topic 3 : organisation de manifs pour bloquer les vols vers la chine, le gouvernement kenyan n'aide pas les kenyans bloqués à wuhan ou guangzhou, c'est chaud y'a déjà le maria dans le nord et les criquets
+Bilan :
+T1 : Peur vis-à-vis de la situation : Retour du Malaria dans le nord, Invasions de criquets, les citoyens pensent que le pays
+     n'est pas prêt à accueillir une crise supplémentaire, qu'il manque notamment d'infrastructures
+T2 : Les citoyens kenyans demandent la suspension des vols en provenance et à destination de la Chine et organisent des manifs
+T3 : Avis mitigés sur les citoyens kenyans bloqués en Chine : certains réclament le rapatriement (fraternité), d'autres
+     réclament l'inverse (peur de contamination, le premier cas suspecté venait de Guangzhou)
+
+FEB - - - - - - - - - - - - - -
+Nb of tweets :  182
+Human Topic interpretation :
+vocabulaire spécifique : Chokoras, BBI,
+Topic 0 : les citoyens déplorent le fait que des avions en provenance de la Chine atterrissent encore au Kenya
+          Peur des répercussions économiques : si la Chine grande puissance galère alors nous..
+          Colère contre le président et le gouvernement
+
+Topic 1 : Défaitisme
+Topic 7 : gire whistleblower
+Bilan :
+T1 : les avions chinois au kenya
+T2 : colère contre le président
+T3 : colère contre le gouvernement
+T4 : peur des répercussions éco
+
+
+MAR - - - - -  - - - - - - - - -
+Nb of tweets :  842
+Human Topic interpretation :
+Topic 0 : peur des répercussions économiques
+          Appel de certains citoyens à se confiner et à respecter la distanciation sociale (citoyens plutôt aisés)
+          Révolte de certains citoyens face aux mesures de distanciation sociale (manque de moyens, peur de famine)
+Topic 1 : Dénonciation de violences policières (notamment après la mort de Yassin Moyo, enfant de 13 ans)
+Topic 2 : Réactions au couvre-feu : certains citoyens ne pensent pas que ce soit une solution, d'autres
+          déplorent non pas le fait en lui-même mais comment il a été implémenté (violences policières)
+Topic 3 : idem
+Topic 4 : Questionnements sur les tests : est-ce qu'on en fait assez ? pourquoi est-ce qu'on n'en a pas plus ?
+          Peur des fakes news et doutes sur les chiffres officiels du gouvernement
+          Réticence à aller se faire tester par peur d'être confiné / violenté / tué
+          Loyer : demande au gouvernement de les suspendre
+Topic 5 : idem
+Topic 6 : idem
+Topic 7 : idem
+Topic 8 : Avis mitigés sur la fermeture des universités (certains disent que c'est bien, d'autres disent
+          que les universités devraient aider les chercheurs à trouver un vaccin, et que c'est ce qui est
+          fait en Chine)
+Topic 9 : idem
+Bilan :
+T1 : Peur des répercussions économiques
+T2 : Appel de certains citoyens à se confiner et à respecter la distanciation sociale (citoyens plutôt aisés)
+T3 : Révolte de certains citoyens face aux mesures de distanciation sociale (manque de moyens, peur de famine)
+T4 : Dénonciation de violences policières (notamment après la mort de Yassin Moyo, enfant de 13 ans)
+T5 : Avis mitigés sur le couvre-feu
+T6 : Questionnements sur les tests
+T7 : Doutes sur les chiffres officiels
+T8 : Avis mitigés sur la fermeture des universités
+
+
+
+APR - - - - - - - - - - - - - -
+Nb of tweets :  860
+Topic 0 : Polémique sur les vaccins : doivent-ils être testés sur des kenyans ou pas ?
+          Quelques tweets qui saluent les efforts du gouvernement (par rapport à quoi exactement ?)
+          Quelques tweets qui saluent le leadership en Ouganda et disent que le Kenya devrait en tirer leçon (about what exactly?)
+Topic 1 : Le gouvernement annonce une baisse des infections. Peut-on les croire ? Pourquoi a-t-on besoin d'autant d'argent quotidiennement pour faire face au virus ?
+Topic 2 : les citoyens pensent que le gouvernement ne fait peut-être pas assez de tests
+Topic 3 :
+Bilan :
+T1 : Polémique sur les tests de vaccins sur des kenyans
+T2 : Doute sur les chiffres réels du virus  (si on avait plus de capacités de test on trouverait surement plus de cas)
+
+MAY - - - - - - - - - - - - - -
+Nb of tweets :  687
+# Demande de transparence sur les chiffres (nb de cas, nb de tests)
+# Human trials for covid-19 drug : qu'en pensent les citoyens ?
+# Répercussions économiques
+# Violences policières

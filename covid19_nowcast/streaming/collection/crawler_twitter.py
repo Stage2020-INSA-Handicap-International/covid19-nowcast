@@ -11,10 +11,22 @@ from datetime import datetime
 import locale
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
+
 def get_tweets_data(soup):
     tweets=[]
+    year_is_2020 = False
+    year_is_2019 = False
     for tweet_container in soup.find_all("table", {"class":"tweet"}):
         date = tweet_container.find("td", {"class":"timestamp"}).text.replace("\n","").strip()
+        #Since the crawled date doesn't contain the year, we detect the end of 2020 when the month switches from Jan to anything else
+        #The crawling stops at that switch
+        month = date.split(" ")[0]
+        month_is_jan = (month == "Jan")
+        if month_is_jan:
+            year_is_2020 = True
+        if year_is_2020 and not month_is_jan:
+            year_is_2019 = True
+            break
         try:
             date=datetime.strptime(date+" 2020",'%b %d %Y')
         except:
@@ -43,12 +55,13 @@ def get_tweets_data(soup):
             }
         )
 
-    return tweets
+    return tweets,year_is_2019
 
 def search(raw_query, count):
     tweets=[]
     next_url = raw_query
-    while next_url is not None and len(tweets) < count:
+    year_is_2019 = False
+    while (not year_is_2019) and next_url is not None and len(tweets) < count:
         response = None
         try:
             response = requests.get("https://mobile.twitter.com"+next_url)
@@ -61,7 +74,8 @@ def search(raw_query, count):
             sys.exit(1)
 
         soup = BeautifulSoup(response.text, 'lxml')
-        tweets.extend(get_tweets_data(soup))
+        one_page_tweets,year_is_2019 = get_tweets_data(soup)
+        tweets.extend(one_page_tweets)
         next_url=soup.find("div", {"class":"w-button-more"})
         if next_url is not None:
             next_url=next_url.a["href"]
