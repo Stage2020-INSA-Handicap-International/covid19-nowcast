@@ -1,4 +1,5 @@
 from workflow.step import Step
+from workflow.metastep import MetaStep
 
 import copy
 class Pipeline():
@@ -33,6 +34,7 @@ class Pipeline():
     @staticmethod
     def check_instance_types(step, recursive=True):
         return isinstance(step, Step) \
+            or isinstance(step, MetaStep) \
             or isinstance(step, Pipeline) \
             or (type(step) is list \
                 and all([Pipeline.check_instance_types(substep) for substep in step]))
