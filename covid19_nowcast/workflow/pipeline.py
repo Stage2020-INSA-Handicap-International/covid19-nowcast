@@ -2,6 +2,9 @@ from workflow.step import Step
 
 import copy
 class Pipeline():
+    """
+    Represents a sequence of *steps* to be executed to obtain a result.
+    """
     def __init__(self, steps=[], name="Pipeline"):
         super().__init__()
 
@@ -11,10 +14,14 @@ class Pipeline():
         self.steps=steps
 
     def run(self,data_containers):
+        """
+            Executes the sequence of steps/sub-pipelines and returns all data_containers of all execution variants (parallel steps/different parameters/...)
+        """
+        print(self.name)
         for step in self.steps:
             if type(step) is list:
                 data_variants = [step_variant.run(copy.deepcopy(data_containers)) for step_variant in step] # deepcopy for different subworkflow dataspaces
-                
+
                 # Flatten containers lists created by variants
                 data_containers=[]
                 for data_variant in data_variants:
