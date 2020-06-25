@@ -12,13 +12,13 @@ pipeline=Pipeline([
             Step(
                 lambda x: [tweet["full_text"] for tweet in x],
                 args=["test_tweets"],
-                outputs=["full_texts"]
+                outputs=["preproc_texts"]
             ),
             Step(
                 analysis.sentiment.classify, 
-                args=["classifier","full_texts"],
+                args=["classifier","preproc_texts"],
                 outputs=["labels"],
                 keep_inputs=False,
-                export_path="./output/labels_<classifier.function>"
+                #export_path="./output/labels_<classifier.function>"
             ),
-            ],name="sentiment_analysis")
+            ],name="test_sentiment")

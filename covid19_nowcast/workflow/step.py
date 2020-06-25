@@ -63,7 +63,7 @@ class Step():
                     assert type(input_key) is str
                 self.outputs.extend(outputs)
 
-        assert type(read_only_outputs) is set and (read_only_outputs == [] or all([type(output) is str for output in read_only_outputs])) 
+        assert type(read_only_outputs) is set and (read_only_outputs == set() or all([type(output) is str for output in read_only_outputs])) 
         self.read_only_outputs=read_only_outputs
 
         assert type(params) is dict or type(params) is list or isinstance(params, types.GeneratorType)
@@ -94,6 +94,13 @@ class Step():
                 output = None
                 if self.args == [] and self.nargs=={}:
                     output = funct(*args, **nargs)
+                    if self.outputs is not None:
+                        # Storing outputs in container
+                        if type(output) is tuple:
+                            assert len(output) == len(self.outputs)
+                        elif output is not None:
+                            assert len(self.outputs)==1
+                            output=[output]
 
                 for data_container in data_containers:
                     for input_key in self.nargs:
@@ -104,7 +111,7 @@ class Step():
                         args.append(data_container[input_key])
 
                     funct_container=Data.rel_deep_copy(data_container)
-                    
+
                     if self.args != [] or self.nargs!={}:
                         output = funct(*args, **nargs)
 
@@ -115,12 +122,13 @@ class Step():
                             funct_container.pop(input_key)
 
                     if self.outputs is not None:
-                        # Storing outputs in container
-                        if type(output) is tuple:
-                            assert len(output) == len(self.outputs)
-                        elif output is not None:
-                            assert len(self.outputs)==1
-                            output=[output]
+                        if self.args != [] or self.nargs!={}:
+                            # Storing outputs in container
+                            if type(output) is tuple:
+                                assert len(output) == len(self.outputs)
+                            elif output is not None:
+                                assert len(self.outputs)==1
+                                output=[output]
 
                         for index, output_key  in enumerate(self.outputs):
                             funct_container[output_key]=output[index]

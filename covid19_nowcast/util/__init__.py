@@ -1,3 +1,7 @@
+import pandas as pd
+import pickle as pk
+import datetime
+
 def filter_keys(aDict, entries, toKeep=True):
     """
     Removes keys from *aDict* which are not in entries if toKeep is True, or those in entries if toKeep is false
@@ -15,12 +19,25 @@ def filter_keys(aDict, entries, toKeep=True):
         del aDict[key]
     return aDict
 
-def import_params(filepath, unpack=False):
-    with open(filepath,"r") as file:
-        data=eval(file.read())
+def import_params(filepath, extension="json",unpack=False):
+    data=None
+    if extension =="pkl":
+        with open(filepath,"rb") as file:
+            data=pk.Unpickler(file).load()
         if type(data) is dict and unpack:
-            data=tuple(value for value in data.values())
-        return data
+                data=tuple(value for value in data.values())
+    else:
+        with open(filepath,"r") as file:
+            data=None
+            if extension=="json":
+                data=eval(file.read())
+                if type(data) is dict and unpack:
+                    data=tuple(value for value in data.values())
+            elif extension=="csv":
+                csv_data=pd.read_csv(file)
+                data=csv_data.to_dict(orient="records")
+
+    return data
 
 def add_params(**kwargs):
     return tuple(kwargs.values())
@@ -28,8 +45,6 @@ def add_params(**kwargs):
 def remove_params(*kwargs):
     pass
 
-import pickle as pk
-import datetime
 def export_param(param, filepath, pickle=False):
     fullpath=filepath+"_"+str(datetime.datetime.now())
     if pickle:

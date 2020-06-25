@@ -13,7 +13,7 @@ from sklearn.pipeline import Pipeline as SKPipeline
 pipeline=Pipeline([
             Step(
                 util.add_params,
-                params=PG({"stop_words":"english", "min_df":[x/100000 for x in range(0,11,5)], "max_df":0.7, "ngram_range":[(1,1),(1.2)]}),
+                params=PG({"stop_words":"english", "min_df":[x/100000 for x in range(1,2)], "max_df":0.7, "ngram_range":[(1,1)]}),
                 outputs=["stop_words","min_df", "max_df", "ngram_range"],
                 name="clsf_par"
             ),
@@ -29,7 +29,7 @@ pipeline=Pipeline([
                         ('tfidf', TfidfTransformer()),
                         ('clf', classifier()),]),
                 args=["vectorizing_params"],
-                params=PG({"classifier":[MultinomialNB,SGDClassifier]}),
+                params=PG({"classifier":[MultinomialNB]}),
                 outputs=["classifier"],
                 name="classifier",
                 export_path="output/<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
@@ -50,11 +50,11 @@ pipeline=Pipeline([
                 analysis.sentiment.get_coeffs,
                 args=["classifier"],
                 outputs=["coeffs"],
-                export_path="output/coeff_<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
+                #export_path="output/coeff_<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
             ),
             Step(
                 util.remove_params,
                 args=["coeffs"],
                 keep_inputs=False
             )
-            ],name="sentiment_analysis")
+            ],name="train_sentiment")

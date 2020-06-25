@@ -17,6 +17,7 @@ class Pipeline():
         """
             Executes the sequence of steps/sub-pipelines and returns all data_containers of all execution variants (parallel steps/different parameters/...)
         """
+        print(self.name)
         for step in self.steps:
             if type(step) is list:
                 data_variants = [step_variant.run(copy.deepcopy(data_containers)) for step_variant in step] # deepcopy for different subworkflow dataspaces

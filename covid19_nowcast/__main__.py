@@ -13,7 +13,7 @@ import workflow
 import workflows
 import util
 from workflow.data import Data
-def run_workflow(workflow="workflows.test_workflow", input_data_path=None, output_data_path=None, use_pickle=False, use_plain=False):
+def run_workflow(workflow="workflows.test_workflow", input_data_path=None, output_data_path=None, use_pickle=False, use_plain=False, use_dict=False):
     """
 
     """
@@ -30,8 +30,12 @@ def run_workflow(workflow="workflows.test_workflow", input_data_path=None, outpu
             with open(output_data_path+".pkl", "wb") as data_file:
                 pickle.Pickler(data_file).dump(data)
         if use_plain:
-            with open(output_data_path, "w") as data_file:
+            with open(output_data_path+".data", "w") as data_file:
                 data_file.write(str(data))
+        if use_dict:
+            for index,data_container in enumerate(data):
+                with open(output_data_path+str(index)+".dict", "w") as data_file:
+                    data_file.write(str(data_container.to_dict()))
         
     return data
 
@@ -49,5 +53,7 @@ if __name__ == '__main__':
                         help="writes output in pickle binary if True")
     parser.add_argument("-t", "--text", dest="use_plain", action="store_true",
                         help="writes output in plain text if True")
+    parser.add_argument("-d", "--dict", dest="use_dict", action="store_true",
+                        help="writes output data as a dictionary if True")
     args = parser.parse_args()
-    run_workflow(args.workflow, args.input_data_path, args.output_data_path, args.use_pickle, args.use_plain)
+    run_workflow(args.workflow, args.input_data_path, args.output_data_path, args.use_pickle, args.use_plain, args.use_dict)
