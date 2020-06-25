@@ -1,10 +1,3 @@
-from workflow.data import Data
-import inspect
-import types
-import copy
-import datetime
-import util
-import itertools
 class MetaStep():
     """
     Enables to manipulate execution dataspaces.
@@ -49,4 +42,4 @@ class MetaStep():
         return variants_containers
 
     def __repr__(self):
-        return str(self)
+        return "MetaStep(function = "+str([funct.__name__ for funct in self.function])+", params = "+str(self.params)+", name = "+self.name+")"

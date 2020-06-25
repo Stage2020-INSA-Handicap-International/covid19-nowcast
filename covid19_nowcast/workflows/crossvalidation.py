@@ -1,7 +1,10 @@
 from workflow.pipeline import Pipeline
 from workflow.step import Step
+from workflow.metastep import MetaStep
+
 from workflow.parameter_grid import parameter_grid as PG
 import util
+from workflow import meta
 
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import recall_score
@@ -18,13 +21,17 @@ pipeline=Pipeline([
                     args=["scores"],
                     outputs=["summary"]
                 ),
-                Step(
-                    print,
-                    args=["summary"]
+                MetaStep(  
+                    meta.top_N,
+                    params={"n_best":5, "criterion":lambda data:data["summary"]}
                 ),
                 Step(
-                util.remove_params,
-                args=["labels", "classifier"],
-                keep_inputs=False
-            )
+                    print,
+                    args=["summary", "vectorizing_params"]
+                ),
+                Step(
+                    util.remove_params,
+                    args=["labels", "samples","classifier"],
+                    keep_inputs=False
+                ),
             ],name="cross_validation")
