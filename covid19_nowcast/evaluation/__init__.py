@@ -1,4 +1,7 @@
 def score(predicted, target):
+    """
+    Returns Precision, Recall, F1-Score, and entity counts for labels in *predicted* compared to *target* labels
+    """
     assert len(predicted) == len(target)
     scores={"TP":{}, "FP":{}, "FN":{}}
     labels=set()

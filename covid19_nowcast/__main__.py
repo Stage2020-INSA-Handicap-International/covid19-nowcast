@@ -15,7 +15,13 @@ import util
 from workflow.data import Data
 def run_workflow(workflow="workflows.test_workflow", input_data_path=None, output_data_path=None, use_pickle=False, use_plain=False, use_dict=False, use_json=False):
     """
-
+        workflow: the import path to the desired workflow;
+        input_data_path: filepath to a file containing data executions;
+        output_data_path: filepath where resulting data executions will be written;
+        use_pickle: whether to write output in Pickle format;
+        use_plain: whether to write output as plain text;
+        use_dict: whether to write output as a dictionary (for data which cannot be written as json)
+        use_json: whether to write output in json format (data must be json compatible)
     """
     data=[Data({})]
     if input_data_path is not None:
