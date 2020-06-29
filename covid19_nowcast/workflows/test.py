@@ -18,6 +18,14 @@ pipeline=Pipeline([
                 analysis.sentiment.classify, 
                 args=["classifier","preproc_texts"],
                 outputs=["labels"],
+                keep_inputs=True,
+                #export_path="./output/labels_<classifier.function>"
+            ),
+            Step(
+                analysis.sentiment.classify, 
+                args=["classifier","preproc_texts"],
+                outputs=["sentiment_proba"],
+                params={"return_type":"proba"},
                 keep_inputs=False,
                 #export_path="./output/labels_<classifier.function>"
             ),

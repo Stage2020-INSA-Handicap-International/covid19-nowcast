@@ -79,7 +79,7 @@ class Step():
 
     def run(self, data_containers):
         print(self)
-        # Collecting input values from container
+
         variants_containers=[]
 
         for param_variant in self.params:
@@ -101,7 +101,7 @@ class Step():
                         elif output is not None:
                             assert len(self.outputs)==1
                             output=[output]
-
+               # Collecting input values from container
                 for data_container in data_containers:
                     for input_key in self.nargs:
                         nargs[input_key]=data_container[input_key]

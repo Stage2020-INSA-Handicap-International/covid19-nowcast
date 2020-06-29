@@ -50,7 +50,7 @@ pipeline=Pipeline([
                 analysis.sentiment.get_coeffs,
                 args=["classifier"],
                 outputs=["coeffs"],
-                #export_path="output/coeff_<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
+                export_path="output/coeff_<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
             ),
             Step(
                 util.remove_params,
