@@ -1,6 +1,6 @@
-from workflow.pipeline import Pipeline
-from workflow.step import Step
-from workflow.parameter_grid import parameter_grid as PG
+from workflow_manager.pipeline import Pipeline
+from workflow_manager.step import Step
+from workflow_manager.parameter_grid import parameter_grid as PG
 import util
 import analysis
 pipeline=Pipeline([
@@ -18,6 +18,14 @@ pipeline=Pipeline([
                 analysis.sentiment.classify, 
                 args=["classifier","preproc_texts"],
                 outputs=["labels"],
+                keep_inputs=True,
+                #export_path="./output/labels_<classifier.function>"
+            ),
+            Step(
+                analysis.sentiment.classify, 
+                args=["classifier","preproc_texts"],
+                outputs=["sentiment_proba"],
+                params={"return_type":"proba"},
                 keep_inputs=False,
                 #export_path="./output/labels_<classifier.function>"
             ),
