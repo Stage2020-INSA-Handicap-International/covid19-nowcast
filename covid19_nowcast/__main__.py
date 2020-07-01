@@ -28,7 +28,7 @@ def run_workflow(workflow="workflows.test_workflow", input_data_path=None, outpu
         
     module = importlib.import_module(workflow)
     data=module.pipeline.run(data, n_jobs)
-
+    data=[Data.from_file(container) if type(container) is str else container for container in data]
     if output_data_path is not None:
         if use_pickle:
             with open(output_data_path+".pkl", "wb") as data_file:
@@ -64,7 +64,7 @@ if __name__ == '__main__':
                         help="writes output data as a dictionary if True")
     parser.add_argument("-j", "--json", dest="use_json", action="store_true",
                         help="writes output data as a json if True")
-    parser.add_argument("-n", "--n_jobs", dest="n_jobs", type=int,
+    parser.add_argument("-n", "--n_jobs", dest="n_jobs", type=int, default=-1,
                         help="determines maximum number of parallel executions")
     args = parser.parse_args()
     run_workflow(args.workflow, args.input_data_path, args.output_data_path, args.use_pickle, args.use_plain, args.use_dict, args.use_json, args.n_jobs)
