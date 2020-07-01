@@ -1,6 +1,6 @@
-from workflow.pipeline import Pipeline
-from workflow.step import Step
-from workflow.parameter_grid import parameter_grid as PG
+from workflow_manager.pipeline import Pipeline
+from workflow_manager.step import Step
+from workflow_manager.parameter_grid import parameter_grid as PG
 import util
 import analysis
 
@@ -13,7 +13,7 @@ from sklearn.pipeline import Pipeline as SKPipeline
 pipeline=Pipeline([
             Step(
                 util.add_params,
-                params=PG({"stop_words":"english", "min_df":[x/100000 for x in range(1,2)], "max_df":0.7, "ngram_range":[(1,1)]}),
+                params=PG({"stop_words":["english"], "min_df":[x/1000000 for x in [pow(10,power) for power in range(0,3)]], "max_df":0.7, "ngram_range":[(1,1), (1,2)]}),
                 outputs=["stop_words","min_df", "max_df", "ngram_range"],
                 name="clsf_par"
             ),
@@ -32,7 +32,7 @@ pipeline=Pipeline([
                 params=PG({"classifier":[MultinomialNB]}),
                 outputs=["classifier"],
                 name="classifier",
-                export_path="output/<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
+                #export_path="output/<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
             ),
             Step(
                 util.import_params, 
@@ -50,7 +50,7 @@ pipeline=Pipeline([
                 analysis.sentiment.get_coeffs,
                 args=["classifier"],
                 outputs=["coeffs"],
-                export_path="output/coeff_<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
+                #export_path="output/coeff_<classifier.params[classifier]>_<clsf_par.params[stop_words,min_df,max_df,ngram_range]>"
             ),
             Step(
                 util.remove_params,

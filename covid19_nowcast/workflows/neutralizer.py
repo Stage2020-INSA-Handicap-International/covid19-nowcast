@@ -1,6 +1,6 @@
-from workflow.pipeline import Pipeline
-from workflow.step import Step
-from workflow.parameter_grid import parameter_grid as PG
+from workflow_manager.pipeline import Pipeline
+from workflow_manager.step import Step
+from workflow_manager.parameter_grid import parameter_grid as PG
 import util
 import analysis
 
@@ -9,17 +9,21 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline as SKPipeline
 pipeline=Pipeline([
-            Step(
-                util.add_params,
-                params=PG({"stop_words":[None], "min_df":[x for x in range(14,15,1)], "max_df":0.7, "ngram_range":[(1,2)]}),
-                outputs=["stop_words","min_df", "max_df", "ngram_range"],
-                name="clsf_par"
-            ),
-            Step(
-                lambda sw,mdf,mxdf,ng:{"stop_words":sw,"min_df":mdf,"max_df":mxdf,"ngram_range":ng},
-                args=["stop_words","min_df", "max_df", "ngram_range"],
-                keep_inputs=False,
-                outputs=["vectorizing_params"]
+            Pipeline([
+                Step(
+                    util.add_params,
+                    params=PG({"stop_words":["english",None], "min_df":[x for x in range(0,20,1)], "max_df":0.7, "ngram_range":[(1,1), (1,2),(2,2)]}),
+                    outputs=["stop_words","min_df", "max_df", "ngram_range"],
+                    name="clsf_par"
+                ),
+                Step(
+                    lambda sw,mdf,mxdf,ng:{"stop_words":sw,"min_df":mdf,"max_df":mxdf,"ngram_range":ng},
+                    args=["stop_words","min_df", "max_df", "ngram_range"],
+                    keep_inputs=False,
+                    outputs=["vectorizing_params"]
+                ),
+                ],
+                name="Generating classification params"
             ),
             Step(
                 lambda vec_par, classifier:SKPipeline([
@@ -29,7 +33,7 @@ pipeline=Pipeline([
                 args=["vectorizing_params"],
                 params={"classifier":MultinomialNB},
                 outputs=["classifier"],
-                name="classifier"
+                name="Creating classifiers"
             ),
             Step(
                 util.import_params, 

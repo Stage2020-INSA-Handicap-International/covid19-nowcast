@@ -25,7 +25,7 @@ def import_params(filepath, extension="json",unpack=False):
         with open(filepath,"rb") as file:
             data=pk.Unpickler(file).load()
         if type(data) is dict and unpack:
-                data=tuple(value for value in data.values())
+            data=tuple(value for value in data.values())
     else:
         with open(filepath,"r") as file:
             data=None
@@ -48,11 +48,14 @@ def remove_params(*kwargs):
 def export_param(param, filepath, pickle=False):
     fullpath=filepath+"_"+str(datetime.datetime.now())
     if pickle:
-        with open(fullpath+".pkl", "wb") as file:
+        fullpath+=".pkl"
+        with open(fullpath, "wb") as file:
             pk.Pickler(file).dump(param)
     else:
+        fullpath+=".txt"
         with open(fullpath+".txt", "w") as file:
             file.write(str(param))
+    return fullpath
 
 def lambda_function():
     pass

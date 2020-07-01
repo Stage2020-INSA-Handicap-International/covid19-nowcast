@@ -9,11 +9,9 @@ import streaming
 import analysis
 import evaluation
 import user_interface
-import workflow
-import workflows
 import util
 from workflow.data import Data
-def run_workflow(workflow="workflows.test_workflow", input_data_path=None, output_data_path=None, use_pickle=False, use_plain=False, use_dict=False, use_json=False):
+def run_workflow(workflow="workflows.test_workflow", input_data_path=None, output_data_path=None, use_pickle=False, use_plain=False, use_dict=False, use_json=False, n_jobs=-1):
     """
         workflow: the import path to the desired workflow;
         input_data_path: filepath to a file containing data executions;
@@ -29,7 +27,7 @@ def run_workflow(workflow="workflows.test_workflow", input_data_path=None, outpu
             data = pickle.Unpickler(data_file).load()
         
     module = importlib.import_module(workflow)
-    data=module.pipeline.run(data)
+    data=module.pipeline.run(data, n_jobs)
 
     if output_data_path is not None:
         if use_pickle:
@@ -66,5 +64,7 @@ if __name__ == '__main__':
                         help="writes output data as a dictionary if True")
     parser.add_argument("-j", "--json", dest="use_json", action="store_true",
                         help="writes output data as a json if True")
+    parser.add_argument("-n", "--n_jobs", dest="n_jobs", type=int,
+                        help="determines maximum number of parallel executions")
     args = parser.parse_args()
-    run_workflow(args.workflow, args.input_data_path, args.output_data_path, args.use_pickle, args.use_plain, args.use_dict, args.use_json)
+    run_workflow(args.workflow, args.input_data_path, args.output_data_path, args.use_pickle, args.use_plain, args.use_dict, args.use_json, args.n_jobs)
