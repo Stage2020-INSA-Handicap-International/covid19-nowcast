@@ -28,7 +28,7 @@ def run_workflow(workflow="workflows.test_workflow", input_data_path=None, outpu
         
     module = importlib.import_module(workflow)
     data=module.pipeline.run(data, n_jobs)
-    data=[Data.from_file(container) if type(container) is str else container for container in data]
+    data=[Data.from_file(container, rm=True) if type(container) is str else container for container in data]
     if output_data_path is not None:
         if use_pickle:
             with open(output_data_path+".pkl", "wb") as data_file:

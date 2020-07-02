@@ -13,7 +13,7 @@ from sklearn.pipeline import Pipeline as SKPipeline
 pipeline=Pipeline([
             Step(
                 util.add_params,
-                params=PG({"stop_words":["english"], "min_df":[x/1000000 for x in [pow(10,power) for power in range(0,3)]], "max_df":0.7, "ngram_range":[(1,1), (1,2)]}),
+                params=PG({"stop_words":None, "min_df":[x/1000000 for x in [pow(10,power) for power in range(1,2)]], "max_df":0.7, "ngram_range":[(1,1)]}),
                 outputs=["stop_words","min_df", "max_df", "ngram_range"],
                 name="clsf_par"
             ),
