@@ -12,7 +12,7 @@ pipeline=Pipeline([
             Pipeline([
                 Step(
                     util.add_params,
-                    params=PG({"stop_words":["english",None], "min_df":[x for x in range(10,16,1)], "max_df":0.7, "ngram_range":[(1,1), (1,2),(2,2)]}),
+                    params=PG({"stop_words":[None], "min_df":[x for x in range(10,11,1)], "max_df":0.7, "ngram_range":[(1,1), (1,2)]}),
                     outputs=["stop_words","min_df", "max_df", "ngram_range"],
                     name="clsf_par"
                 ),
@@ -44,10 +44,16 @@ pipeline=Pipeline([
             Pipeline(
                 [
                     Step(
-                        lambda x, field:([e[field] for e in x if e["sentiment"] in ["positive", "negative", "neutral", "mixed"]],[e["sentiment"] for e in x if e["sentiment"] in ["positive", "negative", "neutral", "mixed"]]), 
-                        args=["tweets_annotated"],
-                        outputs=["samples","labels"],
+                        util.add_params,
                         params=PG({"field":["full_text"]}),
+                        outputs=["field"],
+                        name="clsf_par"
+                    ),
+                    Step(
+                        lambda x, field:([e[field] for e in x if e["sentiment"] in ["positive", "negative", "neutral", "mixed"]],[e["sentiment"] for e in x if e["sentiment"] in ["positive", "negative", "neutral", "mixed"]]), 
+                        args=["tweets_annotated", "field"],
+                        outputs=["samples","labels"],
+                        #params=PG({"field":["preproc_text","full_text"]}),
                         read_only_outputs={"samples"}
                     ),
                     Step(
