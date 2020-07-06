@@ -10,7 +10,7 @@ import analysis
 import evaluation
 import user_interface
 import util
-from workflow.data import Data
+from workflow_manager.data import Data
 def run_workflow(workflow="workflows.test_workflow", input_data_path=None, output_data_path=None, use_pickle=False, use_plain=False, use_dict=False, use_json=False, n_jobs=-1):
     """
         workflow: the import path to the desired workflow;

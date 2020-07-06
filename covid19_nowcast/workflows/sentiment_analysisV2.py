@@ -58,7 +58,7 @@ pipeline=Pipeline([
                             [
                                 Step(
                                     util.import_params, 
-                                    params={"filepath":"../Datasets/2020_tweets.json", "unpack":False},
+                                    params={"filepath":"../Datasets/Kenya_tweets_sentiments.json", "unpack":False},
                                     outputs=["tweets"],
                                     read_only_outputs={"tweets"}
                                 ),
