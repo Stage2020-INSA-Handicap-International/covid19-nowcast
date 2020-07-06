@@ -5,3 +5,5 @@
 *.txt
 *.pkl
 output
+covid19_nowcast/streaming/collection/geckodriver.log
+geckodriver.log

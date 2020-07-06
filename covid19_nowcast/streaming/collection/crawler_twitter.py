@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import requests
 import sys
 import json
+import progressbar
 
 from datetime import datetime
 import locale
@@ -48,24 +49,27 @@ def get_tweets_data(soup):
 def search(raw_query, count):
     tweets=[]
     next_url = raw_query
-    while next_url is not None and len(tweets) < count:
-        response = None
-        try:
-            response = requests.get("https://mobile.twitter.com"+next_url)
-        except Exception as e:
-            print(repr(e))
-            sys.exit(1)
-        
-        if response.status_code != 200:
-            print("Non success status code returned "+str(response.status_code))
-            sys.exit(1)
+    with progressbar.ProgressBar(max_value=count, prefix="Tweets: ") as bar:
+        while next_url is not None and len(tweets) < count:
+            response = None
+            try:
+                response = requests.get("https://mobile.twitter.com"+next_url)
+            except Exception as e:
+                print(repr(e))
+                sys.exit(1)
+            
+            if response.status_code != 200:
+                print("Non success status code returned "+str(response.status_code))
+                sys.exit(1)
 
-        soup = BeautifulSoup(response.text, 'lxml')
-        tweets.extend(get_tweets_data(soup))
-        next_url=soup.find("div", {"class":"w-button-more"})
-        if next_url is not None:
-            next_url=next_url.a["href"]
-        print(".", end="")
-        sys.stdout.flush()
+            soup = BeautifulSoup(response.text, 'lxml')
+            tweets.extend(get_tweets_data(soup))
+            next_url=soup.find("div", {"class":"w-button-more"})
+            if next_url is not None:
+                next_url=next_url.a["href"]
+            print(".", end="")
+            sys.stdout.flush()
+
+            bar.update(min(len(tweets),count))
 
     return tweets[:count]
