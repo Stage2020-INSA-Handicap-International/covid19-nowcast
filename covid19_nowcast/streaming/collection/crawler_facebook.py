@@ -6,9 +6,10 @@ import time
 import progressbar
 from streaming.models.facebook import Post,Comment,Response
 import re
-def search(query, count):
+def search(query, count, with_reactions=True):
     driver = webdriver.Firefox()
     driver.get(query) 
+    posts=[]
     with open("covid19_nowcast/streaming/collection/expandall.js", "r") as file:
         code=file.read()
 
@@ -20,7 +21,7 @@ def search(query, count):
         element = driver.find_element(By.CSS_SELECTOR, "._1pfm")
         driver.execute_script("var element = arguments[0];element.parentNode.removeChild(element);", element)
         time.sleep(1)
-        posts = parse_posts(driver, count)
+        posts = parse_posts(driver, count, with_reactions)
         # post_reactions=driver.find_elements(By.CSS_SELECTOR, "span[aria-label='Voir qui a réagi']")
         # for reaction in post_reactions:
         #     moods=reaction.find_elements(By.CSS_SELECTOR, "span")
@@ -44,19 +45,20 @@ def search(query, count):
         # tooltip = driver.find_element_by_id("js_31")
         # print(tooltip.text)
     #driver.quit()
+    return posts
 
-def parse_posts(element, count, selector="._4-u2 ._4-u8"):
+def parse_posts(element, count, with_reactions, selector="._4-u2 ._4-u8"):
     posts = element.find_elements(By.CSS_SELECTOR, selector)
     posts= posts[:min(len(posts), count)]
     parsed_posts=[]
     for post in posts:
         author=parse_author(post, ".fwb")
-        created_at=parse_date(post,attribute="title") # ".livetimestamp" get_attribute("title")
-        full_text=parse_full_text(post, default="N/A", selector="div[data-testid='post_message']") # div[data-testid='post_message']
-        comments_count=parse_comments_count(post) # "._1whp ._4vn2"
-        shares_count=parse_shares_count(post) # ._355t ._4vn2
-        comments_section = parse_comments_section(element, post)
-        reactions=parse_post_reactions(element, post)#._7a9u (always present) or more precisely ._68wo (optional)
+        created_at=parse_date(post,attribute="title")
+        full_text=parse_full_text(post, default="N/A", selector="div[data-testid='post_message']")
+        comments_count=parse_comments_count(post)
+        shares_count=parse_shares_count(post)
+        comments_section = parse_comments_section(element, post, with_reactions)
+        reactions=parse_post_reactions(element, post) if with_reactions else None
         parsed_posts.append(Post(author,created_at,full_text, comments_count, shares_count, reactions, comments_section))
     [print(post.to_dict()) for post in parsed_posts]
     return parsed_posts
@@ -99,48 +101,49 @@ def parse_post_reactions(driver, post, selector = "span[aria-label='Voir qui a r
                     print("Echec")
     return reactions
 
-def parse_comments_count(element, selector = "._1whp ._4vn2"):
+def parse_comments_count(element, selector = "a[class='_3hg- _42ft']"):
     count=0
     try: 
-        count=re.findall("^[0-9].*",element.find_element(By.CSS_SELECTOR, selector))[0] 
+        count=int(re.search("^[0-9]+",element.find_element(By.CSS_SELECTOR, selector).text).group())
     except: 
         pass
     return count
 
-def parse_shares_count(element, selector = "._355t ._4vn2"):
+def parse_shares_count(element, selector = "a[class='_3rwx _42ft']"):
     count=0
     try: 
-        count=re.findall("^[0-9].*",element.find_element(By.CSS_SELECTOR, selector))[0] 
+        count=int(re.search("^[0-9]+",element.find_element(By.CSS_SELECTOR, selector).text).group())
     except: 
         pass
     return count
 
-def parse_comments_section(driver, element, default=[], selector="._7a9a"):
+def parse_comments_section(driver, element, with_reactions, default=[], selector="._7a9a"):
     comments_section = element.find_elements(By.CSS_SELECTOR, selector)
     assert(len(comments_section) in [0,1])
-    return parse_comment_threads(driver, comments_section[0]) if len(comments_section)==1 else default
+    return parse_comment_threads(driver, comments_section[0], with_reactions) if len(comments_section)==1 else default
 
-def parse_comment_threads(driver, element, selector="._7a9a > li"):
+def parse_comment_threads(driver, element, with_reactions, selector="._7a9a > li"):
     comments = element.find_elements(By.CSS_SELECTOR, selector)
 
     return [parse_comment(
                     driver,
                     comment_thread,
-                    [parse_response(driver, response) for response in parse_responses(comment_thread)]
+                    [parse_response(driver, response, with_reactions) for response in parse_responses(comment_thread)],
+                    with_reactions
                 ) 
             for comment_thread in comments]
 
-def parse_comment(driver, element, responses, selector="div[aria-label='Commenter']"):
+def parse_comment(driver, element, responses, with_reactions, selector="div[aria-label='Commenter']"):
     comment=element.find_element(By.CSS_SELECTOR,selector)
 
-    parsed_comment=Comment(*parse_comment_infos(driver, comment), responses)
+    parsed_comment=Comment(*parse_comment_infos(driver, comment, with_reactions), responses)
     return parsed_comment
 
-def parse_comment_infos(driver,element):
+def parse_comment_infos(driver,element,with_reactions):
     author = parse_author(element)
     full_text = parse_full_text(element, "N/A")
     created_at = parse_date(element)
-    return author, created_at, full_text, parse_comment_reactions(driver,element)
+    return author, created_at, full_text, parse_comment_reactions(driver,element) if with_reactions else None
 
 def parse_comment_reactions(driver, post, selector = "a[aria-label='Voir qui a réagi']"):
     post_reactions=post.find_elements(By.CSS_SELECTOR, selector)
@@ -200,8 +203,8 @@ def parse_reactions(element, selector=None):
 def parse_responses(element, selector="div[aria-label='Réponse au commentaire']"):
     return element.find_elements(By.CSS_SELECTOR, selector)
 
-def parse_response(driver, element):
-    return Response(*parse_comment_infos(driver, element))
+def parse_response(driver, element, with_reactions):
+    return Response(*parse_comment_infos(driver, element, with_reactions))
 
 def scroll(driver,count):
     SCROLL_PAUSE_TIME = 0.5
