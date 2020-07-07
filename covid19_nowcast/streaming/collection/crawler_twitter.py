@@ -10,7 +10,7 @@ import progressbar
 
 from datetime import datetime
 import locale
-#locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 def get_tweets_data(soup):
     tweets=[]

@@ -22,38 +22,18 @@ def search(query, count, with_reactions=True):
         driver.execute_script("var element = arguments[0];element.parentNode.removeChild(element);", element)
         time.sleep(1)
         posts = parse_posts(driver, count, with_reactions)
-        # post_reactions=driver.find_elements(By.CSS_SELECTOR, "span[aria-label='Voir qui a réagi']")
-        # for reaction in post_reactions:
-        #     moods=reaction.find_elements(By.CSS_SELECTOR, "span")
-        #     for mood in moods:
 
-        #         driver.execute_script("arguments[0].scrollIntoView(true);", mood)
-        #         assert(mood.is_displayed())
-        #         time.sleep(1)
-        #         hover = ActionChains(driver).move_to_element(mood)
-        #         hover.perform()
-        #         time.sleep(5)
-        #         people_js=mood.get_attribute("aria-describedby")
-        #         print(people_js)
-        #         reaction_people=driver.find_element_by_id(people_js)
-        #         tokens=reaction_people.text.split("\n")
-        #         print(tokens)
-        #         if len(tokens)>0:
-        #             found = re.search("[0-9]+",tokens[-1]) if re.search("^et [0-9]+ autres...$",tokens[-1]) is not None else None
-        #             print({tokens[0]:len(tokens)-1 if found is None else len(tokens)-1+int(found.group())})
-
-        # tooltip = driver.find_element_by_id("js_31")
-        # print(tooltip.text)
-    #driver.quit()
+    driver.quit()
     return posts
 
-def parse_posts(element, count, with_reactions, selector="._4-u2 ._4-u8"):
+def parse_posts(element, count, with_reactions, selector="._427x"):
     posts = element.find_elements(By.CSS_SELECTOR, selector)
     posts= posts[:min(len(posts), count)]
     parsed_posts=[]
+    
     for post in posts:
         author=parse_author(post, ".fwb")
-        created_at=parse_date(post,attribute="title")
+        created_at=parse_date(post,attribute="title", selector="._5ptz")
         full_text=parse_full_text(post, default="N/A", selector="div[data-testid='post_message']")
         comments_count=parse_comments_count(post)
         shares_count=parse_shares_count(post)
@@ -67,22 +47,20 @@ def parse_post_reactions(driver, post, selector = "span[aria-label='Voir qui a r
     post_reactions=post.find_elements(By.CSS_SELECTOR, selector)
     reactions = {}
     assert len(post_reactions) in [0,1]
+    offset=-50
     for reaction in post_reactions:
         moods=reaction.find_elements(By.CSS_SELECTOR, "span")
         for mood in moods:
             done=False
             while not done:
                 try:
-                    driver.execute_script("window.scrollTo(0, 0);")
-                    time.sleep(0.001)
-                    driver.execute_script("arguments[0].scrollIntoView(true);", mood)
+                    driver.execute_script("arguments[0].scrollIntoView(true);window.scrollBy(0, arguments[1]);", mood, -50+offset)
+                    offset=-50-offset
                     assert(mood.is_displayed())
                     time.sleep(0.001)
-                    hover = ActionChains(driver).move_to_element(mood)
-                    hover.perform()
+                    ActionChains(driver).move_to_element(mood).perform()
                     def is_ready(driver):
                         people_js=mood.get_attribute("aria-describedby")
-                        #print(people_js)
                         reaction_people=driver.find_element_by_id(people_js)
                         tokens=reaction_people.text.split("\n")
                         if tokens[0]=="":
@@ -90,10 +68,8 @@ def parse_post_reactions(driver, post, selector = "span[aria-label='Voir qui a r
                         return tokens
                     tokens = WebDriverWait(driver, timeout=1).until(is_ready)
 
-                    #print(tokens)
                     if len(tokens)>0:
                         found = re.search("[0-9]+",tokens[-1]) if re.search("^et [0-9]+ autres...$",tokens[-1]) is not None else None
-                        #print({tokens[0]:len(tokens)-1 if found is None else len(tokens)-1+int(found.group())})
                         reactions[tokens[0]]=len(tokens)-1 if found is None else len(tokens)-1+int(found.group())
 
                     done=True
@@ -149,22 +125,19 @@ def parse_comment_reactions(driver, post, selector = "a[aria-label='Voir qui a r
     post_reactions=post.find_elements(By.CSS_SELECTOR, selector)
     reactions = {}
     assert len(post_reactions) in [0,1]
-    #print(len(post_reactions))
+
     for mood in post_reactions:
         tokens=None
         done=False
         while not done:
             try:
-                driver.execute_script("window.scrollTo(0, 0);")
-                time.sleep(0.001)
-                driver.execute_script("arguments[0].scrollIntoView(true);", mood)
+                driver.execute_script("arguments[0].scrollIntoView(true);window.scrollBy(0, -50);", mood)
                 time.sleep(0.001)
                 assert(mood.is_displayed())
-                hover = ActionChains(driver).move_to_element(mood)
-                hover.perform()
+                ActionChains(driver).move_to_element(mood).perform()
                 def is_ready(driver):
                     people_js=mood.find_element_by_xpath('..').get_attribute("aria-describedby")
-                    #print(people_js)
+
                     reaction_people=driver.find_element_by_id(people_js)
                     tokens=reaction_people.get_attribute("innerHTML")
                     if tokens=="<div></div>":
@@ -174,10 +147,7 @@ def parse_comment_reactions(driver, post, selector = "a[aria-label='Voir qui a r
                 done=True
             except:
                 print("Echec")
-        #if len(tokens)>0:
-            #found = re.search("[0-9]+",tokens[-1]) if re.search("^et [0-9]+ autres...$",tokens[-1]) is not None else None
-            #print({tokens[0]:len(tokens)-1 if found is None else len(tokens)-1+int(found.group())})
-            #reactions[tokens[0]]=len(tokens)-1 if found is None else len(tokens)-1+int(found.group())
+
         reactions=tokens
     return reactions
 
