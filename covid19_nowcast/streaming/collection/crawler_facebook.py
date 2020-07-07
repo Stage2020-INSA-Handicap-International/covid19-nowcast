@@ -80,7 +80,7 @@ def parse_post_reactions(driver, post, selector = "span[aria-label='Voir qui a r
                     hover.perform()
                     def is_ready(driver):
                         people_js=mood.get_attribute("aria-describedby")
-                        print(people_js)
+                        #print(people_js)
                         reaction_people=driver.find_element_by_id(people_js)
                         tokens=reaction_people.text.split("\n")
                         if tokens[0]=="":
@@ -88,10 +88,10 @@ def parse_post_reactions(driver, post, selector = "span[aria-label='Voir qui a r
                         return tokens
                     tokens = WebDriverWait(driver, timeout=1).until(is_ready)
 
-                    print(tokens)
+                    #print(tokens)
                     if len(tokens)>0:
                         found = re.search("[0-9]+",tokens[-1]) if re.search("^et [0-9]+ autres...$",tokens[-1]) is not None else None
-                        print({tokens[0]:len(tokens)-1 if found is None else len(tokens)-1+int(found.group())})
+                        #print({tokens[0]:len(tokens)-1 if found is None else len(tokens)-1+int(found.group())})
                         reactions[tokens[0]]=len(tokens)-1 if found is None else len(tokens)-1+int(found.group())
 
                     done=True
@@ -146,7 +146,7 @@ def parse_comment_reactions(driver, post, selector = "a[aria-label='Voir qui a r
     post_reactions=post.find_elements(By.CSS_SELECTOR, selector)
     reactions = {}
     assert len(post_reactions) in [0,1]
-    print(len(post_reactions))
+    #print(len(post_reactions))
     for mood in post_reactions:
         tokens=None
         done=False
@@ -161,7 +161,7 @@ def parse_comment_reactions(driver, post, selector = "a[aria-label='Voir qui a r
                 hover.perform()
                 def is_ready(driver):
                     people_js=mood.find_element_by_xpath('..').get_attribute("aria-describedby")
-                    print(people_js)
+                    #print(people_js)
                     reaction_people=driver.find_element_by_id(people_js)
                     tokens=reaction_people.get_attribute("innerHTML")
                     if tokens=="<div></div>":
