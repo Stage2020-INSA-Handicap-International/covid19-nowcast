@@ -7,8 +7,9 @@ pipeline=Pipeline(
     [
         Step(
             streaming.collection.crawler_facebook.search,
-            params=PG({"query":["https://www.facebook.com/pg/Senegocom/posts/","https://www.facebook.com/pg/lafranceaumali/posts/", "https://www.facebook.com/pg/GenerationSenegal/posts/"], "count":20, "with_reactions":True}),
+            params=PG({"query":["https://www.facebook.com/pg/EstoySad19/posts/"], "count":5, "with_reactions":True}),
+            outputs=["posts"],
             name="query",
         )
     ],
-    name="crawling")
+    name="crawling")#,"https://www.facebook.com/pg/Senegocom/posts/"

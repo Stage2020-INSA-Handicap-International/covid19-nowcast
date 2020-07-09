@@ -7,7 +7,7 @@ pipeline=Pipeline(
     [
         Step(
             streaming.collection.tweets.crawl_from_raw_query,
-            params=PG({"raw_query":["#Sénégal","#Kenya", "#Mali"], "count":[10,50]}),
+            params=PG({"raw_query":["#Sénégal"], "live":False, "legacy":[True, False], "count":[100]}),
             name="query",
             export_path="Crawl<query.params[raw_query,count]>",
             outputs=["tweets"]

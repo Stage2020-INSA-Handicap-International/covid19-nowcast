@@ -43,7 +43,7 @@ def run_workflow(workflow="workflows.test_workflow", input_data_path=None, outpu
         if use_json:
             for index,data_container in enumerate(data):
                 with open(output_data_path+str(index)+".json", "w") as data_file:
-                    json.dump(data_container.to_dict(),data_file)
+                    json.dump(data_container.to_dict(),data_file, ensure_ascii=False)
     return data
 
 if __name__ == '__main__':
