@@ -78,6 +78,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
 import time
 import progressbar
 from streaming.models.twitter import Tweet
@@ -100,7 +101,13 @@ def search(raw_query, count):
 
 def parse_tweet(element, selector="div[data-testid='tweet']"):
     tweet = element.find_element(By.CSS_SELECTOR, selector)
-    parsed_tweet = Tweet(id_str=parse_id(tweet), user = parse_user(tweet), created_at = parse_date(tweet), full_text = parse_text(tweet), retweet_count = parse_retweets(tweet), favorite_count = parse_favorites(tweet), replies = parse_replies(tweet))
+    if "Le propriétaire de ce compte limite qui peut voir ses Tweets." in element.text:
+        return None
+    parsed_tweet = Tweet(id_str=parse_id(tweet), user = parse_user(tweet), created_at = parse_date(tweet), full_text = parse_text(tweet), retweet_count = parse_retweets(tweet), favorite_count = parse_favorites(tweet), replies = parse_replies_count(tweet))
+    if parsed_tweet.replies>0:
+        parsed_tweet.replies=parse_replies(element)
+    else :
+        parsed_tweet.replies=[]
     return parsed_tweet.to_dict()
 
 def parse_id(element, selector=".//time/.."):
@@ -120,16 +127,54 @@ def parse_text(element, selector="./div[last()]/div[last()]"):
     return element.find_element_by_xpath(selector).text
 
 def parse_retweets(element, selector="div[data-testid='like']"):
-    favorites = element.find_element(By.CSS_SELECTOR, selector).text
-    return int(favorites) if favorites != "" else 0
+    rts = element.find_element(By.CSS_SELECTOR, selector).text
+    return int(rts) if rts != "" else 0
 
 def parse_favorites(element, selector="div[data-testid='retweet']"):
     favorites = element.find_element(By.CSS_SELECTOR, selector).text
     return int(favorites) if favorites != "" else 0
 
-def parse_replies(element, selector="div[data-testid='reply']"):
-    favorites = element.find_element(By.CSS_SELECTOR, selector).text
-    return int(favorites) if favorites != "" else 0
+def parse_replies_count(element, selector="div[data-testid='reply']"):
+    count = element.find_element(By.CSS_SELECTOR, selector).text
+    return int(count) if count != "" else 0
+
+def parse_replies(element, selector=".//time/.."):
+    link = element.find_element_by_xpath(selector).get_attribute("href")
+    driver = webdriver.Firefox()
+    driver.get(link) 
+    replies=[]
+    found=[WebDriverWait(driver, timeout=10).until(lambda d: d.find_element(By.CSS_SELECTOR, "article"))]
+    #Get first response to the first found article which is the initial tweet
+    found_beginning=len(found[-1].find_elements_by_xpath("./div/div/div/div"))==3
+
+    while not found_beginning:
+        found=WebDriverWait(driver, timeout=1).until(lambda d: found[-1].find_elements_by_xpath("./../../../following-sibling::div//article")[:1])
+        if len(found[-1].find_elements_by_xpath("./div/div/div/div"))==3:
+            found_beginning=True
+    found=WebDriverWait(driver, timeout=1).until(lambda d: found[-1].find_elements_by_xpath("./../../../following-sibling::div//article")[:1])
+    #found is now the first reply
+    try:
+        while True:#until it doesn't find a next tweet
+            found.extend(WebDriverWait(driver, timeout=1).until(lambda d: found[-1].find_elements_by_xpath("./../../../following-sibling::div//article")[:1]))
+            replies.extend([parse_tweet(element) for element in found[:-1]])
+            found=[found[-1]]
+            if is_thread(found[-1]):
+                print("is_thread")
+                while is_thread(found[-1]):
+                    found=WebDriverWait(driver, timeout=1).until(lambda d: found[-1].find_elements_by_xpath("./../../../following-sibling::div//article")[:1])
+                found=WebDriverWait(driver, timeout=1).until(lambda d: found[-1].find_elements_by_xpath("./../../../following-sibling::div//article")[:1])
+            scroll(driver,found[-1])
+    except TimeoutException:
+        pass
+    replies.append(parse_tweet(found[-1]))
+    driver.quit()
+    return replies
+
+def is_thread(element, selector="./div/div/div/div[2]/div[1]/div"):
+    print("e",element.find_elements_by_xpath(selector))
+    print("c",parse_replies_count(element)>0)
+    print("r", element.find_elements_by_xpath(selector)==2 and parse_replies_count(element)>0)
+    return len(element.find_elements_by_xpath(selector))==2 and parse_replies_count(element)>0
 
 def scroll(driver, element):
     # Scroll so that element is at the top of the page
