@@ -14,7 +14,7 @@ for i in range(TEST_LENGTH):
 
 # DATA PREPROCESSING
 tokens = Preprocessor.preprocess(tweet_list)
-tokens = Preprocessor.normalize(tokens)
+#tokens = Preprocessor.normalize(tokens)
 
 # FREQUENCY ANALYSIS
 print("5 most common words before preprocessing :")

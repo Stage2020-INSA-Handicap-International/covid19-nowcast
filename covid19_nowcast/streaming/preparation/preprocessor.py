@@ -4,6 +4,7 @@ from collections import Counter
 from nltk import FreqDist
 from collections import defaultdict
 import matplotlib.pyplot as plt
+import gensim
 import progressbar
 
 #Domain-dependent preprocessing : Lemmatization, Stopwords removal, Text-enrichment (POS-tagging)
@@ -20,13 +21,17 @@ class Preprocessor(object):
                 flattened_array.append(str(array[i][j]))
         return flattened_array
 
-    ######### Data Collection #########
-    #TODO: when access to Twitter's API is granted
-
-
     ######### Data Preprocessing #########
     #Faire un jupyter notebook avec des visualisations des résultats selon le preprocessing qu'on fait de manière à voir les plus pertinents
     # la visualisation peut se faire à travers des word frequencies par ex
+
+    @staticmethod
+    def identity_tokenizer(text):
+        return text
+
+    @staticmethod
+    def identity_preprocessor(text):
+        return text
 
     #Tokenization, Lowercasing, Lemmatization, Stopword Removal
     @staticmethod
@@ -35,10 +40,8 @@ class Preprocessor(object):
         tokens = []
         for i in progressbar.progressbar(range(len(tweets_list))):
             doc = nlp(str(tweets_list[i]))
-            #for token in doc:
-                #print(token,token.pos_,token.lemma_,token.is_stop)
             #Remove stop words and non-alpha words
-            tweet_tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha)]
+            tweet_tokens = [str(token.lemma_).lower() for token in doc if (not token.is_stop and token.is_alpha)]
             tokens.append(tweet_tokens)
         return tokens
 
@@ -74,6 +77,27 @@ class Preprocessor(object):
         #pos_tags = nltk.pos_tag(tokenized_first_tweet)
         #print(pos_tags)
 
+    #Used to filter out unwanted words such as hashtag labels or obvious words (e.g "covid-19" and such)
+    @staticmethod
+    def delete_words(tokens,words):
+        for token_list in tokens:
+            for word in words:
+                if word in token_list:
+                    token_list.remove(word)
+        return tokens
+
+    #Filter out tokens by their frequency
+    @staticmethod
+    def filter_extremes(tokens,no_below=5,no_above=0.5,keep_n=100000):
+        """
+        Removes all tokens in the dictionary that are:
+        #. Less frequent than `no_below` documents (absolute number, e.g. `5`) or \n
+        #. More frequent than `no_above` documents (fraction of the total corpus size, e.g. `0.3`).
+        #. After (1) and (2), keep only the first `keep_n` most frequent tokens (or keep all if `keep_n=None`).
+        """
+        dictionary = gensim.corpora.Dictionary(tokens)
+        dictionary.filter_extremes(no_below=no_below, no_above=no_above, keep_n=keep_n)
+        return dictionary
 
     #Frequency Analysis
     @staticmethod

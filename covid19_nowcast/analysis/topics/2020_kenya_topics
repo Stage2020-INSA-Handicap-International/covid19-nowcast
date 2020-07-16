@@ -1,0 +1,129 @@
+Query = Kenya AND (corona OR coronavirus OR virus OR covid-19 OR covid19)
+Total nb of tweets : 2713
+
+ *************************************** NEW VERSION : 4 TOPICS PER MONTH, SKLEARN PIPELINE, TF-IDF LDA MODEL
+
+MAR - - - - - - - - - - - - - -
+Nb of tweets :  842
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : kit chinese mask donate protective ma jack face bear equipment
+Topic 1 : police curfew china fight kenyans government let help would death
+Topic 2 : hand want hospital people staysafe spread private retweet stay stayhome
+Topic 3 : case confirm health kenya country would test government ministry cs
+
+APR - - - - - - - - - - - - - -
+Nb of tweets :  860
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : fact zone vaccine trial leader pilot judiciary email flight parliament
+Topic 1 : would kenya new case country government citizen day fight tv
+Topic 2 : case test total number positive health confirm bring patient say
+Topic 3 : fight would need worker human nairobi support health food social
+
+MAY - - - - - - - - - - - - - -
+Nb of tweets :  687
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : case test new positive confirm death total number health kenya
+Topic 1 : nation daily miguna drug trial political start would curve nationnewsplex
+Topic 2 : take youth water soap fight kenya tourism way action support
+Topic 3 : crisis response fund work discuss country billion economy journalist fact
+Gensim TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic: 0 : case new test total confirm positive record would driver kenya
+Topic: 1 : fight come kenya kenyatta hospital country citizen day economic test
+Topic: 2 : would people news tally government testing kenya robert alai positive
+Topic: 3 : case death country update patient confirm health response test positive
+Topic 0 : (0.031,0.020,0.017,0.015,0.013,0.013,0.012,0.012,0.012)
+Topic 1 : (0.012,0.009,0.009,0.009,0.008,0.008,0.008,0.007,0.007,0.007)
+Topic 2 : (0.012,0.010,0.009,0.009,0.009,0.009,0.009,0.008,0.008,0.008)
+Topic 3 : (0.020,0.015,0.011,0.011,0.011,0.011,0.010,0.010,0.010,0.009)
+
+
+JUN - - - - - - - - - - - - - -
+Nb of tweets :  97
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : kill police people guideline way place
+Topic 1 : time protestor country daily record fit
+Topic 2 : health new case total kenya patient
+Topic 3 : test positive mombasa food cost limuru
+Gensim TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic: 0 : 0.111*"country" + 0.094*"health" + 0.089*"testing" + 0.088*"case" + 0.068*"support" + 0.065*"total" + 0.058*"new" + 0.042*"police" + 0.040*"george" + 0.040*"positive"
+Topic: 1 : 0.169*"test" + 0.139*"affect" + 0.119*"face" + 0.089*"spread" + 0.087*"today" + 0.056*"health" + 0.042*"positive" + 0.027*"support" + 0.025*"time" + 0.022*"country"
+Topic: 2 : 0.160*"uhuru" + 0.151*"kenya" + 0.101*"number" + 0.092*"recovery" + 0.060*"people" + 0.054*"positive" + 0.045*"case" + 0.042*"daily" + 0.036*"president" + 0.026*"record"
+Topic: 3 : 0.124*"time" + 0.105*"people" + 0.094*"kill" + 0.081*"police" + 0.066*"m" + 0.059*"spread" + 0.048*"president" + 0.046*"nation" + 0.040*"country" + 0.039*"die"
+
+ *************************************** OLD VERSION : 10 TOPICS PER MONTH, SKLEARN PIPELINE, TF-IDF LDA MODEL
+
+JAN - - - - - - - - - - - - - -
+Nb of tweets :  45
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : china airways flight suspend kenya passenger step guangzhou come citizen
+Topic 1 : new come imagine like speak work case china person eat
+Topic 2 : passenger health send government virus public detailed screen high handle
+Topic 3 : strike want disease citizen bill outbreak admit new case travel
+Topic 4 : case suspect chinese people dear kenyans prepared government evacuate report
+Topic 5 : day prepared fly government afford dear ethiopia detailed hospital handle
+Topic 6 : deal china quarantine flight ebola epidemic surprised government make mainland
+Topic 7 : wuhan want china outbreak people follow kenyans africa see locust
+Topic 8 : detailed africa high country coronavirus world ethiopia case report day
+Topic 9 : lord locust zika evolve malaria afford thing bbi send schoolfee
+
+
+FEB - - - - - - - - - - - - - -
+Nb of tweets :  182
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : fight help china imagine lab flight thank outbreak country response
+Topic 1 : kenya know need welcome tell hand use sure refuse work
+Topic 2 : deal china live doctor case report say tough evolve end
+Topic 3 : importation prevention measure fly country enjoy china vote uhuru shake
+Topic 4 : president international medium meeting report case like arrival task force
+Topic 5 : test national influenza case suspect sign china quarantine show let
+Topic 6 : handle carry ready land flight deadly jkia god hand protect
+Topic 7 : ready control government country need current health preparedness prepare lab
+Topic 8 : share state ambassador vulnerable china quarantine risk kenyans suspend flight
+Topic 9 : test china allow country positive chinese hour jkia plane passenger
+
+
+MAR - - - - - - - - - - - - - -
+Nb of tweets :  842
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : sector line safe toll hot mitigate share justice free stay
+Topic 1 : god let south africa problem safe rule world attack people
+Topic 2 : police government curfew right response think information support public protect
+Topic 3 : shake time china south hand cautionary answer burkina reality possible
+Topic 4 : testing chinese kit record death m kenya save man protective
+Topic 5 : solution university global sunday impact body research mask wanna china
+Topic 6 : police fight tea official ready pastor un china invasion chinese
+Topic 7 : case confirm country health test total cs kagwe new report
+Topic 8 : school university outbreak home wait response close politician govt africa
+Topic 9 : police force kill listen life huge rent landlord false sanitize
+
+
+APR - - - - - - - - - - - - - -
+Nb of tweets :  860
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : m denmark give boost corner body community fight mama kibra
+Topic 1 : innovation un soap public senate season advice epidemic disease entrepreneur
+Topic 2 : fund receive food emergency fight response donation today tomorrow chairperson
+Topic 3 : thing response worth learn webinar invite revisit issue elect youth
+Topic 4 : fight need worker landlord dedicate care rent frontline government waive
+Topic 5 : case test new positive number total people confirm health patient
+Topic 6 : spread stop stayhomesavelives deep pilot context fuel reckless work line
+Topic 7 : god amid domestic commission fight aid tackle initiative youth tourism
+Topic 8 : human right ukweliusemwe man impact hrd majority police difficulty survive
+Topic 9 : suspend earth prototype executive flight parliament pre airways store kot
+
+
+MAY - - - - - - - - - - - - - -
+Nb of tweets :  687
+SkLearn TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -
+Topic 0 : day pay come water march wash country reshuffle expenditure hand
+Topic 1 : health kagwe say mutahi die cs youth work cas patient
+Topic 2 : country africa uganda south response take crisis egypt african economic
+Topic 3 : active mention discuss response home join tomorrow emergency family tell
+Topic 4 : case test new confirm positive total death number record sample
+Topic 5 : support drug need trial partner human provide service illegal right
+Topic 6 : imf loan address president billion today nationnewsplex busy kenyatta response
+Topic 7 : impact tourism industry sector tanzania livelihood employ govt blog travel
+Topic 8 : deadly welcome infection government spread home measure young think kenya
+Topic 9 : fight donate ppe corruption workers way continue komeshacorona health government
+
+Process finished with exit code 0

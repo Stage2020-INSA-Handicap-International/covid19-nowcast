@@ -12,10 +12,22 @@ from datetime import datetime
 import locale
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
+
 def get_tweets_data(soup):
     tweets=[]
+    year_is_2020 = False
+    year_is_2019 = False
     for tweet_container in soup.find_all("table", {"class":"tweet"}):
         date = tweet_container.find("td", {"class":"timestamp"}).text.replace("\n","").strip()
+        #Since the crawled date doesn't contain the year, we detect the end of 2020 when the month switches from Jan to anything else
+        #The crawling stops at that switch
+        month = date.split(" ")[0]
+        month_is_jan = (month == "Jan")
+        if month_is_jan:
+            year_is_2020 = True
+        if year_is_2020 and not month_is_jan:
+            year_is_2019 = True
+            break
         try:
             date=datetime.strptime(date+" 2020",'%b %d %Y')
         except:
@@ -44,7 +56,7 @@ def get_tweets_data(soup):
             }
         )
 
-    return tweets
+    return tweets,year_is_2019
 
 def search_legacy(raw_query, count):
     tweets=[]
