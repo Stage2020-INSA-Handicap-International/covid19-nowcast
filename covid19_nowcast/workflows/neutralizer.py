@@ -12,7 +12,7 @@ pipeline=Pipeline([
             Pipeline([
                 Step(
                     util.add_params,
-                    params=PG({"stop_words":[None], "min_df":[x for x in range(10,11,1)], "max_df":0.7, "ngram_range":[(1,1), (1,2)]}),
+                    params=PG({"stop_words":[None], "min_df":[x for x in range(10,11,1)], "max_df":0.7, "ngram_range":[(1,1)]}),
                     outputs=["stop_words","min_df", "max_df", "ngram_range"],
                     name="clsf_par"
                 ),

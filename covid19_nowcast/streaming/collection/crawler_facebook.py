@@ -40,7 +40,7 @@ def parse_posts(element, count, with_reactions, selector="._427x"):
         comments_section = parse_comments_section(element, post, with_reactions)
         reactions=parse_post_reactions(element, post) if with_reactions else None
         parsed_posts.append(Post(author,created_at,full_text, comments_count, shares_count, reactions, comments_section))
-    [print(post.to_dict()) for post in parsed_posts]
+    parsed_posts=[post.to_dict() for post in parsed_posts]
     return parsed_posts
 
 def parse_post_reactions(driver, post, selector = "span[aria-label='Voir qui a réagi']"):
@@ -140,10 +140,22 @@ def parse_comment_reactions(driver, post, selector = "a[aria-label='Voir qui a r
 
                     reaction_people=driver.find_element_by_id(people_js)
                     tokens=reaction_people.get_attribute("innerHTML")
-                    if tokens=="<div></div>":
+                    if tokens=="<div></div>" or tokens=="<div><div>Chargement...</div></div>":
                         return False
-                    return tokens
-                tokens = WebDriverWait(driver, timeout=1).until(is_ready)
+                    return reaction_people
+                reacts = WebDriverWait(driver, timeout=1).until(is_ready)
+                reacts=reacts.find_elements(By.CSS_SELECTOR,"span")
+                react_types=[rea for index, rea in enumerate(reacts) if index%2==0]
+                react_counts=[int(rea.text) for index, rea in enumerate(reacts) if index%2==1]
+                react_dict={"_3j7l _2p78 _9--":"J'aime",
+                            "_3j7m _2p78 _9--":"J'adore",
+                            "_3j7o _2p78 _9--":"Haha",
+                            "_906t _2p78 _9--":"Solidaire",
+                            "_3j7q _2p78 _9--":"Grrr",
+                            "_3j7r _2p78 _9--":"Triste",
+                            "_3j7n _2p78 _9--":"Wouah"}
+                react_types=[react_dict.get(rea.find_element(By.CSS_SELECTOR,"i").get_attribute("class"),rea.find_element(By.CSS_SELECTOR,"i").get_attribute("class")) for rea in react_types]
+                tokens={ty:react_counts[index] for index, ty in enumerate(react_types)}
                 done=True
             except:
                 print("Echec")

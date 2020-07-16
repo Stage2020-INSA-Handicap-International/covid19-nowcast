@@ -39,7 +39,7 @@ def search_from_raw_query(api, raw_query, **kwargs):
     tweets=api.GetSearch(raw_query=raw_query)
     return tweets
 
-def crawl_from_raw_query(raw_query, count, **kwargs):
+def crawl_from_raw_query(raw_query, live, count, legacy=False, **kwargs):
     """
     Crawl tweets from Twitter which are results from *raw_query*
     Input:
@@ -49,7 +49,8 @@ def crawl_from_raw_query(raw_query, count, **kwargs):
         - tweets: a list of tweets, results of the Twitter request
     """
     formatted_query = urllib.parse.quote(raw_query, safe='')
-    tweets=crawler_twitter.search(raw_query="/search?q="+formatted_query+"&f=live", count=count)
+    crawler= crawler_twitter.search_legacy if legacy else crawler_twitter.search 
+    tweets=crawler(raw_query="/search?q="+formatted_query+("&f=live" if live else ""), count=count)
     return tweets
 
 def get_from_file(filepath, **kwargs):

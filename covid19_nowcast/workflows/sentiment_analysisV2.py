@@ -2,13 +2,16 @@ from workflow_manager.pipeline import Pipeline
 from workflow_manager.step import Step
 from workflow_manager.parameter_grid import parameter_grid as PG
 from workflow_manager.metastep import MetaStep
-from workflow import meta
+from workflow_manager import meta
 import util
 import analysis
 import evaluation
 import numpy as np
 from workflows.test import pipeline as sentiment_clsf_pipe
 from workflows.neutralizer import pipeline as neutral_clsf_pipe
+
+testfile_path="output/preproc_india0.json"
+
 pipeline=Pipeline([
                 Pipeline(
                     [
@@ -58,7 +61,7 @@ pipeline=Pipeline([
                             [
                                 Step(
                                     util.import_params, 
-                                    params={"filepath":"../Datasets/Kenya_tweets_sentiments.json", "unpack":False},
+                                    params={"filepath":testfile_path, "unpack":False},
                                     outputs=["tweets"],
                                     read_only_outputs={"tweets"}
                                 ),
@@ -90,14 +93,14 @@ pipeline=Pipeline([
                 ),
                 Step(
                     util.import_params, 
-                    params={"filepath":"../Datasets/Kenya_tweets_sentiments.json", "unpack":False},
+                    params={"filepath":testfile_path, "unpack":False},
                     outputs=["tweets"],
                     read_only_outputs={"tweets"},
                     name="Getting manual sentiment annotations"
                 ),
                 Step(
                     util.add_params,
-                    params=PG({"threshold_pos":[x/100 for x in range(10,50,1)],"threshold_neg":[x/100 for x in range(46,47)]}),
+                    params=PG({"threshold_pos":[x/100 for x in range(25,26,1)],"threshold_neg":[x/100 for x in range(46,47)]}),
                     outputs=["threshold_pos","threshold_neg"],
                     name="thresholds"
                 ),

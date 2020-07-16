@@ -4,7 +4,7 @@ from collections import Counter
 from nltk import FreqDist
 from collections import defaultdict
 import matplotlib.pyplot as plt
-
+import progressbar
 
 #Domain-dependent preprocessing : Lemmatization, Stopwords removal, Text-enrichment (POS-tagging)
 #Should-dos : Normalization (standardize identical words e.g b4 and before), Lowercasing, Noise-removal (e.g punctuation, non-alpha chars. The noise definition is domain-dependent)
@@ -33,7 +33,7 @@ class Preprocessor(object):
     def preprocess(tweets_list, **kwargs):
         nlp = spacy.load("en_core_web_sm")
         tokens = []
-        for i in range(len(tweets_list)):
+        for i in progressbar.progressbar(range(len(tweets_list))):
             doc = nlp(str(tweets_list[i]))
             #for token in doc:
                 #print(token,token.pos_,token.lemma_,token.is_stop)

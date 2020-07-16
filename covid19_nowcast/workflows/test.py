@@ -6,7 +6,7 @@ import analysis
 pipeline=Pipeline([
             Step(
                 util.import_params, 
-                params={"filepath":"../Datasets/2020_Kenya_preprocDict.json", "unpack":True},
+                params={"filepath":"output/preproc_india0.json", "unpack":True},
                 outputs=["test_tweets"]
             ),
             Step(
