@@ -2,5 +2,5 @@ import covid19_nowcast.streaming
 import covid19_nowcast.analysis
 import covid19_nowcast.evaluation
 import covid19_nowcast.user_interface
-import covid19_nowcast.workflow
+import covid19_nowcast.workflow_manager
 import covid19_nowcast.workflows

@@ -78,7 +78,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 import time
 import progressbar
 from streaming.models.twitter import Tweet
@@ -91,11 +91,16 @@ def search(raw_query, count):
     found=[WebDriverWait(driver, timeout=10).until(lambda d: d.find_element(By.CSS_SELECTOR, "article"))]
     with progressbar.ProgressBar(max_value=count, prefix="Tweets: ") as bar:
         while len(tweets)<count:
-            found.extend(WebDriverWait(driver, timeout=10).until(lambda d: found[-1].find_elements_by_xpath("./../../../following-sibling::div//article")[:1]))
-            tweets.extend([parse_tweet(element) for element in found[:-1]])
-            found=[found[-1]]
-            scroll(driver,found[-1])
-            bar.update(min(len(tweets), count))
+            try:
+                found.extend(WebDriverWait(driver, timeout=10).until(lambda d: found[-1].find_elements_by_xpath("./../../../following-sibling::div//article")[:1]))
+                tweets.extend([parse_tweet(element) for element in found[-2:-1]])
+                scroll(driver,found[-1])
+                bar.update(min(len(tweets), count))
+            except StaleElementReferenceException as e:
+                print(e)
+                found=[WebDriverWait(driver, timeout=10).until(lambda d: d.find_element(By.CSS_SELECTOR, "article"))]
+                scroll(driver,found[-1])
+            
     driver.quit()
     return tweets[:count]
 
@@ -104,10 +109,10 @@ def parse_tweet(element, selector="div[data-testid='tweet']"):
     if "Le propriétaire de ce compte limite qui peut voir ses Tweets." in element.text:
         return None
     parsed_tweet = Tweet(id_str=parse_id(tweet), user = parse_user(tweet), created_at = parse_date(tweet), full_text = parse_text(tweet), retweet_count = parse_retweets(tweet), favorite_count = parse_favorites(tweet), replies = parse_replies_count(tweet))
-    if parsed_tweet.replies>0:
-        parsed_tweet.replies=parse_replies(element)
-    else :
-        parsed_tweet.replies=[]
+    # if parsed_tweet.replies>0:
+    #     parsed_tweet.replies=parse_replies(element)
+    # else :
+    #     parsed_tweet.replies=[]
     return parsed_tweet.to_dict()
 
 def parse_id(element, selector=".//time/.."):
@@ -127,16 +132,16 @@ def parse_text(element, selector="./div[last()]/div[last()]"):
     return element.find_element_by_xpath(selector).text
 
 def parse_retweets(element, selector="div[data-testid='like']"):
-    rts = element.find_element(By.CSS_SELECTOR, selector).text
-    return int(rts) if rts != "" else 0
+    count = element.find_element(By.CSS_SELECTOR, selector).text
+    return int(count) if count != "" and count[-1]!="k" else 0 if count == "" else int(float(count.replace(",", ".")[:-2])*1000)
 
 def parse_favorites(element, selector="div[data-testid='retweet']"):
-    favorites = element.find_element(By.CSS_SELECTOR, selector).text
-    return int(favorites) if favorites != "" else 0
+    count = element.find_element(By.CSS_SELECTOR, selector).text
+    return int(count) if count != "" and count[-1]!="k" else 0 if count == "" else int(float(count.replace(",", ".")[:-2])*1000)
 
 def parse_replies_count(element, selector="div[data-testid='reply']"):
     count = element.find_element(By.CSS_SELECTOR, selector).text
-    return int(count) if count != "" else 0
+    return int(count) if count != "" and count[-1]!="k" else 0 if count == "" else int(float(count.replace(",", ".")[:-2])*1000)
 
 def parse_replies(element, selector=".//time/.."):
     link = element.find_element_by_xpath(selector).get_attribute("href")
