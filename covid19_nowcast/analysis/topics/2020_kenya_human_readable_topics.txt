@@ -2,12 +2,12 @@ DISCLAIMER :
 1 - L'analyse est centrée sur le point de vue citoyen. Je ne fais pas rentrer dans mes catégories les tweets des médias et/ou du gouvernement
 2 - Les sujets catégorisés à travers les tweets ne sont en aucun cas une représentation de la société dans sa réalité sociale entière.
 3 - Les exemples de tweets sont volontairement très expressifs. Les sujets qu'ils évoquent sont bien représentatifs d'une partie non
-    négligeable du corpus, mais leur niveau de sentimentalité ne l'est pas nécessairement (à reformuler de façon plus simple).
+    négligeable du corpus, mais leur niveau de sentimentalité ne l'est pas nécessairement.
     L'analyse des sentiments devrait montrer la vraie distribution des sentiments sur tout le corpus
 4 - Les topics que je ne cite pas volontairement :
         - Tout ce qui est remerciement au personnel soignant
         - Tout ce qui est décompte du nb officiel de cas
-        - Tout ce qui est infos officielles : dons au Kenya (IMF, World Bank, etc), annonces du gouvernement,
+        - Tout ce qui est infos officielles : dons au Kenya (IMF, World Bank, etc), annonces du gouvernement..
 
 
 JAN - - - - - - - - - - - - - -

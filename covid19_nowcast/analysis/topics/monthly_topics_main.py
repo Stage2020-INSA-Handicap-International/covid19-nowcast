@@ -6,6 +6,7 @@ import json
 from covid19_nowcast.streaming.collection import covid19_api
 from covid19_nowcast.streaming.preparation import Preprocessor
 from covid19_nowcast.analysis.topics import TopicClassifier
+from covid19_nowcast.streaming.collection import tweets
 n_topics = 4
 no_top_words = 6
 misc_keywords = ['amp']
@@ -15,8 +16,8 @@ covid_keywords = ['covid','covid-19','covid19','coronavirus','corona','virus','p
 weekdays_keywords = ['mon','tue','wed','thu','fri','sat','sun']
 keywords = misc_keywords + africa_keywords + ke_keywords + covid_keywords + weekdays_keywords
 
-def collect_monthly_data(month):
-    with open('2020_tweets.json') as json_file:
+def collect_monthly_data(month,json_tweets_filename):
+    with open(json_tweets_filename) as json_file:
 	    json_tweets = json.load(json_file)
     tweet_list = []
     for tweet in json_tweets['tweets']:
@@ -24,11 +25,14 @@ def collect_monthly_data(month):
             tweet_list.append([tweet['created_at'][0:10],tweet['user']['name'],tweet['full_text']])
     return tweet_list
 
-def aggregate_monthly_data(months):
+def aggregate_monthly_data(months,json_tweets_filename):
     monthly_tweets = []
+    nb_tweets = 0
     for month in months:
-        month_tweet_list = collect_monthly_data(month)
+        month_tweet_list = collect_monthly_data(month,json_tweets_filename)
         monthly_tweets.append(month_tweet_list)
+        nb_tweets += len(month_tweet_list)
+    print("Nb of tweets within the months parameter : ",nb_tweets)
     return monthly_tweets
 
 
@@ -77,8 +81,24 @@ def classify_topics_per_month(monthly_tweets):
         print("Gensim TF-IDF LDA Model Topics - - - - - - - - - - - - - - - - - - - -")
         TopicClassifier.gensim_print_topics(tfidf_lda_model)
 
+# TWEETS COLLECTION : INDIA
+'''
+twitter_query = '(India OR INDIA or india) AND (corona OR coronavirus OR virus OR covid-19 OR covid19)'
+json_tweets = tweets.crawl_from_raw_query(twitter_query,50000)
+print("JSON length (nb of tweets) = ",len(json_tweets['tweets']))
+with open('2020_tweets_india.json','w') as outfile:
+    json.dump(json_tweets,outfile)
+'''
+months = ['Jan','Feb','Mar','Apr','May','Jun']
+monthly_tweets = aggregate_monthly_data(months,'2020_tweets_india.json')
+classify_topics_per_month(monthly_tweets)
+
+
+
+
 
 # TOPIC VERIFICATION  - - - - - - - - - - - - -
+'''
 #months = ['Jan','Feb','Mar','Apr','May','Jun']
 months = ['Jan','Feb','Mar','Apr','May','Jun']
 monthly_tweets = aggregate_monthly_data(months)
@@ -96,3 +116,4 @@ for topic_word in topics:
         if topic_word in tweet[2]:
             print(topic_word,' - - - - ',tweet[0],'- -',tweet[1],'- -',tweet[2])
     print('- - - - - - - ')
+'''

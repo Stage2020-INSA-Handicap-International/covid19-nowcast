@@ -64,11 +64,13 @@ def format_date(json_tweets):
 #'''
 # DATA COLLECTION : Twitter Crawler version
 def collect_data(twitter_query,tweets_nb):
+    #First run : crawl tweets
     #json_tweets = tweets.crawl_from_raw_query(twitter_query,tweets_nb)
     #print("JSON length (nb of tweets) = ",len(json_tweets['tweets']))
     #with open('2020_tweets.json','w') as outfile:
 	    #json.dump(json_tweets,outfile)
 
+    #Further runs : open the json crawled tweets
     with open('2020_tweets.json') as json_file:
 	    json_tweets = json.load(json_file)
     tweet_list = []
