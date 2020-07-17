@@ -1,4 +1,4 @@
-from covid19_nowcast.streaming.preparation import Preprocessor
+from streaming.preparation.preprocessor import Preprocessor
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer
 from gensim import models

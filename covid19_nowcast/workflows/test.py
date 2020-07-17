@@ -10,7 +10,8 @@ pipeline=Pipeline([
                 outputs=["test_tweets"]
             ),
             Step(
-                lambda x: [tweet["full_text"] for tweet in x],
+                lambda x,key: [tweet[key] for tweet in x],
+                params={"key":"preproc_text"},
                 args=["test_tweets"],
                 outputs=["preproc_texts"]
             ),
