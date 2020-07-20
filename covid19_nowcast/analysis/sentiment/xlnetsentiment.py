@@ -104,18 +104,19 @@ def test_file(w_path, test_loader,  device, model, flat=True):
 def analyse(w_path, test_loader, device, model, data, output_data_path):
     model.load_state_dict(torch.load(w_path))
     model.eval()
+    pred = []
     for i, loader in tqdm(enumerate(test_loader)):
         inp, label = loader
         outp1 = model(inp.to(device))
         for p1 in torch.argmax(outp1[0], axis=1).flatten():
             if p1.item() == 0:
-                data.at[i, 'sentiment'] = 'negative'
+                pred.append('negative')
             elif p1.item() == 1:
-                data.at[i, 'sentiment'] = 'neutral'
+                pred.append('neutral')
             elif p1.item() == 2:
-                data.at[i, 'sentiment'] = 'positive'
+                pred.append('positive')
 
-    data.to_json(output_data_path, orient='index')
+    return pred
 
 
 
@@ -163,7 +164,9 @@ if __name__ == '__main__':
         test_loader = DataLoader(test_data, batch_size=batch_size)
 
         model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-        analyse('xlnet_weights_full_text.pth', test_loader, device, model, data, args.output)
+        data['pred'] = analyse('xlnet_weights_full_text.pth', test_loader, device, model, data, args.output)
+
+        data.to_json(args.output, orient='index', date_format='iso')
     elif args.test:
         if args.file :
             test_data = pd.read_json(args.file)
