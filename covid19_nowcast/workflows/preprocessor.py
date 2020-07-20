@@ -11,9 +11,15 @@ pipeline=Pipeline([
                 outputs=["tweets"]
             ),
             Step(
-                Preprocessor.preprocess,
+                lambda tweets:[t["full_text"] for t in tweets],
                 args=["tweets"],
+                outputs=["full_texts"]
+            ),
+            Step(
+                Preprocessor.preprocess,
+                args=["full_texts"],
                 outputs=["preproc_list"],
+                keep_inputs=False
             ),
             Step(
                 lambda prep, tw:[{**t, "sentiment":"N/A","preproc_text":" ".join(prep[index])} for index, t in enumerate(tw)],
