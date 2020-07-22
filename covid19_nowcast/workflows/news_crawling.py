@@ -7,8 +7,8 @@ import streaming
 pipeline=Pipeline(
     [
         Step(
-            util.add_params,
-            params={"crawler":streaming.collection.articles.ap.AP_Crawler()},
+            lambda cats: streaming.collection.articles.kenyannews.KN_Crawler(cats,True),
+            params={"cats":["World"]},
             outputs=["crawler"]
         ),
         Step(

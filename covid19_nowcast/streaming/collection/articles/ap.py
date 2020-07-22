@@ -10,16 +10,16 @@ import locale
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 class AP_Crawler(Crawler):
-    def __init__(self,categories_to_crawl=None, parsed_urls=[]):
+    def __init__(self,categories_to_crawl=None, HI_category_nomenclature=False, parsed_urls=[]):
         if categories_to_crawl==None:
             categories_to_crawl=list(AP_Crawler.site_categories_to_ours.keys())
-        super().__init__(AP_Crawler.root_url,categories_to_crawl,AP_Crawler.site_categories_to_ours)
+        super().__init__(AP_Crawler.root_url,categories_to_crawl,AP_Crawler.site_categories_to_ours,HI_category_nomenclature)
 
     def articles_from_site(self, link, separate=False):
         if separate:
             return [self.articles_from_category(self.root_url+link, category) for category, link in progressbar.progressbar(AP_Crawler.category_urls.items(), prefix=link)]
         else:
-            for category, link in progressbar.progressbar(AP_Crawler.category_urls.items(), prefix=link):
+            for category, link in progressbar.progressbar([(cat, lnk) for cat,lnk in AP_Crawler.category_urls.items() if cat in self.categories_to_crawl], prefix=link):
                 yield from self.articles_from_category(self.root_url+link, category)
 
     def articles_from_category(self, link, category):
@@ -58,7 +58,6 @@ AP_Crawler.category_urls={
     "Entertainment":"/apf-entertainment",
     "Lifestyle":"/apf-lifestyle",
     "Oddities":"/apf-oddities",
-    "Photography":"/Photography",
     "Travel":"/apf-Travel",
     "Technology":"/apf-technology",
     "Business":"/apf-business",
@@ -75,7 +74,6 @@ AP_Crawler.site_categories_to_ours={
     "Entertainment":"/apf-entertainment",
     "Lifestyle":"/apf-lifestyle",
     "Oddities":"/apf-oddities",
-    "Photography":"/Photography",
     "Travel":"/apf-Travel",
     "Technology":"/apf-technology",
     "Business":"/apf-business",
