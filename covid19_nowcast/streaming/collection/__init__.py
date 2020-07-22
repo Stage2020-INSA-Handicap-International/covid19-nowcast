@@ -2,6 +2,8 @@ import streaming.collection.tweets
 import streaming.collection.countries_api
 import streaming.collection.covid19_api
 import streaming.collection.crawler_facebook
+import streaming.collection.crawler_facebook
+import streaming.collection.articles
 
 from streaming.collection.config_auth_twitter import *
 import twitter

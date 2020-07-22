@@ -1,5 +1,0 @@
-[
-    {
-        "function": "covid19_nowcast.streaming.storage.init_database"
-    }
-]

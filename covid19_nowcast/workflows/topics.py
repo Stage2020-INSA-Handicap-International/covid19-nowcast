@@ -25,7 +25,7 @@ def top_topic_tweets_by_proba(tweets, topic_indices, topics, nb_top_tweets=3):
 pipeline=Pipeline([
         Step(
             util.import_params,
-            params=PG({"filepath":["../Datasets/Kenya_tweets_sentiments.json","../Datasets/preproc_india.json"]}),
+            params=PG({"filepath":["../Datasets/preproc_india0.json"]}),
             outputs=["tweets"]
         ),
         Step(
@@ -45,7 +45,7 @@ pipeline=Pipeline([
                                 learning_method='online',
                                 learning_offset=50.,
                                 random_state=0)),
-            params=PG({"n_components":range(10,11,10)}),
+            params=PG({"n_components":range(5,6,10)}),
             outputs=["n_topics","lda"]
         ),
         Step(

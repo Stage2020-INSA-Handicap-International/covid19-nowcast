@@ -112,7 +112,9 @@ def search(raw_query, count):
                 print(e)
                 found=[WebDriverWait(driver, timeout=10).until(lambda d: d.find_element(By.CSS_SELECTOR, "article"))]
                 scroll(driver,found[-1])
-            
+            except TimeoutException as e:
+                print(e)
+                break
     driver.quit()
     return tweets[:count]
 
@@ -140,8 +142,12 @@ def parse_user(element, selector=".//time/../../div[position() = 1]/a/div"):
 def parse_date(element, selector=".//time"):
     return element.find_element_by_xpath(selector).get_attribute("datetime").replace(".000Z", "+00:00").replace("T"," ")
 
-def parse_text(element, selector="./div[last()]/div[last()]"):
-    return element.find_element_by_xpath(selector).text
+def parse_text(element, selector="./div[last()]/div[last()]", rm_strs=[r"Le média suivant comprend des contenus potentiellement sensibles\. Modifier les paramètres\nVoir",
+                                                                        r"En réponse à \n@[a-z0-9_]*(\n  et  \n@[a-z0-9_]*)?\n"]):
+    full_text=element.find_element_by_xpath(selector).text
+    for rm_str in rm_strs:
+        full_text=re.sub(rm_str,"",full_text)
+    return full_text
 
 def parse_retweets(element, selector="div[data-testid='like']"):
     count = element.find_element(By.CSS_SELECTOR, selector).text

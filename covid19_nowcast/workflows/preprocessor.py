@@ -22,6 +22,13 @@ pipeline=Pipeline([
                 keep_inputs=False
             ),
             Step(
+                Preprocessor.delete_words,
+                args=["preproc_list"],
+                params={"words":['covid','covid-19','covid19','coronavirus','corona','virus','pandemic', 'india', 'réponse', 'à', 'en']},
+                outputs=["preproc_list"],
+                keep_inputs=False
+            ),
+            Step(
                 lambda prep, tw:[{**t, "sentiment":"N/A","preproc_text":" ".join(prep[index])} for index, t in enumerate(tw)],
                 args=["preproc_list","tweets"],
                 outputs=["tweets"],
