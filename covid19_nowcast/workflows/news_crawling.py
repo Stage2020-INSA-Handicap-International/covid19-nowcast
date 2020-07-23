@@ -7,7 +7,7 @@ import streaming
 pipeline=Pipeline(
     [
         Step(
-            lambda cats: streaming.collection.articles.buzzfeednews.BFN_Crawler(cats,False),
+            lambda cats: streaming.collection.articles.newyorktimes.NYT_Crawler(cats,False),
             params={"cats":None},
             outputs=["crawler"]
         ),
