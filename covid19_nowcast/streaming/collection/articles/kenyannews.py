@@ -54,7 +54,7 @@ KN_Crawler.category_urls={
     "lifestyle":"lifestyle/",
     "health":"health/",
     "tech":"technology/",
-    "sports":"sports",
+    "sports":"sports/",
 }
 KN_Crawler.site_categories_to_ours={
     "world-news":"World",
