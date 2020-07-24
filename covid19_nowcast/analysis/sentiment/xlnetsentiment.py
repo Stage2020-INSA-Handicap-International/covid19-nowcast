@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 from keras.preprocessing.sequence import pad_sequences
 import torch
@@ -87,6 +88,7 @@ def test_file(w_path, test_loader,  device, model, flat=True):
     acc = []
     lab = []
     t = 0
+    pred = []
     for inp, lab1 in tqdm(test_loader):
         inp.to(device)
         lab1.to(device)
@@ -94,12 +96,32 @@ def test_file(w_path, test_loader,  device, model, flat=True):
         outp1 = model(inp.to(device))
         [acc.append(p1.item()) for p1 in torch.argmax(outp1[0], axis=1).flatten()]
         [lab.append(z1.item()) for z1 in lab1]
+        for p1 in torch.argmax(outp1[0], axis=1).flatten():
+            if p1.item() == 0:
+                pred.append('negative')
+            elif p1.item() == 1:
+                pred.append('neutral')
+            elif p1.item() == 2:
+                pred.append('positive')
     if flat:
         print("Total Examples : {} Accuracy {}".format(t, flat_accuracy(acc, lab)))
+        return flat_accuracy(acc, lab)
     else:
         acc_neg, acc_neut, acc_pos = sentiment_accuracy(acc, lab)
+        print("Total Examples : {} Accuracy {}".format(t, flat_accuracy(acc, lab)))
         print("Accuracy by sentiment : neg {}, neut {}, pos {}".format(acc_neg, acc_neut, acc_pos))
-    return flat_accuracy(acc, lab)
+        conf_mat = confusion_matrix(lab, acc)
+        true_neg = conf_mat[0][0]
+        true_neut =  conf_mat[1][1]
+        true_pos = conf_mat[2][2]
+        false_neg = conf_mat[1][0] + conf_mat[2][0]
+        false_neut = conf_mat[0][1] + conf_mat[2][1]
+        false_pos = conf_mat[0][2] + conf_mat[1][2]
+        print("True negative: {}, True neutral: {}, True positive: {}".format(true_neg, true_neut, true_pos))
+        print("False negative: {}, False neutral: {}, False positive: {}".format(false_neg, false_neut, false_pos))
+        print("Precision negative: {}, Precision neutral: {}, Precision positive: {}".format(true_neg / (true_neg + false_neg), true_neut / (true_neut + false_neut), true_pos / (true_pos + false_pos)))
+        return pred
+
 
 def analyse(w_path, test_loader, device, model, data, output_data_path):
     model.load_state_dict(torch.load(w_path))
@@ -184,8 +206,7 @@ if __name__ == '__main__':
 
             ids = [tokenizer.convert_tokens_to_ids(x) for x in tokenized_text]
 
-            test_data['sentiment_cat'] = test_data['sentiment'].astype('category').cat.codes
-            labels = test_data['sentiment_cat'].values
+            labels = test_data['sentiment'].astype('category').cat.codes.values
 
             # Getting max len in order to pad tokenized ids
             max1 = len(ids[0])
@@ -199,13 +220,15 @@ if __name__ == '__main__':
 
             Xtest = torch.tensor(input_ids2)
             Ytest = torch.tensor(labels)
-            batch_size = 3
-            test_data = TensorDataset(Xtest, Ytest)
-            test_loader = DataLoader(test_data, batch_size=batch_size)
+            batch_size = 1
+            test_dataset = TensorDataset(Xtest, Ytest)
+            test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
             model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-            acc = test_file('xlnet_weights_full_text.pth', test_loader, device, model, flat=False)
-            print("Total acc {}".format(acc))
+            pred = test_file('xlnet_weights_full_text.pth', test_loader, device, model, flat=False)
+            test_data['pred'] = pred
+            #data = pd.concat([test_data, test_data], ignore_index=True, axis=1)
+            test_data.to_json(args.output, orient='index', date_format='iso')
         else :
             test_sentence('xlnet_weights_full_text.pth', device, 0, args.sentence)
     else:
