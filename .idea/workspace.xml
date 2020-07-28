@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8e7779a9-bdb9-425a-a0dc-e5abe3842b2d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/covid19_nowcast/analysis/topics/2020_kenya_human_readable_topics.txt" beforeDir="false" afterPath="$PROJECT_DIR$/covid19_nowcast/analysis/topics/2020_kenya_human_readable_topics.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/covid19_nowcast/analysis/topics/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/covid19_nowcast/analysis/topics/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/covid19_nowcast/analysis/topics/monthly_topics_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/covid19_nowcast/analysis/topics/monthly_topics_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,31 +28,15 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/covid19_nowcast/util" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.monthly_topics_main">
-    <configuration name="__init__" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="covid19-nowcast-africa" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/covid19_nowcast/streaming/storage" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/covid19_nowcast/streaming/storage/__init__.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/covid19_nowcast/util" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.timeseries">
     <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="covid19-nowcast-africa" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -119,6 +100,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="timeseries" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="covid19-nowcast-africa" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/covid19_nowcast/util" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/covid19_nowcast/util/timeseries.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="topic_classifier" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="covid19-nowcast-africa" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -142,11 +144,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.timeseries" />
         <item itemvalue="Python.monthly_topics_main" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.main (1)" />
         <item itemvalue="Python.topic_classifier" />
-        <item itemvalue="Python.__init__" />
       </list>
     </recent_temporary>
   </component>
@@ -163,26 +165,26 @@
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state x="595" y="184" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1440.825@0.23.1440.825" timestamp="1591952237686" />
-    <state width="1419" height="279" key="GridCell.Tab.0.bottom" timestamp="1593529382577">
+    <state width="1419" height="247" key="GridCell.Tab.0.bottom" timestamp="1595899437228">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1419" height="688" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1591697066836" />
-    <state width="1419" height="279" key="GridCell.Tab.0.bottom/0.23.1440.825@0.23.1440.825" timestamp="1593529382577" />
-    <state width="1419" height="279" key="GridCell.Tab.0.center" timestamp="1593529382576">
+    <state width="1419" height="247" key="GridCell.Tab.0.bottom/0.23.1440.825@0.23.1440.825" timestamp="1595899437228" />
+    <state width="1419" height="247" key="GridCell.Tab.0.center" timestamp="1595899437225">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1419" height="688" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1591697066835" />
-    <state width="1419" height="279" key="GridCell.Tab.0.center/0.23.1440.825@0.23.1440.825" timestamp="1593529382576" />
-    <state width="1419" height="279" key="GridCell.Tab.0.left" timestamp="1593529382575">
+    <state width="1419" height="247" key="GridCell.Tab.0.center/0.23.1440.825@0.23.1440.825" timestamp="1595899437225" />
+    <state width="1419" height="247" key="GridCell.Tab.0.left" timestamp="1595899437225">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1419" height="688" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1591697066833" />
-    <state width="1419" height="279" key="GridCell.Tab.0.left/0.23.1440.825@0.23.1440.825" timestamp="1593529382575" />
-    <state width="1419" height="279" key="GridCell.Tab.0.right" timestamp="1593529382576">
+    <state width="1419" height="247" key="GridCell.Tab.0.left/0.23.1440.825@0.23.1440.825" timestamp="1595899437225" />
+    <state width="1419" height="247" key="GridCell.Tab.0.right" timestamp="1595899437227">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
     <state width="1419" height="688" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1591697066836" />
-    <state width="1419" height="279" key="GridCell.Tab.0.right/0.23.1440.825@0.23.1440.825" timestamp="1593529382576" />
+    <state width="1419" height="247" key="GridCell.Tab.0.right/0.23.1440.825@0.23.1440.825" timestamp="1595899437227" />
     <state x="394" y="113" key="SettingsEditor" timestamp="1590485876617">
       <screen x="0" y="23" width="1440" height="825" />
     </state>
