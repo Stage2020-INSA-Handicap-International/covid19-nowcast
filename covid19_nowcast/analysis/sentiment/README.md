@@ -1,4 +1,4 @@
-### Sentiment Analysis
+# Sentiment Analysis
 
 
 
@@ -8,7 +8,7 @@
 
 
 
-# Credits 
+### Credits 
 @inproceedings{martin2020camembert,
   title={CamemBERT: a Tasty French Language Model},
   author={Martin, Louis and Muller, Benjamin and Ortiz Su{\'a}rez, Pedro Javier and Dupont, Yoann and Romary, Laurent and de la Clergerie, {\'E}ric Villemonte and Seddah, Djam{\'e} and Sagot, Beno{\^\i}t},
