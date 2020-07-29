@@ -1,7 +1,9 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import json
 import datetime
+import ruptures as rpt
 
 
 with open("2020_tweets.json") as json_file:
@@ -44,6 +46,51 @@ df.set_index('day',inplace=True)
 # Plot the time series of the dataframe
 df.plot(figsize=(10,7), linewidth=5, fontsize=20)
 plt.xlabel('Day', fontsize=20)
-plt.show(block=True)
+f1 = plt.figure(1)
+f1.show()
 
-# Detect change of slope
+# DETECT CHANGE OF SLOPE
+# Convert the time series values to a numpy 1D array
+points = np.array(df['count'])
+print(points)
+# Ruptures package
+# Changepoint detection with the Pelt search method
+model = "rbf"
+algo = rpt.Pelt(model = model).fit(points)
+result = algo.predict(pen=10)
+rpt.display(points, result, figsize=(10,7))
+plt.title('Change Point Detection : Pelt Search Method')
+f2 = plt.figure(2)
+f2.show()
+
+
+# Changepoint detection with the Binary Segmentation search method
+model = "l2"
+algo = rpt.Binseg(model=model).fit(points)
+my_bkps = algo.predict(n_bkps=10)
+# show results
+rpt.show.display(points, my_bkps, figsize=(10, 7))
+plt.title('Change Point Detection: Binary Segmentation Search Method')
+f3 = plt.figure(3)
+f3.show()
+
+#Changepoint detection with window-based search method
+model = "l2"
+algo = rpt.Window(width=40, model=model).fit(points)
+my_bkps = algo.predict(n_bkps=10)
+rpt.show.display(points, my_bkps, figsize=(10, 7))
+plt.title('Change Point Detection: Window-Based Search Method')
+f4 = plt.figure(4)
+f4.show()
+
+#Changepoint detection with dynamic programming search method
+model = "l1"
+algo = rpt.Dynp(model=model, min_size=3, jump=5).fit(points)
+my_bkps = algo.predict(n_bkps=10)
+rpt.show.display(points, my_bkps, figsize=(10, 7))
+plt.title('Change Point Detection: Dynamic Programming Search Method')
+f5 = plt.figure(5)
+f5.show()
+
+plt.show()
+
