@@ -259,7 +259,7 @@ if __name__ == '__main__':
         test_loader = DataLoader(test_data, batch_size=batch_size)
 
         model = CamembertForSequenceClassification.from_pretrained('camembert-base', num_labels=3)
-        #model.load_state_dict(torch.load('camembert_weights_{}.pth'.format(args.option)))
+        model.load_state_dict(torch.load('camembert_weights_{}.pth'.format(args.option)))
 
         optimizer = AdamW(model.parameters(), lr=4e-5)
 
@@ -267,7 +267,7 @@ if __name__ == '__main__':
 
         no_train = 0
         epochs = args.epoch
-        acc = 0
+        acc = 80.76923076923077
         for epoch in tqdm(range(epochs)):
             model.train()
             loss1 = []
@@ -299,8 +299,8 @@ if __name__ == '__main__':
             if acc - acc_eval < 0:
                 acc = acc_eval
                 print("saving weights ...")
-                torch.save(model.state_dict(), "camembert_weights_{}.pth".format(args.option))
+                torch.save(model.state_dict(), "camembert_weights_2.0_{}.pth".format(args.option))
         print("Saving last weights...")
-        torch.save(model.state_dict(), "camembert_weights_last_{}.pth".format(args.option))
+        torch.save(model.state_dict(), "camembert_weights_2.0_last_{}.pth".format(args.option))
         print("Best eval accuracy : {}".format(acc))
 
