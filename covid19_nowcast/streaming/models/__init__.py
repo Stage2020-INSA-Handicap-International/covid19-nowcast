@@ -1,2 +1,2 @@
-import streaming.models.facebook
-import streaming.models.twitter
+import covid19_nowcast.streaming.models.facebook
+import covid19_nowcast.streaming.models.twitter

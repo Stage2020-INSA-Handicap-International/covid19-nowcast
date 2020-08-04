@@ -1,7 +1,7 @@
 import json
 import urllib
-import util
-from streaming.collection import crawler_twitter
+import covid19_nowcast.util
+from covid19_nowcast.streaming.collection import crawler_twitter
 
 def search_from_terms(api, term, **kwargs):
     """

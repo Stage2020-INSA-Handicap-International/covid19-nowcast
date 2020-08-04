@@ -1,6 +1,6 @@
-import streaming.collection.articles.crawler
-import streaming.collection.articles.ap
-import streaming.collection.articles.hindustantimes
-import streaming.collection.articles.kenyannews
-import streaming.collection.articles.buzzfeednews
-import streaming.collection.articles.newyorktimes
+import covid19_nowcast.streaming.collection.articles.crawler
+import covid19_nowcast.streaming.collection.articles.ap
+import covid19_nowcast.streaming.collection.articles.hindustantimes
+import covid19_nowcast.streaming.collection.articles.kenyannews
+import covid19_nowcast.streaming.collection.articles.buzzfeednews
+import covid19_nowcast.streaming.collection.articles.newyorktimes

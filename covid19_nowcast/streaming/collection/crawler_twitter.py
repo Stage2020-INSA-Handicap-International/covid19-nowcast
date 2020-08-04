@@ -93,7 +93,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 import time
 import progressbar
-from streaming.models.twitter import Tweet
+from covid19_nowcast.streaming.models.twitter import Tweet
 import re
 
 def search(raw_query, count):

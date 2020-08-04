@@ -1,4 +1,4 @@
-from streaming.collection.articles.crawler import Crawler
+from covid19_nowcast.streaming.collection.articles.crawler import Crawler
 from bs4 import BeautifulSoup
 import requests
 import sys
