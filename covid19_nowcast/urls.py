@@ -1,19 +1,17 @@
 from django.urls import include, path
-# from rest_framework import routers
-# from .views import  IngredientViewSet, RecipeViewSet, OCRView
-# from .SearchView import SearchView
-# from .RecipeStepsView import RecipeStepsView
-# from .SeasonUpdateView import SeasonUpdateView
-# router = routers.DefaultRouter()
-# router.register(r'ingredient', IngredientViewSet)
-# router.register(r'recipe', RecipeViewSet)
 
 from . import views
 
 urlpatterns = [
-    path('',views.index)
-    # path('', include(router.urls)),
-    # path(r'search/', SearchView.as_view()),
-    # path(r'recipeSteps/', RecipeStepsView.as_view()),
-    # path(r'seasonUpdate/', SeasonUpdateView.as_view())
+    path(r'',views.index),
+    path(r'collector/',views.CollectorView.as_view()),
+    path(r'topics/',views.TopicAnalysisView.as_view()),
+    path(r'examples/',views.TopicExamplesView.as_view()),
+    path(r'graph/',views.GraphAnalysisView.as_view()),
+    path(r'category/',views.CategoryView.as_view()),
+    path('testcookie/', views.cookie_session),
+    path('deletecookie/', views.cookie_delete),
+    path('create/', views.create_session),
+    path('access/', views.access_session),
+    path('delete/', views.delete_session),
 ]
