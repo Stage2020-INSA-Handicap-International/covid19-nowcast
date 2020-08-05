@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import progressbar
-from streaming.models.facebook import Post,Comment,Response
+from covid19_nowcast.streaming.models.facebook import Post,Comment,Response
 import re
 def search(query, count, with_reactions=True):
     driver = webdriver.Firefox()

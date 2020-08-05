@@ -1,1 +1,1 @@
-import analysis.topics.topic_classifier
+import covid19_nowcast.analysis.topics.topic_classifier

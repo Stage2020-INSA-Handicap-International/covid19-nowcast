@@ -1,3 +1,3 @@
-import analysis.volume
-import analysis.sentiment
-import analysis.topics
+import covid19_nowcast.analysis.volume
+import covid19_nowcast.analysis.sentiment
+import covid19_nowcast.analysis.topics
