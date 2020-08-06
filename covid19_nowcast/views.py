@@ -33,8 +33,8 @@ class CollectorView (View):
                 "country":str a country which has an entry in the covid19 api,
                 "source":str in ["twitter"],
                 "lang":str in ["fr","en"],
-                "date_from":str in %Y-%m-%dT%H:%M:%SZ format,
-                "date_to":str in %Y-%m-%dT%H:%M:%SZ format
+                "date_from":str in %Y-%m-%d format,
+                "date_to":str in %Y-%m-%d format
             }
         """
         params=json.loads(request.body)
@@ -64,13 +64,13 @@ class CollectorView (View):
 
             def test_date(date):
                 try:
-                    datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+                    date=datetime.strftime(datetime.strptime(date, '%Y-%m-%d'),"%Y-%m-%dT%H:%M:%SZ")
                 except ValueError as e:
                     raise(AssertionError(e))
-                return False
+                return date
 
             for date_key in date_keys:
-                test_date(params[date_key])
+                params[date_key]=test_date(params[date_key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
         

@@ -13,9 +13,9 @@ from tqdm import tqdm
 import json
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-model.load_state_dict(torch.load('covid19_nowcast/trained_models/en_weights.pth'))
-model.eval()
+# model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
+# model.load_state_dict(torch.load('covid19_nowcast/trained_models/en_weights.pth'))
+# model.eval()
 
 def flat_accuracy(preds, labels):  # A function to predict Accuracy
     correct = 0
