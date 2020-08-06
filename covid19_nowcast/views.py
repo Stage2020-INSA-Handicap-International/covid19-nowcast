@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 #from django.shortcuts import render_to_response, redirect
 from django.shortcuts import render
@@ -66,13 +66,13 @@ class CollectorView (View):
 
             def test_date(date):
                 try:
-                    date=datetime.strftime(datetime.strptime(date, '%Y-%m-%d'),"%Y-%m-%dT%H:%M:%SZ")
+                    datetime.strptime(date, '%Y-%m-%d')
                 except ValueError as e:
                     raise(AssertionError(e))
                 return date
 
             for date_key in date_keys:
-                params[date_key]=test_date(params[date_key])
+                test_date(params[date_key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
         

@@ -2,7 +2,6 @@ import covid19_nowcast.streaming.collection.tweets
 import covid19_nowcast.streaming.collection.countries_api
 import covid19_nowcast.streaming.collection.covid19_api
 import covid19_nowcast.streaming.collection.crawler_facebook
-import covid19_nowcast.streaming.collection.crawler_facebook
 import covid19_nowcast.streaming.collection.articles
 
 from covid19_nowcast.streaming.collection.config_auth_twitter import *
@@ -13,5 +12,8 @@ def authenticate(consumer_key= consumer_key, consumer_secret=consumer_secret, ac
     return api
 
 def collect_sts_data(country,source,date_from,date_to):
-    data=util.import_params("../output/topics_india_tw0.json")["tweets"]
+    #data=util.import_params("../output/topics_india_tw0.json")["tweets"]
+    api=authenticate()
+    api.GetSearch(raw_query="q=twitter%20&result_type=recent&since=2014-07-19&count=5")
+    data=None
     return data
