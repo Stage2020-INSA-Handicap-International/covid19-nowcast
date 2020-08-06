@@ -27,7 +27,7 @@ print(tweet_count_by_day)
 
 df = pd.DataFrame.from_dict(json_tweets)
 #print(df.head(5))
-columns=['day','count']
+columns=['day','tweet_count']
 data = []
 index = 0
 
@@ -45,25 +45,27 @@ df.set_index('day',inplace=True)
 
 # Plot the time series of the dataframe
 df.plot(figsize=(10,7), linewidth=5, fontsize=20)
-plt.xlabel('Day', fontsize=20)
+plt.title('Count of tweets related to the COVID-19 pandemic in Kenya',size=15)
+plt.xlabel('Day', fontsize=15)
 f1 = plt.figure(1)
 f1.show()
 
 # DETECT CHANGE OF SLOPE
 # Convert the time series values to a numpy 1D array
-points = np.array(df['count'])
+points = np.array(df['tweet_count'])
 print(points)
 # Ruptures package
-# Changepoint detection with the Pelt search method
+# Changepoint detection with the Pelt search method, o(N)
 model = "rbf"
 algo = rpt.Pelt(model = model).fit(points)
-result = algo.predict(pen=10)
+result = algo.predict(pen=0.8)
 rpt.display(points, result, figsize=(10,7))
 plt.title('Change Point Detection : Pelt Search Method')
 f2 = plt.figure(2)
 f2.show()
 
-
+plt.show()
+'''
 # Changepoint detection with the Binary Segmentation search method
 model = "l2"
 algo = rpt.Binseg(model=model).fit(points)
@@ -93,4 +95,4 @@ f5 = plt.figure(5)
 f5.show()
 
 plt.show()
-
+'''
