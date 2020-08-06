@@ -15,7 +15,7 @@ import torch
 from covid19_nowcast.streaming.collection import covid19_api
 from covid19_nowcast import util, analysis
 from covid19_nowcast.user_interface import visualisation
-from covid19_nowcast.streaming import collection
+from covid19_nowcast.streaming import CollectionManager
 def index(request):
     return render_to_response('index.html')
 
@@ -55,7 +55,7 @@ class CollectorView (View):
             found_country=False
             for country in available_countries:
                 if params["country"] in country.values():
-                    params["country"]=country["Slug"]
+                    params["country"]=country
                     found_country=True
             assert found_country, "{} is not an available country for analyses".format(params["country"])
 
@@ -71,6 +71,9 @@ class CollectorView (View):
 
             for date_key in date_keys:
                 test_date(params[date_key])
+
+            params["date_to"]=datetime.strftime(datetime.strptime(params["date_to"], '%Y-%m-%d')+timedelta(days=1),'%Y-%m-%d')
+            assert params["date_from"] < params["date_to"], "beginning date {} is later than end {}".format(params["date_from"],params["date_to"])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
         
@@ -78,7 +81,7 @@ class CollectorView (View):
         clsf={"fr":analysis.sentiment.camemBERTsentiment,"en":analysis.sentiment.xlnetsentiment}
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
-            tweets=collection.collect_sts_data(params["country"], params["source"], params["date_from"], params["date_to"])
+            tweets=CollectionManager.collect_sts_data(params["country"], params["source"], params["lang"], params["date_from"], params["date_to"])
             #tweets=clsf[params["lang"]].predict(tweets,"full_text")
             request.session["data"]=tweets
 
@@ -87,6 +90,7 @@ class CollectorView (View):
         request.session["source"]=params["source"]
         request.session["date_from"]=params["date_from"]
         request.session["date_to"]=params["date_to"]
+        request.session["lang"]=params["lang"]
 
         response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=501)
         return response
