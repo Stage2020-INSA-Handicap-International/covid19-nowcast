@@ -5,7 +5,8 @@ from django.http import HttpResponse
 import json
 from datetime import datetime
 
-from django.shortcuts import render_to_response, redirect
+#from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render
 from django.template import RequestContext
 
 from transformers import XLNetForSequenceClassification
@@ -17,7 +18,8 @@ from covid19_nowcast import util, analysis
 from covid19_nowcast.user_interface import visualisation
 from covid19_nowcast.streaming import collection
 def index(request):
-    return render_to_response('index.html')
+    #return render_to_response('index.html')
+    return render(request,'index.html')
 
 def check_type(key, value, t):
     assert type(value) is t, "{} = {} is not {}".format(key,value,t.__name__)
