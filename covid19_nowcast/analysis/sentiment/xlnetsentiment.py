@@ -13,7 +13,9 @@ from tqdm import tqdm
 import json
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+# model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
+# model.load_state_dict(torch.load('covid19_nowcast/trained_models/en_weights.pth'))
+# model.eval()
 
 def flat_accuracy(preds, labels):  # A function to predict Accuracy
     correct = 0
@@ -126,9 +128,7 @@ def test_file(w_path, test_loader, device, model, flat=True):
         return pred
 
 
-def analyse(w_path, test_loader, device, model, data, output_data_path):
-    model.load_state_dict(torch.load(w_path))
-    model.eval()
+def analyse(test_loader, device, model):
     pred = []
     for i, loader in tqdm(enumerate(test_loader)):
         inp, label = loader
@@ -143,6 +143,42 @@ def analyse(w_path, test_loader, device, model, data, output_data_path):
 
     return pred
 
+def predict(data_to_predict, prediction_key):
+    data=None
+    if type(data_to_predict) is str:
+        data = pd.read_json(data_to_predict)
+    elif type(data_to_predict) is list:
+        data = pd.DataFrame.from_dict(data_to_predict)
+    else:
+        raise TypeError("Unexpected type for data_to_predict: {}".format(type(data_to_predict).__name__))
+
+    sentences = [sent for sent in data[prediction_key]]
+
+    tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased', do_lower_case=True)
+    tokenized_text = [tokenizer.tokenize(sent) for sent in sentences]
+
+    ids = [tokenizer.convert_tokens_to_ids(x) for x in tokenized_text]
+
+    labels = np.zeros(len(ids))
+
+    # Getting max len in order to pad tokenized ids
+    max1 = len(ids[0])
+    for i in ids:
+        if (len(i) > max1):
+            max1 = len(i)
+    # print(max1)
+    MAX_LEN = max1
+
+    input_ids2 = pad_sequences(ids, maxlen=MAX_LEN, dtype="long", truncating="post", padding="post")
+
+    Xtest = torch.tensor(input_ids2)
+    Ytest = torch.tensor(labels)
+    batch_size = 1
+    test_data = TensorDataset(Xtest, Ytest)
+    test_loader = DataLoader(test_data, batch_size=batch_size)
+
+    data['pred'] = analyse(test_loader, device, model)
+    return data.to_dict()
 
 if __name__ == '__main__':
 
@@ -190,7 +226,7 @@ if __name__ == '__main__':
 
         model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
         data['pred'] = analyse('xlnet_weights_{}_{}.pth'.format(args.option, args.name), test_loader, device, model,
-                               data, args.output)
+                            data, args.output)
 
         data.to_json(args.output, orient='index', date_format='iso')
     elif args.test:

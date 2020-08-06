@@ -34,21 +34,25 @@ class CollectorView (View):
             {
                 "country":str a country which has an entry in the covid19 api,
                 "source":str in ["twitter"],
-                "date_from":str in %Y-%m-%dT%H:%M:%SZ format,
-                "date_to":str in %Y-%m-%dT%H:%M:%SZ format
+                "lang":str in ["fr","en"],
+                "date_from":str in %Y-%m-%d format,
+                "date_to":str in %Y-%m-%d format
             }
         """
         params=json.loads(request.body)
 
         # Sanity checks
         date_keys=["date_from","date_to"]
-        keys=["country","source"]
+        keys=["country","source","lang"]
         keys.extend(date_keys)
         try:
             for key in keys:
                 check_missing(key,params.keys())
                 check_type(key, params[key], str)
 
+            key="lang"
+            available_languages=["fr","en"]
+            assert params[key] in available_languages, "lang=\"{}\" not in available languages={}".format(params["lang"], available_languages)
             available_countries=covid19_api.get_countries()
             found_country=False
             for country in available_countries:
@@ -62,20 +66,22 @@ class CollectorView (View):
 
             def test_date(date):
                 try:
-                    datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+                    date=datetime.strftime(datetime.strptime(date, '%Y-%m-%d'),"%Y-%m-%dT%H:%M:%SZ")
                 except ValueError as e:
                     raise(AssertionError(e))
-                return False
+                return date
 
             for date_key in date_keys:
-                test_date(params[date_key])
+                params[date_key]=test_date(params[date_key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
         
         # Request processing
+        clsf={"fr":analysis.sentiment.camemBERTsentiment,"en":analysis.sentiment.xlnetsentiment}
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
             tweets=collection.collect_sts_data(params["country"], params["source"], params["date_from"], params["date_to"])
+            #tweets=clsf[params["lang"]].predict(tweets,"full_text")
             request.session["data"]=tweets
 
         # Session management
