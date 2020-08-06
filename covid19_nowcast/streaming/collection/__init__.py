@@ -16,4 +16,5 @@ def collect_sts_data(country,source,date_from,date_to):
     api=authenticate()
     api.GetSearch(raw_query="q=twitter%20&result_type=recent&since=2014-07-19&count=5")
     data=None
+    data=util.import_params("covid19_nowcast/util/2020_tweets.json")["tweets"]
     return data

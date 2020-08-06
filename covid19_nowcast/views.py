@@ -90,7 +90,7 @@ class CollectorView (View):
         request.session["date_from"]=params["date_from"]
         request.session["date_to"]=params["date_to"]
 
-        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=501)
+        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=200)
         return response
 
 class TopicAnalysisView (View):
