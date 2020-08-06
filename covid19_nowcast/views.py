@@ -64,13 +64,13 @@ class CollectorView (View):
 
             def test_date(date):
                 try:
-                    date=datetime.strftime(datetime.strptime(date, '%Y-%m-%d')+timedelta(days=1),"%Y-%m-%dT%H:%M:%SZ")
+                    datetime.strptime(date, '%Y-%m-%d')
                 except ValueError as e:
                     raise(AssertionError(e))
                 return date
 
             for date_key in date_keys:
-                params[date_key]=test_date(params[date_key])
+                test_date(params[date_key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
         
