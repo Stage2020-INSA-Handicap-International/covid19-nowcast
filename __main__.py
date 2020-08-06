@@ -5,11 +5,11 @@ import copy
 import importlib
 import pickle
 
-import streaming
-import analysis
-import evaluation
-import user_interface
-import util
+import covid19_nowcast.streaming
+import covid19_nowcast.analysis
+import covid19_nowcast.evaluation
+import covid19_nowcast.user_interface
+import covid19_nowcast.util
 from workflow_manager.data import Data
 def run_workflow(workflow="workflows.test_workflow", input_data_path=None, output_data_path=None, use_pickle=False, use_plain=False, use_dict=False, use_json=False, n_jobs=-1):
     """

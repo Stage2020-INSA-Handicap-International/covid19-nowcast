@@ -8,6 +8,9 @@ from datetime import datetime
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 
+from covid19_nowcast.streaming.collection import covid19_api
+from covid19_nowcast import util, analysis
+from covid19_nowcast.user_interface import visualisation
 def index(request):
     return render_to_response('index.html')
 
@@ -39,7 +42,13 @@ class CollectorView (View):
                 check_missing(key,params.keys())
                 check_type(key, params[key], str)
 
-            # <!> Check country has an entry in the covid19 api
+            available_countries=covid19_api.get_countries()
+            found_country=False
+            for country in available_countries:
+                if params["country"] in country.values():
+                    params["country"]=country["Slug"]
+                    found_country=True
+            assert found_country, "{} is not an available country for analyses".format(params["country"])
 
             available_sources=["twitter"]
             assert params["source"] in available_sources, "source=\"{}\" not in available sources={}".format(params["source"], available_sources)
@@ -60,6 +69,8 @@ class CollectorView (View):
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
             # collect_sts_data(params["country"], params["source"], params["date_from"], params["date_to"])
+            tweets=util.import_params("../output/topics_india_tw0.json")["tweets"]
+            request.session["data"]=tweets
 
         # Session management
         request.session["country"]=params["country"]
@@ -82,12 +93,19 @@ class TopicAnalysisView (View):
 
         # Sanity checks
         try:
+            assert request.session.get("data",None) is not None, "Data hasn't been collected yet"
+            assert request.session.get("category_data",None) is not None, "Data hasn't been categorized yet"
+        except AssertionError as e:
+            return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=409, reason="Conflict: "+str(e))
+
+        try:
             key="nb_topics"
             check_missing(key, params.keys())
             check_type(key,params[key],int)
             assert params[key]>0, "\"{}\" is not >0".format(key)
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
+            
         # Request processing
         topics=None
         if request.session.get("topics",None) is not None \
@@ -95,8 +113,10 @@ class TopicAnalysisView (View):
                 and request.session.get("nb_topics",-1)==params["nb_topics"]:
             topics=request.session["topics"]
         else:
-            topics=None # <!> Execute function
+            tweets=request.session["data"]
+            tweets,topics=analysis.topics.topicalize_tweets(tweets, params["nb_topics"])
             request.session["modified_topics"]=True
+            request.session["data"]=tweets
 
         # Session management
         request.session["nb_topics"]=params["nb_topics"]
@@ -104,7 +124,7 @@ class TopicAnalysisView (View):
         request.session["topics"]=topics
         request.session["modified_category_topics"]=False
 
-        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=501)
+        response=HttpResponse(json.dumps({"topics":topics,"request":params},ensure_ascii=False),status=200)
         return response
 
 class TopicExamplesView (View):
@@ -112,7 +132,7 @@ class TopicExamplesView (View):
     def post(self, request):
         """
         {
-            "topic":str in topic classifier classes,
+            "topic":int>=0 and <nb_topics,
             "nb_examples":int>0
         }
         """
@@ -120,23 +140,40 @@ class TopicExamplesView (View):
 
         # Sanity checks
         try:
+            assert request.session.get("topics",None) is not None, "Topic analysis has not been executed yet"
+            assert request.session.get("nb_topics",None) is not None, "Topic analysis has not been executed yet"
+            assert request.session.get("data",None) is not None, "Data hasn't been collected yet"
+            assert request.session.get("category_data",None) is not None, "Data hasn't been categorized yet"
+        except AssertionError as e:
+            return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=409, reason="Conflict: "+str(e))
+
+        try:
             key="nb_examples"
             check_missing(key, params.keys())
             check_type(key,params[key],int)
             assert params[key]>0, "\"{}\" is not >0".format(key)
+
             key="topic"
             check_missing(key, params.keys())
-            check_type(key,params[key],str)
-            # <!> Check topic_id is in classifier classes
+            check_type(key,params[key],int)
+            assert params[key]>=0, "\"{}\" is not >=0".format(key)
+            assert params["topic"] < request.session["nb_topics"], "Topic index {} is out of bounds ({} topics)".format(params["topic"],request.session["nb_topics"])
+
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
+
         # Request processing
-        
+        tweets=request.session["data"]
+        topic_indices=[t["topic_id"] for t in tweets]
+        topics=request.session["topics"]
+        examples=analysis.topics.top_topic_tweets_by_proba(tweets,topic_indices,topics, params["nb_examples"])[params["topic"]]["top_tweets"]
+        examples=[e["full_text"] for e in examples]
         # Session management
+        request.session["examples"]=examples
         request.session["topic"]=params["topic"]
         request.session["nb_examples"]=params["nb_examples"]
         
-        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=501)
+        response=HttpResponse(json.dumps({"examples":examples,"request":params},ensure_ascii=False),status=200)
         return response
 
 class GraphAnalysisView (View):
@@ -147,13 +184,20 @@ class GraphAnalysisView (View):
                 "sentiments":{"positive":bool, "negative":bool, "neutral":bool},
                 "cases":{"enabled":bool, "rolling":bool},
                 "trends":bool,
-                "topic":str in topic classifier classes,
+                "topic":int in topic classifier classes,
                 "period":str in ["day","week","month"]
             }
         """
         params=json.loads(request.body)
 
         # Sanity checks
+        try:
+            assert request.session.get("data",None) is not None, "Data hasn't been collected yet"
+            assert request.session.get("category_data",None) is not None, "Data hasn't been categorized yet"
+            assert request.session.get("topics", None) is not None or params.get("topic","All") == "All", "Topic analysis hasn't been executed yet, but topic selection was requested"
+        except AssertionError as e:
+            return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=409, reason="Conflict: "+str(e))
+
         keys={"sentiments":dict, "cases":dict, "trends":bool, "topic":str, "period":str}
         try:
             for key, t in keys.items():
@@ -212,19 +256,26 @@ class CategoryView (View):
 
         # Sanity checks
         try:
+            assert request.session.get("data",None) is not None, "Data hasn't been collected yet"
+        except AssertionError as e:
+            return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=409, reason="Conflict: "+str(e))
+
+        try:
             key="category"
             check_missing(key, params.keys())
             check_type(key,params[key],str)
-            # <!> Check category is in classifier classes
+
+            available_categories=["Unknown"] # <!> Replace with real categories from classifier
+            assert params[key] in available_categories, "{} category is not known".format(params[key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
 
-        # Request processing
-        # Nothing to do: this request only writes category in the session data
-        # The analysed dataset is only modified when topic/graph analyses are run
-
         # Session management
         if "category" not in request.session.keys() or request.session["category"] != params["category"]:
+            if params["category"]=="All":
+                request.session["category_data"]=request.session["data"]
+            else:
+                request.session["category_data"]=[d for d in request.session["data"] if d["category"]==params["category"]]
             request.session["category"]=params["category"]
             request.session["modified_category_graph"]=True
             request.session["modified_category_topics"]=True

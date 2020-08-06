@@ -2,7 +2,7 @@ import requests
 import json
 from datetime import datetime
 import covid19_nowcast.util
-def get_countries_info(countries, entries = ["Date", "Confirmed", "Deaths", "Recovered", "Active"], **kwargs):
+def get_countries_info(countries, entries = ["Date", "Confirmed", "Deaths", "Recovered", "Active"]):
     """
     Searches api.covid19api.com for COVID-19 cases
     Input:
@@ -18,3 +18,14 @@ def get_countries_info(countries, entries = ["Date", "Confirmed", "Deaths", "Rec
             situation["Date"]= datetime.strftime(datetime.date(datetime.strptime(situation["Date"], '%Y-%m-%dT%H:%M:%SZ')),'%b %d %Y')
             situation = util.filter_keys(situation,entries)
     return country_info
+
+def get_countries():
+    """
+    Searches available countries in api.covid19api.com 
+    Input:
+        - N/A
+    Output:
+        - a list of dictionaries containing the "Country" (name), "Slug" (used in API requests) and "ISO2" (abbreviation) for each available country
+    """
+    countries = json.loads(requests.get("https://api.covid19api.com/countries").text) 
+    return countries

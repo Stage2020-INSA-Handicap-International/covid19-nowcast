@@ -2,9 +2,8 @@ from workflow_manager.pipeline import Pipeline
 from workflow_manager.step import Step
 from workflow_manager.metastep import MetaStep
 from workflow_manager.parameter_grid import parameter_grid as PG
-import util
-import analysis
-from streaming.preparation.preprocessor import Preprocessor
+from covid19_nowcast import util, analysis
+from covid19_nowcast.streaming.preparation.preprocessor import Preprocessor
 
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
@@ -25,7 +24,7 @@ def top_topic_tweets_by_proba(tweets, topic_indices, topics, nb_top_tweets=3):
 pipeline=Pipeline([
         Step(
             util.import_params,
-            params=PG({"filepath":["../Datasets/preproc_india0.json"]}),
+            params=PG({"filepath":["Datasets/preproc_india0.json"]}),
             outputs=["tweets"]
         ),
         Step(
@@ -86,7 +85,9 @@ pipeline=Pipeline([
             outputs=["no_top_words","topics"]
         ),
         Step(
-            lambda tweets, topic_idx, topic_proba, topics:[{**t, "topic":topics[topic_idx[index]],"topic_proba":topic_proba[index]} for index, t in enumerate(tweets)],
+            lambda tweets, topic_idx, topic_proba, topics:[{**t, "topic_id":topic_idx[index],
+                        #"topic":topics[topic_idx[index]],
+                        "topic_proba":topic_proba[index]} for index, t in enumerate(tweets)],
             args=["tweets", "topic_indices", "topic_proba","topics"],
             outputs=["tweets"],
         ),
@@ -96,36 +97,36 @@ pipeline=Pipeline([
         #     outputs=["N/A count", "% N/A"],
         #     name="count and % N/A"
         # ),
-        Step(
-            lambda tweets:  [
-                            # t if t["topic"] == "N/A" else 
-                            {
-                                **t,
-                                "relevance":sum([
-                                        word in t["preproc_text"] for word in t["topic"]
-                                    ])/len(t["topic"])
-                            } for t in tweets],
-            args=["tweets"],
-            outputs=["tweets"]
-        ),
-        Step(
-            lambda tweets, min_proba: ({
-                    "avg":np.average([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba]), 
-                    "std":np.std([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba]), 
-                    "min":np.min([t["relevance"]for t in tweets if  t["topic_proba"]>=min_proba]), 
-                    "max":np.max([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba]),
-                    "percentile":{10*x:np.percentile([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba],10*x) for x in range(1,11)}
-                }, min_proba),
-            args=["tweets"],
-            params=PG({"min_proba":0.8}),
-            outputs=["relevance", "min_proba"]
-        ),
-        Step(
-            top_topic_tweets_by_proba,
-            args=["tweets", "topic_indices","topics"],
-            params=PG({"nb_top_tweets":3}),
-            outputs=["topics"]
-        ),
+        # Step(
+        #     lambda tweets:  [
+        #                     # t if t["topic"] == "N/A" else 
+        #                     {
+        #                         **t,
+        #                         "relevance":sum([
+        #                                 word in t["preproc_text"] for word in t["topic"]
+        #                             ])/len(t["topic"])
+        #                     } for t in tweets],
+        #     args=["tweets"],
+        #     outputs=["tweets"]
+        # ),
+        # Step(
+        #     lambda tweets, min_proba: ({
+        #             "avg":np.average([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba]), 
+        #             "std":np.std([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba]), 
+        #             "min":np.min([t["relevance"]for t in tweets if  t["topic_proba"]>=min_proba]), 
+        #             "max":np.max([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba]),
+        #             "percentile":{10*x:np.percentile([t["relevance"]for t in tweets if t["topic_proba"]>=min_proba],10*x) for x in range(1,11)}
+        #         }, min_proba),
+        #     args=["tweets"],
+        #     params=PG({"min_proba":0.8}),
+        #     outputs=["relevance", "min_proba"]
+        # ),
+        # Step(
+        #     top_topic_tweets_by_proba,
+        #     args=["tweets", "topic_indices","topics"],
+        #     params=PG({"nb_top_tweets":3}),
+        #     outputs=["topics"]
+        # ),
         Step(
             analysis.topics.topic_classifier.TopicClassifier.sklearn_print_topics,
             args=["lda", "tfidf_feature_names"],
@@ -137,7 +138,10 @@ pipeline=Pipeline([
         # ),
         Step(
             util.remove_params,
-            args=["tweets","topic_indices", "topic_proba"],
+            args=["topic_indices", "topic_proba", 
+                #"relevance", 
+                #"min_proba",
+                "n_topics","no_top_words"],
             keep_inputs=False
         ),
     ], name="topics analysis")
