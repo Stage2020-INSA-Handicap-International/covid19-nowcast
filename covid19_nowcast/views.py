@@ -8,9 +8,14 @@ from datetime import datetime
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 
+from transformers import XLNetForSequenceClassification
+from transformers import CamembertForSequenceClassification
+import torch
+
 from covid19_nowcast.streaming.collection import covid19_api
 from covid19_nowcast import util, analysis
 from covid19_nowcast.user_interface import visualisation
+from covid19_nowcast.streaming import collection
 def index(request):
     return render_to_response('index.html')
 
@@ -68,8 +73,7 @@ class CollectorView (View):
         # Request processing
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
-            # collect_sts_data(params["country"], params["source"], params["date_from"], params["date_to"])
-            tweets=util.import_params("../output/topics_india_tw0.json")["tweets"]
+            tweets=collection.collect_sts_data(params["country"], params["source"], params["date_from"], params["date_to"])
             request.session["data"]=tweets
 
         # Session management
@@ -265,7 +269,7 @@ class CategoryView (View):
             check_missing(key, params.keys())
             check_type(key,params[key],str)
 
-            available_categories=["Unknown"] # <!> Replace with real categories from classifier
+            available_categories=["Business", "Food", "Health", "Politics", "Science", "Sports", "Tech", "Travel"]
             assert params[key] in available_categories, "{} category is not known".format(params[key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
@@ -279,7 +283,7 @@ class CategoryView (View):
             request.session["category"]=params["category"]
             request.session["modified_category_graph"]=True
             request.session["modified_category_topics"]=True
-        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=501)
+        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=200)
         return response
 
 def cookie_session(request):
