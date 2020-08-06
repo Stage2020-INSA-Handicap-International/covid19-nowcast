@@ -7,7 +7,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 import numpy as np
 import spacy
-
+import covid19_nowcast.analysis.sentiment.camemBERTsentiment
+import covid19_nowcast.analysis.sentiment.xlnetsentiment
 def train_classifier(pipeline, texts_list, labels):
     pipeline = pipeline.fit(texts_list, labels)
     return pipeline
