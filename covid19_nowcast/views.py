@@ -32,6 +32,7 @@ class CollectorView (View):
             {
                 "country":str a country which has an entry in the covid19 api,
                 "source":str in ["twitter"],
+                "lang":str in ["fr","en"],
                 "date_from":str in %Y-%m-%dT%H:%M:%SZ format,
                 "date_to":str in %Y-%m-%dT%H:%M:%SZ format
             }
@@ -40,13 +41,16 @@ class CollectorView (View):
 
         # Sanity checks
         date_keys=["date_from","date_to"]
-        keys=["country","source"]
+        keys=["country","source","lang"]
         keys.extend(date_keys)
         try:
             for key in keys:
                 check_missing(key,params.keys())
                 check_type(key, params[key], str)
 
+            key="lang"
+            available_languages=["fr","en"]
+            assert params[key] in available_languages, "lang=\"{}\" not in available languages={}".format(params["lang"], available_languages)
             available_countries=covid19_api.get_countries()
             found_country=False
             for country in available_countries:
@@ -71,9 +75,11 @@ class CollectorView (View):
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
         
         # Request processing
+        clsf={"fr":analysis.sentiment.camemBERTsentiment,"en":analysis.sentiment.xlnetsentiment}
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
             tweets=collection.collect_sts_data(params["country"], params["source"], params["date_from"], params["date_to"])
+            #tweets=clsf[params["lang"]].predict(tweets,"full_text")
             request.session["data"]=tweets
 
         # Session management
