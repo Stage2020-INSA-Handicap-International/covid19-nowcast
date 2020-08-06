@@ -13,9 +13,9 @@ from tqdm import tqdm
 import json
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = CamembertForSequenceClassification.from_pretrained('camembert-base', num_labels=3)
-model.load_state_dict(torch.load('covid19_nowcast/trained_models/fr_weights.pth'))
-model.eval()
+# model = CamembertForSequenceClassification.from_pretrained('camembert-base', num_labels=3)
+# model.load_state_dict(torch.load('covid19_nowcast/trained_models/fr_weights.pth'))
+# model.eval()
 
 def flat_accuracy(preds, labels):  # A function to predict Accuracy
     correct = 0
