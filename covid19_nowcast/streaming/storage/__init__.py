@@ -2,6 +2,7 @@ import pymongo
 from covid19_nowcast.streaming.storage.config_mongodb import *
 from covid19_nowcast.streaming.storage import tweets 
 import copy
+import progressbar
 def init_database(connection_url=connection_url, db_name=db_name):
     db=pymongo.MongoClient(connection_url)[db_name]
     tweets.init_collection(db)
@@ -237,14 +238,21 @@ class DBTimeSubset():
         return data
     def get_data(self, present_subsets):
         data=[]
-        db=connect_database()
-        for date_from, date_to in present_subsets.to_tuples():
-            data.extend(db[col_data_analyses].find({"country":self.country,
-                                                    "source":self.source,
-                                                    "lang":self.lang,
-                                                    "created_at": {
-                                                        "$gte": date_from,
-                                                        "$lt": date_to
-                                                    }},{"_id":0}))
-        print("get",data)
+        if present_subsets.intervals != []:
+            db=connect_database()
+            with progressbar.ProgressBar(max_value=len(present_subsets.intervals), prefix="DB subsets: ") as bar:
+                i=0
+                bar.update(i)
+                for date_from, date_to in present_subsets.to_tuples():
+                    bar.prefix="Subset {} to {}:".format(date_from,date_to)
+                    bar.update(i)
+                    data.extend(db[col_data_analyses].find({"country":self.country,
+                                                            "source":self.source,
+                                                            "lang":self.lang,
+                                                            "created_at": {
+                                                                "$gte": date_from,
+                                                                "$lt": date_to
+                                                            }},{"_id":0}))
+                    i+=1
+                    bar.update(i)
         return data

@@ -10,7 +10,7 @@ def topicalize_tweets(tweets, nb_topics):
     return tweets, topics
 
 def topicalize_texts(preproc_texts, nb_topics, no_top_words=10):
-    max_df=0.95
+    max_df=0.95 if len(preproc_texts)>2 else 1.0
     min_df=2 if max_df*len(preproc_texts)>2 else 0
     tfidf=TfidfVectorizer(max_df=max_df,min_df=min_df,max_features=None,stop_words='english')
     tfidf_res=tfidf.fit_transform(preproc_texts)
