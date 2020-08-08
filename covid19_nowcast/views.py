@@ -311,7 +311,9 @@ def create_session(request):
     request.session['password'] = 'password123'
     return HttpResponse("<h1>dataflair<br> the session is set</h1>")
 def access_session(request):
+    request.session['test'] = 'item'
     response = str(request.session.items())
+    print("access_session"+response)
     return HttpResponse(response)
 
 def delete_session(request):
