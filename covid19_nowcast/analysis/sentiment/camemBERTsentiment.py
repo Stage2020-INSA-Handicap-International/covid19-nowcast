@@ -10,6 +10,7 @@ import numpy as np
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import CamembertForSequenceClassification, CamembertTokenizer, AdamW
 from tqdm import tqdm
+import progressbar
 import json
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -110,7 +111,7 @@ def test_file(w_path, test_loader, device, model, flat=True):
 
 def analyse(test_loader, device, model):
     pred = []
-    for i, loader in tqdm(enumerate(test_loader)):
+    for loader in progressbar.progressbar(test_loader, prefix="FR sentiments: "):
         inp, label = loader
         outp1 = model(inp.to(device))
         for p1 in torch.argmax(outp1[0], axis=1).flatten():

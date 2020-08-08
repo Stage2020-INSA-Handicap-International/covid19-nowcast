@@ -38,7 +38,7 @@ class Preprocessor(object):
     def preprocess(tweets_list, **kwargs):
         nlp = spacy.load("en_core_web_sm")
         tokens = []
-        for i in progressbar.progressbar(range(len(tweets_list))):
+        for i in progressbar.progressbar(range(len(tweets_list)),prefix="Preprocessing :"):
             doc = nlp(str(tweets_list[i]))
             #Remove stop words and non-alpha words
             tweet_tokens = [str(token.lemma_).lower() for token in doc if (not token.is_stop and token.is_alpha)]
