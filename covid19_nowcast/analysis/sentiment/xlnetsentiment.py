@@ -13,9 +13,9 @@ from tqdm import tqdm
 import json
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-# model.load_state_dict(torch.load('covid19_nowcast/trained_models/en_weights.pth'))
-# model.eval()
+model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
+model.load_state_dict(torch.load('covid19_nowcast/trained_models/en_weights.pth'))
+model.eval()
 
 def flat_accuracy(preds, labels):  # A function to predict Accuracy
     correct = 0
@@ -151,7 +151,7 @@ def predict(data_to_predict, prediction_key):
         data = pd.DataFrame.from_dict(data_to_predict)
     else:
         raise TypeError("Unexpected type for data_to_predict: {}".format(type(data_to_predict).__name__))
-
+    print("pred",data,data_to_predict)
     sentences = [sent for sent in data[prediction_key]]
 
     tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased', do_lower_case=True)
@@ -178,7 +178,7 @@ def predict(data_to_predict, prediction_key):
     test_loader = DataLoader(test_data, batch_size=batch_size)
 
     data['pred'] = analyse(test_loader, device, model)
-    return data.to_dict()
+    return data.to_dict(orient="records")
 
 if __name__ == '__main__':
 
@@ -225,8 +225,7 @@ if __name__ == '__main__':
         test_loader = DataLoader(test_data, batch_size=batch_size)
 
         model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-        data['pred'] = analyse('xlnet_weights_{}_{}.pth'.format(args.option, args.name), test_loader, device, model,
-                            data, args.output)
+        data['pred'] = analyse(test_loader, device, model)
 
         data.to_json(args.output, orient='index', date_format='iso')
     elif args.test:
