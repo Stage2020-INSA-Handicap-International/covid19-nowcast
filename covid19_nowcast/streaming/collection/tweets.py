@@ -3,7 +3,7 @@ import urllib
 import covid19_nowcast.util
 from covid19_nowcast.streaming.collection import crawler_twitter
 
-def search_from_terms(api, term, **kwargs):
+def search_from_terms(api, term):
     """
     Gets tweets from Twitter's api which are result from *raw_query*
     Input:
@@ -15,7 +15,7 @@ def search_from_terms(api, term, **kwargs):
     tweets=api.GetSearch(term=term)
     return tweets
 
-def search_from_geocode(api, geocode, **kwargs):
+def search_from_geocode(api, geocode):
     """
     Gets tweets from Twitter's api which are result from *raw_query*
     Input:
@@ -27,7 +27,7 @@ def search_from_geocode(api, geocode, **kwargs):
     tweets=api.GetSearch(geocode=geocode)
     return tweets
 
-def search_from_raw_query(api, raw_query, **kwargs):
+def search_from_raw_query(api, raw_query):
     """
     Gets tweets from Twitter's api which are results from *raw_query*
     Input:
@@ -39,7 +39,7 @@ def search_from_raw_query(api, raw_query, **kwargs):
     tweets=api.GetSearch(raw_query=raw_query)
     return tweets
 
-def crawl_from_raw_query(raw_query, live, count, legacy=False, **kwargs):
+def crawl_from_raw_query(raw_query, live, count, legacy=False):
     """
     Crawl tweets from Twitter which are results from *raw_query*
     Input:
@@ -53,7 +53,7 @@ def crawl_from_raw_query(raw_query, live, count, legacy=False, **kwargs):
     tweets=crawler(raw_query="/search?q="+formatted_query+("&f=live" if live else ""), count=count)
     return tweets
 
-def get_from_file(filepath, **kwargs):
+def get_from_file(filepath):
     """
     Gets tweets at *filepath*
     Input:

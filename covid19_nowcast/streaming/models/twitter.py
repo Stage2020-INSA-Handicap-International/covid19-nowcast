@@ -1,5 +1,5 @@
 class Tweet():
-    def __init__(self, id_str, user, created_at, full_text=None, retweet_count=0, favorite_count=0, replies=[]):
+    def __init__(self, id_str, created_at, full_text=None, user=None, retweet_count=0, favorite_count=0, replies=[]):
         self.id_str=id_str
         self.user = user
         self.created_at =created_at
