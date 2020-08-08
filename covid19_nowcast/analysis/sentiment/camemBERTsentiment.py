@@ -10,12 +10,13 @@ import numpy as np
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import CamembertForSequenceClassification, CamembertTokenizer, AdamW
 from tqdm import tqdm
+import progressbar
 import json
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# model = CamembertForSequenceClassification.from_pretrained('camembert-base', num_labels=3)
-# model.load_state_dict(torch.load('covid19_nowcast/trained_models/fr_weights.pth'))
-# model.eval()
+model = CamembertForSequenceClassification.from_pretrained('camembert-base', num_labels=3)
+model.load_state_dict(torch.load('covid19_nowcast/trained_models/fr_weights.pth'))
+model.eval()
 
 def flat_accuracy(preds, labels):  # A function to predict Accuracy
     correct = 0
@@ -110,7 +111,7 @@ def test_file(w_path, test_loader, device, model, flat=True):
 
 def analyse(test_loader, device, model):
     pred = []
-    for i, loader in tqdm(enumerate(test_loader)):
+    for loader in progressbar.progressbar(test_loader, prefix="FR sentiments: "):
         inp, label = loader
         outp1 = model(inp.to(device))
         for p1 in torch.argmax(outp1[0], axis=1).flatten():
@@ -159,7 +160,7 @@ def predict(data_to_predict, prediction_key):
 
     data['sentiment'] = analyse(test_loader, device, model)
 
-    return data.to_dict()
+    return data.to_dict(orient="records")
 
 if __name__ == '__main__':
 
@@ -247,7 +248,7 @@ if __name__ == '__main__':
         test_loader = DataLoader(test_data, batch_size=batch_size)
 
         model = CamembertForSequenceClassification.from_pretrained('camembert-base', num_labels=3)
-        data['pred'] = analyse('camembert_weights_{}.pth'.format(args.option), test_loader, device, model)
+        data['pred'] = analyse(test_loader, device, model)
 
         data.to_json(args.output, orient='index', date_format='iso')
     else:

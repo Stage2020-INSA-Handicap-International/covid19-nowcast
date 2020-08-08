@@ -14,8 +14,8 @@ import progressbar
 import json
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-model.load_state_dict(torch.load('covid19_nowcast/trained_models/en_weights.pth'))
+model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=8)
+model.load_state_dict(torch.load('covid19_nowcast/trained_models/cat_weights.pth'))
 model.eval()
 
 def flat_accuracy(preds, labels):  # A function to predict Accuracy
@@ -26,7 +26,7 @@ def flat_accuracy(preds, labels):  # A function to predict Accuracy
     return (correct / len(labels)) * 100
 
 
-def sentiment_accuracy(preds, labels):  # A function to predict Accuracy by sentiment
+def category_accuracy(preds, labels):  # A function to predict Accuracy by category
     acc_neg = 0
     acc_neut = 0
     acc_pos = 0
@@ -64,12 +64,12 @@ def evaluate(model, test_loader, device, flat=True):
     if flat:
         print("Total Examples : {} Accuracy {}".format(t, flat_accuracy(acc, lab)))
     else:
-        acc_neg, acc_neut, acc_pos = sentiment_accuracy(acc, lab)
-        print("Accuracy by sentiment : neg {}, neut {}, pos {}".format(acc_neg, acc_neut, acc_pos))
+        acc_neg, acc_neut, acc_pos = category_accuracy(acc, lab)
+        print("Accuracy by category : neg {}, neut {}, pos {}".format(acc_neg, acc_neut, acc_pos))
     return flat_accuracy(acc, lab)
 
 
-def test_sentence(w_path, device, pad, sentence, num_labels=3):
+def test_sentence(w_path, device, pad, sentence, num_labels=8):
     model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=num_labels)
     model.load_state_dict(torch.load(w_path))
     model.eval()
@@ -103,18 +103,28 @@ def test_file(w_path, test_loader, device, model, flat=True):
         [lab.append(z1.item()) for z1 in lab1]
         for p1 in torch.argmax(outp1[0], axis=1).flatten():
             if p1.item() == 0:
-                pred.append('negative')
+                pred.append('Business')
             elif p1.item() == 1:
-                pred.append('neutral')
+                pred.append('Food')
             elif p1.item() == 2:
-                pred.append('positive')
+                pred.append('Health')
+            elif p1.item() == 3:
+                pred.append('Politics')
+            elif p1.item() == 4:
+                pred.append('Science')
+            elif p1.item() == 5:
+                pred.append('Sports')
+            elif p1.item() == 6:
+                pred.append('Tech')
+            elif p1.item() == 7:
+                pred.append('Travel')
     if flat:
         print("Total Examples : {} Accuracy {}".format(t, flat_accuracy(acc, lab)))
-        return flat_accuracy(acc, lab)
+        return pred
     else:
-        acc_neg, acc_neut, acc_pos = sentiment_accuracy(acc, lab)
+        acc_neg, acc_neut, acc_pos = category_accuracy(acc, lab)
         print("Total Examples : {} Accuracy {}".format(t, flat_accuracy(acc, lab)))
-        print("Accuracy by sentiment : neg {}, neut {}, pos {}".format(acc_neg, acc_neut, acc_pos))
+        print("Accuracy by category : neg {}, neut {}, pos {}".format(acc_neg, acc_neut, acc_pos))
         conf_mat = confusion_matrix(lab, acc)
         true_neg = conf_mat[0][0]
         true_neut = conf_mat[1][1]
@@ -130,17 +140,28 @@ def test_file(w_path, test_loader, device, model, flat=True):
 
 
 def analyse(test_loader, device, model):
+
     pred = []
-    for loader in progressbar.progressbar(test_loader, prefix="EN sentiments: "):
+    for loader in progressbar.progressbar(test_loader, prefix="Categories: "):
         inp, label = loader
         outp1 = model(inp.to(device))
         for p1 in torch.argmax(outp1[0], axis=1).flatten():
             if p1.item() == 0:
-                pred.append('negative')
+                pred.append('Business')
             elif p1.item() == 1:
-                pred.append('neutral')
+                pred.append('Food')
             elif p1.item() == 2:
-                pred.append('positive')
+                pred.append('Health')
+            elif p1.item() == 3:
+                pred.append('Politics')
+            elif p1.item() == 4:
+                pred.append('Science')
+            elif p1.item() == 5:
+                pred.append('Sports')
+            elif p1.item() == 6:
+                pred.append('Tech')
+            elif p1.item() == 7:
+                pred.append('Travel')
 
     return pred
 
@@ -178,8 +199,10 @@ def predict(data_to_predict, prediction_key):
     test_data = TensorDataset(Xtest, Ytest)
     test_loader = DataLoader(test_data, batch_size=batch_size)
 
-    data['sentiment'] = analyse(test_loader, device, model)
+    data['category'] = analyse(test_loader, device, model)
+
     return data.to_dict(orient="records")
+
 
 if __name__ == '__main__':
 
@@ -188,18 +211,18 @@ if __name__ == '__main__':
     parser.add_argument("-a", "--analyse", action="store_true")
     parser.add_argument("-f", "--file", type=str, help="json file that will be used in the training or testing")
     parser.add_argument("-s", "--sentence", type=str, default="It's a pleasure to meet you")
-    parser.add_argument("-op", "--option", type=str, default="full_text")
+    parser.add_argument("-op", "--option", type=str, default="preproc_text")
     parser.add_argument("-n", "--name", type=str, required=True)
     parser.add_argument("-e", "--epoch", type=int, default=10)
     parser.add_argument("-o", "--output", type=str, default="data_out.json")
     args = parser.parse_args()
 
     if args.analyse:
+        assert (args.file)
         data = pd.read_json(args.file)
         # data = data.sample(frac=1) #Shuffle the dataset
         sentences = []
         for sentence in data[args.option]:
-            sentence = sentence + "[SEP] [CLS]"  # [SEP] and [CLS] is needed for our model
             sentences.append(sentence)
 
         tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased', do_lower_case=True)
@@ -225,20 +248,29 @@ if __name__ == '__main__':
         test_data = TensorDataset(Xtest, Ytest)
         test_loader = DataLoader(test_data, batch_size=batch_size)
 
-        model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
+        model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=8)
         data['pred'] = analyse(test_loader, device, model)
 
         data.to_json(args.output, orient='index', date_format='iso')
     elif args.test:
         if args.file:
             test_data = pd.read_json(args.file)
-            test_data = test_data[['preproc_text', 'sentiment', 'full_text']]
-            test_data = test_data[test_data.sentiment != "N/A"]
-            # test_data = test_data[test_data.sentiment != "neutral"]
-            test_data = test_data[test_data.sentiment != "mixed"]
+            test_data = test_data[['preproc_text', 'category', "full_text"]]
+            test_data = test_data[test_data.category != "N/A"]
+            test_data = test_data[test_data.category != "T Magazine"]
+            test_data = test_data[test_data.category != "Magazine"]
+            test_data = test_data[test_data.category != "Style"]
+            test_data = test_data[test_data.category != "Books"]
+            test_data = test_data[test_data.category != "N.Y."]
+            test_data = test_data[test_data.category != "U.S."]
+            test_data = test_data[test_data.category != "World"]
+            test_data = test_data[test_data.category != "Opinion"]
+            test_data = test_data[test_data.category != "Arts"]
+            test_data = test_data[test_data.category != "Arts & Entertainment"]
+            test_data = test_data[test_data.category != "LGBTQ"]
+            test_data = test_data[test_data.category != "Reader"]
             sentences = []
             for sentence in test_data[args.option]:
-                sentence = sentence + "[SEP] [CLS]"  # [SEP] and [CLS] is needed for our model
                 sentences.append(sentence)
 
             tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased', do_lower_case=True)
@@ -246,7 +278,8 @@ if __name__ == '__main__':
 
             ids = [tokenizer.convert_tokens_to_ids(x) for x in tokenized_text]
 
-            labels = test_data['sentiment'].astype('category').cat.codes.values
+            #labels = test_data['category'].astype('category').cat.codes.values
+            labels = np.zeros(len(ids))
 
             # Getting max len in order to pad tokenized ids
             max1 = len(ids[0])
@@ -264,27 +297,34 @@ if __name__ == '__main__':
             test_dataset = TensorDataset(Xtest, Ytest)
             test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
-            model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-            pred = test_file('xlnet_weights_{}_{}.pth'.format(args.option, args.name), test_loader, device, model,
-                             flat=False)
+            model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=8)
+            pred = test_file('cat_weights_{}_{}.pth'.format(args.option, args.name), test_loader, device, model,
+                             flat=True)
             test_data['pred'] = pred
             # data = pd.concat([test_data, test_data], ignore_index=True, axis=1)
             test_data.to_json(args.output, orient='index', date_format='iso')
         else:
-            test_sentence('xlnet_weights_{}_{}.pth'.format(args.option, args.name), device, 0, args.sentence)
+            test_sentence('cat_weights_{}_{}.pth'.format(args.option, args.name), device, 0, args.sentence)
     else:
-        # data_train = pd.read_json('../../../Datasets/Kenya_tweets_sentiments.json')
         assert (args.file)
         data_train = pd.read_json(args.file)
-        data_train = data_train[['preproc_text', 'sentiment', 'full_text']]
-        data_train = data_train[data_train.sentiment != "N/A"]
-        # data_train = data_train[data_train.sentiment != "neutral"]
-        data_train = data_train[data_train.sentiment != "mixed"]
-        # print(len(data_train['sentiment']))
+        data_train = data_train[['preproc_text', 'category', 'full_text']]
+        data_train = data_train[data_train.category != "N/A"]
+        data_train = data_train[data_train.category != "T Magazine"]
+        data_train = data_train[data_train.category != "Magazine"]
+        data_train = data_train[data_train.category != "Style"]
+        data_train = data_train[data_train.category != "Books"]
+        data_train = data_train[data_train.category != "N.Y."]
+        data_train = data_train[data_train.category != "U.S."]
+        data_train = data_train[data_train.category != "World"]
+        data_train = data_train[data_train.category != "Opinion"]
+        data_train = data_train[data_train.category != "Arts"]
+        data_train = data_train[data_train.category != "Arts & Entertainment"]
+        data_train = data_train[data_train.category != "LGBTQ"]
+        data_train = data_train[data_train.category != "Reader"]
 
         sentences = []
         for sentence in data_train[args.option]:
-            sentence = sentence + "[SEP] [CLS]"  # [SEP] and [CLS] is needed for our model
             sentences.append(sentence)
 
         tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased', do_lower_case=True)
@@ -292,8 +332,8 @@ if __name__ == '__main__':
 
         ids = [tokenizer.convert_tokens_to_ids(x) for x in tokenized_text]
 
-        data_train['sentiment_cat'] = data_train['sentiment'].astype('category').cat.codes
-        labels = data_train['sentiment_cat'].values
+        data_train['category_cat'] = data_train['category'].astype('category').cat.codes
+        labels = data_train['category_cat'].values
 
         # Getting max len in order to pad tokenized ids
         max1 = len(ids[0])
@@ -305,7 +345,7 @@ if __name__ == '__main__':
 
         input_ids2 = pad_sequences(ids, maxlen=MAX_LEN, dtype="long", truncating="post", padding="post")
 
-        xtrain, xtest, ytrain, ytest = train_test_split(input_ids2, labels, test_size=0.5, random_state=69)
+        xtrain, xtest, ytrain, ytest = train_test_split(input_ids2, labels, test_size=0.25, random_state=69)
 
         Xtrain = torch.tensor(xtrain)
         Ytrain = torch.tensor(ytrain)
@@ -319,11 +359,10 @@ if __name__ == '__main__':
         loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
         test_loader = DataLoader(test_data, batch_size=batch_size)
 
-        #model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-        model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=3)
-        model.load_state_dict(torch.load('xlnet_weights_{}_kenya.pth'.format(args.option)))
+        model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', num_labels=8)
+        model.load_state_dict(torch.load("cat_weights_{}_{}.pth".format(args.option, args.name)))
 
-        optimizer = AdamW(model.parameters(), lr=2e-5)
+        optimizer = AdamW(model.parameters(), lr=1e-6)
 
         criterion = nn.CrossEntropyLoss()
 
@@ -356,12 +395,12 @@ if __name__ == '__main__':
                                                                                                   no_train,
                                                                                                   flat_accuracy(
                                                                                                       train_loss, l)))
-            acc_eval = evaluate(model, test_loader, device, False)
+            acc_eval = evaluate(model, test_loader, device, True)
             print("Eval accuracy : {}".format(acc_eval))
             if acc - acc_eval < 0:
                 acc = acc_eval
                 print("saving weights ...")
-                torch.save(model.state_dict(), "xlnet_weights_{}_{}.pth".format(args.option, args.name))
+                torch.save(model.state_dict(), "cat_weights_{}_{}.pth".format(args.option, args.name))
         print("Saving last weights...")
-        torch.save(model.state_dict(), "xlnet_weights_last_{}_{}.pth".format(args.option, args.name))
+        torch.save(model.state_dict(), "cat_weights_last_{}_{}.pth".format(args.option, args.name))
         print("Best eval accuracy : {}".format(acc))

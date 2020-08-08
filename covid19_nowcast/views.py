@@ -2,6 +2,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
+import copy
 import json
 from datetime import datetime, timedelta
 
@@ -9,14 +10,12 @@ from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.template import RequestContext
 
-from transformers import XLNetForSequenceClassification
-from transformers import CamembertForSequenceClassification
-import torch
-
 from covid19_nowcast.streaming.collection import covid19_api
 from covid19_nowcast import util, analysis
 from covid19_nowcast.user_interface import visualisation
-from covid19_nowcast.streaming import collection
+from covid19_nowcast.streaming import CollectionManager
+from covid19_nowcast.analysis import AnalysisManager
+from covid19_nowcast.streaming.preparation import PreprocessManager
 def index(request):
     #return render_to_response('index.html')
     return render(request,'index.html')
@@ -57,7 +56,7 @@ class CollectorView (View):
             found_country=False
             for country in available_countries:
                 if params["country"] in country.values():
-                    params["country"]=country["Slug"]
+                    params["country"]=country
                     found_country=True
             assert found_country, "{} is not an available country for analyses".format(params["country"])
 
@@ -73,15 +72,19 @@ class CollectorView (View):
 
             for date_key in date_keys:
                 test_date(params[date_key])
+
+            mem_date_to=copy.copy(params["date_to"])
+            params["date_to"]=datetime.strftime(datetime.strptime(params["date_to"], '%Y-%m-%d')+timedelta(days=1),'%Y-%m-%d')
+            assert params["date_from"] < params["date_to"], "beginning date {} is later than end {}".format(params["date_from"],mem_date_to)
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
         
         # Request processing
-        clsf={"fr":analysis.sentiment.camemBERTsentiment,"en":analysis.sentiment.xlnetsentiment}
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
-            tweets=collection.collect_sts_data(params["country"], params["source"], params["date_from"], params["date_to"])
-            #tweets=clsf[params["lang"]].predict(tweets,"full_text")
+            tweets=CollectionManager.collect_sts_data(params["country"], params["source"], params["lang"], params["date_from"], params["date_to"])
+            tweets=PreprocessManager.preprocess(tweets)
+            tweets=AnalysisManager.analyze(tweets)
             request.session["data"]=tweets
 
         # Session management
@@ -89,8 +92,11 @@ class CollectorView (View):
         request.session["source"]=params["source"]
         request.session["date_from"]=params["date_from"]
         request.session["date_to"]=params["date_to"]
+        request.session["lang"]=params["lang"]
 
-        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=200)
+
+        response=HttpResponse(json.dumps({"count":len(request.session["data"]),"request":params},ensure_ascii=False),status=200)
+
         return response
 
 class TopicAnalysisView (View):
@@ -119,16 +125,17 @@ class TopicAnalysisView (View):
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
             
         # Request processing
-        topics=None
+        topics=[]
         if request.session.get("topics",None) is not None \
                 and request.session.get("modified_category_topics",False) == False \
                 and request.session.get("nb_topics",-1)==params["nb_topics"]:
             topics=request.session["topics"]
         else:
-            tweets=request.session["data"]
-            tweets,topics=analysis.topics.topicalize_tweets(tweets, params["nb_topics"])
+            tweets=request.session["category_data"]
+            if tweets!=[]:
+                tweets,topics=analysis.topics.topicalize_tweets(tweets, params["nb_topics"])
             request.session["modified_topics"]=True
-            request.session["data"]=tweets
+            request.session["category_data"]=tweets
 
         # Session management
         request.session["nb_topics"]=params["nb_topics"]
@@ -175,7 +182,7 @@ class TopicExamplesView (View):
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
 
         # Request processing
-        tweets=request.session["data"]
+        tweets=request.session["category_data"]
         topic_indices=[t["topic_id"] for t in tweets]
         topics=request.session["topics"]
         examples=analysis.topics.top_topic_tweets_by_proba(tweets,topic_indices,topics, params["nb_examples"])[params["topic"]]["top_tweets"]
@@ -210,7 +217,7 @@ class GraphAnalysisView (View):
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=409, reason="Conflict: "+str(e))
 
-        keys={"sentiments":dict, "cases":dict, "trends":bool, "topic":str, "period":str}
+        keys={"sentiments":dict, "cases":dict, "trends":bool, "topic":int, "period":str}
         try:
             for key, t in keys.items():
                 check_missing(key, params.keys())
@@ -227,7 +234,8 @@ class GraphAnalysisView (View):
 
             assert params["period"] in ["day","week","month"]
 
-            # <!> Check topic_id is in classifier classes
+            assert params["topic"] >= 0, "Topic index {} is out of bounds (should be >=0)".format(params["topic"])
+            assert params["topic"] < request.session["nb_topics"], "Topic index {} is out of bounds ({} topics)".format(params["topic"],request.session["nb_topics"])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
 
@@ -277,7 +285,8 @@ class CategoryView (View):
             check_missing(key, params.keys())
             check_type(key,params[key],str)
 
-            available_categories=["All","Business", "Food", "Health", "Politics", "Science", "Sports", "Tech", "Travel"]
+            available_categories=["All", "Business", "Food", "Health", "Politics", "Science", "Sports", "Tech", "Travel"]
+
             assert params[key] in available_categories, "{} category is not known".format(params[key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
@@ -291,7 +300,7 @@ class CategoryView (View):
             request.session["category"]=params["category"]
             request.session["modified_category_graph"]=True
             request.session["modified_category_topics"]=True
-        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=200)
+        response=HttpResponse(json.dumps({"count":len(request.session["category_data"]),"request":params},ensure_ascii=False),status=200)
         return response
 
 def cookie_session(request):
