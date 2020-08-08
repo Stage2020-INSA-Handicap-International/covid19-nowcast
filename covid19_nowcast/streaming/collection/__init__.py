@@ -4,7 +4,7 @@ import covid19_nowcast.streaming.collection.covid19_api
 import covid19_nowcast.streaming.collection.crawler_facebook
 import covid19_nowcast.streaming.collection.articles
 
-#from covid19_nowcast.streaming.collection.config_auth_twitter import *
+from covid19_nowcast.streaming.collection.config_auth_twitter import *
 import twitter
     
 from twarc import Twarc
