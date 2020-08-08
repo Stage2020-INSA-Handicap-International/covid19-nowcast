@@ -94,7 +94,9 @@ class CollectorView (View):
         request.session["date_to"]=params["date_to"]
         request.session["lang"]=params["lang"]
 
+
         response=HttpResponse(json.dumps({"count":len(request.session["data"]),"request":params},ensure_ascii=False),status=200)
+
         return response
 
 class TopicAnalysisView (View):
@@ -284,6 +286,7 @@ class CategoryView (View):
             check_type(key,params[key],str)
 
             available_categories=["All", "Business", "Food", "Health", "Politics", "Science", "Sports", "Tech", "Travel"]
+
             assert params[key] in available_categories, "{} category is not known".format(params[key])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
@@ -317,7 +320,9 @@ def create_session(request):
     request.session['password'] = 'password123'
     return HttpResponse("<h1>dataflair<br> the session is set</h1>")
 def access_session(request):
+    #request.session['test'] = 'item'
     response = str(request.session.items())
+    #print("access_session"+response)
     return HttpResponse(response)
 
 def delete_session(request):

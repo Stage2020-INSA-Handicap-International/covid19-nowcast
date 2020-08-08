@@ -11,6 +11,7 @@ from twarc import Twarc
 
 import urllib
 from covid19_nowcast import util
+
 from covid19_nowcast.streaming.models.twitter import Tweet
 from datetime import datetime
 import locale
@@ -37,3 +38,4 @@ def collect_twitter_data(country,lang,date_from,date_to):
     data=[{"id_str":t.id_str,"created_at":datetime.strftime(datetime.strptime(str(t.created_at),"%a %b %d %H:%M:%S %z %Y"),"%Y-%m-%dT%H:%M:%SZ"),"full_text":t.text} for t in data]
     
     return data
+
