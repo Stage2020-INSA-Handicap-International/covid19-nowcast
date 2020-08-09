@@ -1,7 +1,7 @@
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-
+import base64
 import copy
 import json
 from datetime import datetime, timedelta
@@ -16,6 +16,7 @@ from covid19_nowcast.user_interface import visualisation
 from covid19_nowcast.streaming import CollectionManager
 from covid19_nowcast.analysis import AnalysisManager
 from covid19_nowcast.streaming.preparation import PreprocessManager
+from covid19_nowcast.user_interface import visualisation
 def index(request):
     #return render_to_response('index.html')
     return render(request,'index.html')
@@ -185,12 +186,17 @@ class TopicExamplesView (View):
         topics=request.session["topics"]
         examples=analysis.topics.top_topic_tweets_by_proba(tweets,topic_indices,topics, params["nb_examples"])[params["topic"]]["top_tweets"]
         examples=[e["full_text"] for e in examples]
+        topic_texts=[t["preproc_text"] for t in tweets if t["topic_id"]==params["topic"]]
+        graph=visualisation.n_gram_graph(topic_texts)
+        with open(graph, "rb") as img_file:
+            graph = str(base64.b64encode(img_file.read()))[2:-1]
+            print(str(graph)[2:-1])
         # Session management
         request.session["examples"]=examples
         request.session["topic"]=params["topic"]
         request.session["nb_examples"]=params["nb_examples"]
         
-        response=HttpResponse(json.dumps({"examples":examples,"request":params},ensure_ascii=False),status=200)
+        response=HttpResponse(json.dumps({"graph":graph,"examples":examples,"request":params},ensure_ascii=False),status=200)
         return response
 
 class GraphAnalysisView (View):
