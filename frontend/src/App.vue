@@ -35,6 +35,10 @@ export default {
     height:200px;
   }
 
+    div {
+    font-family: 'Roboto'
+  }
+
 
 
 </style>

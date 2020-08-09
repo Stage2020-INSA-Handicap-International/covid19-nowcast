@@ -1,0 +1,122 @@
+digraph "N-gram cloud" {
+	node [color=transparent fontname=helvetica]
+	node [fontsize=32]
+	existence
+	node [fontsize=32]
+	firsthand
+	existence -> firsthand
+	node [color=transparent fontname=helvetica]
+	node [fontsize=26]
+	lord
+	node [fontsize=30]
+	save
+	lord -> save
+	node [color=transparent fontname=helvetica]
+	node [fontsize=24]
+	fearful
+	node [fontsize=28]
+	offend
+	fearful -> offend
+	node [color=transparent fontname=helvetica]
+	node [fontsize=25]
+	incompetent
+	node [fontsize=23]
+	greedy
+	incompetent -> greedy
+	node [color=transparent fontname=helvetica]
+	node [fontsize=28]
+	offend
+	node [fontsize=22]
+	china
+	offend -> china
+	node [color=transparent fontname=helvetica]
+	node [fontsize=26]
+	daughter
+	node [fontsize=19]
+	poor
+	daughter -> poor
+	node [color=transparent fontname=helvetica]
+	node [fontsize=18]
+	avoid
+	node [fontsize=25]
+	son
+	avoid -> son
+	node [color=transparent fontname=helvetica]
+	node [fontsize=24]
+	coronaviruskenya
+	node [fontsize=20]
+	enter
+	coronaviruskenya -> enter
+	node [color=transparent fontname=helvetica]
+	node [fontsize=19]
+	citizen
+	node [fontsize=21]
+	let
+	citizen -> let
+	node [color=transparent fontname=helvetica]
+	node [fontsize=17]
+	kenya
+	node [fontsize=25]
+	incompetent
+	kenya -> incompetent
+	node [color=transparent fontname=helvetica]
+	node [fontsize=21]
+	dear
+	node [fontsize=26]
+	lord
+	dear -> lord
+	node [color=transparent fontname=helvetica]
+	node [fontsize=20]
+	virus
+	node [fontsize=17]
+	exist
+	virus -> exist
+	node [color=transparent fontname=helvetica]
+	node [fontsize=21]
+	let
+	node [fontsize=24]
+	fearful
+	let -> fearful
+	node [color=transparent fontname=helvetica]
+	node [fontsize=23]
+	greedy
+	node [fontsize=18]
+	politician
+	greedy -> politician
+	node [color=transparent fontname=helvetica]
+	node [fontsize=20]
+	enter
+	node [fontsize=17]
+	kenya
+	enter -> kenya
+	node [color=transparent fontname=helvetica]
+	node [fontsize=22]
+	china
+	node [fontsize=16]
+	deny
+	china -> deny
+	node [color=transparent fontname=helvetica]
+	node [fontsize=14]
+	innocent
+	node [fontsize=19]
+	citizen
+	innocent -> citizen
+	node [color=transparent fontname=helvetica]
+	node [fontsize=17]
+	exist
+	node [fontsize=14]
+	evidence
+	exist -> evidence
+	node [color=transparent fontname=helvetica]
+	node [fontsize=19]
+	poor
+	node [fontsize=14]
+	innocent
+	poor -> innocent
+	node [color=transparent fontname=helvetica]
+	node [fontsize=17]
+	kenya
+	node [fontsize=18]
+	avoid
+	kenya -> avoid
+}

@@ -7,9 +7,12 @@ from covid19_nowcast.streaming.collection import collect_twitter_data
 from covid19_nowcast.streaming.collection import hydrate
 from covid19_nowcast.streaming.storage import DBTimeSubset
 import progressbar
+from covid19_nowcast import util
+
 class CollectionManager():
     @staticmethod
     def collect_sts_data(country,source,lang,date_from,date_to):
+        '''
         data=None
         db_time_subsets=DBTimeSubset(country["ISO2"],source,lang)
         present_subsets,missing_subsets=db_time_subsets.subsets_status(date_from,date_to)
@@ -31,4 +34,6 @@ class CollectionManager():
                     i+=1
                     bar.update(i)
         data=db_time_subsets.insert_data(data,missing_subsets)
+        '''
+        data=util.import_params("covid19_nowcast/util/2020_tweets.json")
         return data
