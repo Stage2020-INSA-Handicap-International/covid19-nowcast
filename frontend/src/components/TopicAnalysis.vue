@@ -19,7 +19,8 @@
         </div>
         <div class="topic-box">
           <div class="title-4">N-GRAMS</div>
-          <img :src='"data:image/png;base64, "+n_grams_img' alt="no img at the moment bro">
+          <!--<img :src='"data:image/png;base64, "+n_grams_img' alt="n-gram diagram image">-->
+          <canvas id="canvas" width=600></canvas>
         </div>
       </div>
       <div class="container-5 topic-box">
@@ -110,12 +111,8 @@
             data = JSON.parse(data);
             //Set examples
             vm.examples = data["examples"];
-            //Set n_grams img
-            //var encoded_img = data["graph"]
-            //var decoded_img = new Image()
-            //decoded_img.src = encoded_img
-            //vm.n_grams_img = decoded_img
             vm.n_grams_img = data["graph"]
+            vm.resize_img()
           }); 
     },
     get: function () {
@@ -124,7 +121,23 @@
           .done(function( data ) {
             alert( "Data Loaded: " + JSON.stringify(data) );
           });      
-    },   
+    }, 
+    resize_img: function() {
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      var img = new Image();
+      img.src = "data:image/png;base64, "+this.n_grams_img
+
+      img.onload = function () {
+
+          // set size proportional to image
+          canvas.height = canvas.width * (img.height / img.width);
+
+          ctx.drawImage(img, 0, 0, img.width,    img.height,     // source rectangle
+                         0, 0, canvas.width, canvas.height);
+      }
+
+    },  
 
   },
 
@@ -165,6 +178,7 @@
   .container-3 {
     display:flex;
     
+    
   }
 
   .container-4 {
@@ -188,7 +202,7 @@
     
   }
   .scrollbar {
-    height:400px;
+    height:800px;
     overflow-y:auto;
   }
 

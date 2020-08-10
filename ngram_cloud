@@ -1,122 +1,122 @@
 digraph "N-gram cloud" {
 	node [color=transparent fontname=helvetica]
-	node [fontsize=32]
-	existence
-	node [fontsize=32]
-	firsthand
-	existence -> firsthand
-	node [color=transparent fontname=helvetica]
-	node [fontsize=26]
-	lord
-	node [fontsize=30]
-	save
-	lord -> save
-	node [color=transparent fontname=helvetica]
-	node [fontsize=24]
-	fearful
-	node [fontsize=28]
-	offend
-	fearful -> offend
-	node [color=transparent fontname=helvetica]
-	node [fontsize=25]
-	incompetent
-	node [fontsize=23]
-	greedy
-	incompetent -> greedy
+	node [fontsize=31]
+	follow
+	node [fontsize=27]
+	credible
+	follow -> credible
 	node [color=transparent fontname=helvetica]
 	node [fontsize=28]
-	offend
-	node [fontsize=22]
-	china
-	offend -> china
+	solid
+	node [fontsize=31]
+	follow
+	solid -> follow
 	node [color=transparent fontname=helvetica]
-	node [fontsize=26]
-	daughter
-	node [fontsize=19]
-	poor
-	daughter -> poor
-	node [color=transparent fontname=helvetica]
-	node [fontsize=18]
-	avoid
 	node [fontsize=25]
-	son
-	avoid -> son
+	wuhan
+	node [fontsize=25]
+	coronavirus
+	wuhan -> coronavirus
+	node [color=transparent fontname=helvetica]
+	node [fontsize=28]
+	question
+	node [fontsize=24]
+	africa
+	question -> africa
+	node [color=transparent fontname=helvetica]
+	node [fontsize=25]
+	coronavirus
+	node [fontsize=28]
+	question
+	coronavirus -> question
 	node [color=transparent fontname=helvetica]
 	node [fontsize=24]
-	coronaviruskenya
-	node [fontsize=20]
-	enter
-	coronaviruskenya -> enter
-	node [color=transparent fontname=helvetica]
-	node [fontsize=19]
-	citizen
-	node [fontsize=21]
-	let
-	citizen -> let
-	node [color=transparent fontname=helvetica]
-	node [fontsize=17]
-	kenya
-	node [fontsize=25]
-	incompetent
-	kenya -> incompetent
-	node [color=transparent fontname=helvetica]
-	node [fontsize=21]
-	dear
+	work
 	node [fontsize=26]
-	lord
-	dear -> lord
+	hard
+	work -> hard
 	node [color=transparent fontname=helvetica]
-	node [fontsize=20]
-	virus
-	node [fontsize=17]
-	exist
-	virus -> exist
+	node [fontsize=26]
+	hard
+	node [fontsize=28]
+	solid
+	hard -> solid
+	node [color=transparent fontname=helvetica]
+	node [fontsize=24]
+	timely
+	node [fontsize=24]
+	info
+	timely -> info
+	node [color=transparent fontname=helvetica]
+	node [fontsize=27]
+	credible
+	node [fontsize=24]
+	timely
+	credible -> timely
 	node [color=transparent fontname=helvetica]
 	node [fontsize=21]
-	let
+	response
 	node [fontsize=24]
-	fearful
-	let -> fearful
+	work
+	response -> work
 	node [color=transparent fontname=helvetica]
-	node [fontsize=23]
-	greedy
-	node [fontsize=18]
-	politician
-	greedy -> politician
+	node [fontsize=21]
+	see
+	node [fontsize=25]
+	wuhan
+	see -> wuhan
 	node [color=transparent fontname=helvetica]
-	node [fontsize=20]
-	enter
-	node [fontsize=17]
-	kenya
-	enter -> kenya
+	node [fontsize=24]
+	africa
+	node [fontsize=21]
+	response
+	africa -> response
 	node [color=transparent fontname=helvetica]
-	node [fontsize=22]
-	china
 	node [fontsize=16]
-	deny
-	china -> deny
+	fight
+	node [fontsize=25]
+	coronavirus
+	fight -> coronavirus
 	node [color=transparent fontname=helvetica]
-	node [fontsize=14]
-	innocent
-	node [fontsize=19]
-	citizen
-	innocent -> citizen
-	node [color=transparent fontname=helvetica]
-	node [fontsize=17]
-	exist
-	node [fontsize=14]
-	evidence
-	exist -> evidence
-	node [color=transparent fontname=helvetica]
-	node [fontsize=19]
-	poor
-	node [fontsize=14]
-	innocent
-	poor -> innocent
-	node [color=transparent fontname=helvetica]
-	node [fontsize=17]
-	kenya
+	node [fontsize=16]
+	fight
 	node [fontsize=18]
-	avoid
-	kenya -> avoid
+	effect
+	fight -> effect
+	node [color=transparent fontname=helvetica]
+	node [fontsize=16]
+	fight
+	node [fontsize=17]
+	flight
+	fight -> flight
+	node [color=transparent fontname=helvetica]
+	node [fontsize=16]
+	fight
+	node [fontsize=16]
+	include
+	fight -> include
+	node [color=transparent fontname=helvetica]
+	node [fontsize=15]
+	zingebakia
+	node [fontsize=15]
+	day
+	zingebakia -> day
+	node [color=transparent fontname=helvetica]
+	node [fontsize=16]
+	fight
+	node [fontsize=14]
+	kenya
+	fight -> kenya
+	node [color=transparent fontname=helvetica]
+	node [fontsize=13]
+	fickle
+	node [fontsize=13]
+	begin
+	fickle -> begin
+	node [color=transparent fontname=helvetica]
+	node [fontsize=16]
+	fight
+	node [fontsize=12]
+	outbreak
+	fight -> outbreak
 }

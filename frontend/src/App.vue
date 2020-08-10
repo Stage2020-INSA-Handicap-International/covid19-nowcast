@@ -29,6 +29,7 @@ export default {
     display:flex;
     align-items:flex-start;
     flex-direction:column;
+    overflow-x:auto;
   }
 
   .box-1-webAppTitle {
