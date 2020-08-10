@@ -87,6 +87,7 @@ class CollectorView (View):
             tweets=CollectionManager.collect_sts_data(params["country"], params["source"], params["lang"], params["date_from"], params["date_to"])
             tweets=PreprocessManager.preprocess(tweets)
             tweets=AnalysisManager.analyze(tweets)
+            #tweets = "données bidons"
             request.session["data"]=tweets
 
         # Session management

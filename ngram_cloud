@@ -1,0 +1,122 @@
+digraph "N-gram cloud" {
+	node [color=transparent fontname=helvetica]
+	node [fontsize=25]
+	sure
+	node [fontsize=22]
+	suspect
+	sure -> suspect
+	node [color=transparent fontname=helvetica]
+	node [fontsize=21]
+	scientist
+	node [fontsize=23]
+	know
+	scientist -> know
+	node [color=transparent fontname=helvetica]
+	node [fontsize=28]
+	origin
+	node [fontsize=25]
+	sure
+	origin -> sure
+	node [color=transparent fontname=helvetica]
+	node [fontsize=28]
+	novel
+	node [fontsize=27]
+	coronavirus
+	novel -> coronavirus
+	node [color=transparent fontname=helvetica]
+	node [fontsize=23]
+	know
+	node [fontsize=28]
+	novel
+	know -> novel
+	node [color=transparent fontname=helvetica]
+	node [fontsize=27]
+	coronavirus
+	node [fontsize=28]
+	origin
+	coronavirus -> origin
+	node [color=transparent fontname=helvetica]
+	node [fontsize=20]
+	world
+	node [fontsize=22]
+	infection
+	world -> infection
+	node [color=transparent fontname=helvetica]
+	node [fontsize=19]
+	united
+	node [fontsize=20]
+	states
+	united -> states
+	node [color=transparent fontname=helvetica]
+	node [fontsize=20]
+	states
+	node [fontsize=18]
+	america
+	states -> america
+	node [color=transparent fontname=helvetica]
+	node [fontsize=18]
+	lead
+	node [fontsize=20]
+	world
+	lead -> world
+	node [color=transparent fontname=helvetica]
+	node [fontsize=18]
+	infect
+	node [fontsize=19]
+	united
+	infect -> united
+	node [color=transparent fontname=helvetica]
+	node [fontsize=18]
+	america
+	node [fontsize=18]
+	lead
+	america -> lead
+	node [color=transparent fontname=helvetica]
+	node [fontsize=20]
+	world
+	node [fontsize=22]
+	infection
+	world -> infection
+	node [color=transparent fontname=helvetica]
+	node [fontsize=19]
+	united
+	node [fontsize=20]
+	states
+	united -> states
+	node [color=transparent fontname=helvetica]
+	node [fontsize=20]
+	states
+	node [fontsize=18]
+	america
+	states -> america
+	node [color=transparent fontname=helvetica]
+	node [fontsize=18]
+	lead
+	node [fontsize=20]
+	world
+	lead -> world
+	node [color=transparent fontname=helvetica]
+	node [fontsize=18]
+	infect
+	node [fontsize=19]
+	united
+	infect -> united
+	node [color=transparent fontname=helvetica]
+	node [fontsize=18]
+	america
+	node [fontsize=18]
+	lead
+	america -> lead
+	node [color=transparent fontname=helvetica]
+	node [fontsize=25]
+	sure
+	node [fontsize=22]
+	suspect
+	sure -> suspect
+	node [color=transparent fontname=helvetica]
+	node [fontsize=21]
+	scientist
+	node [fontsize=23]
+	know
+	scientist -> know
+}

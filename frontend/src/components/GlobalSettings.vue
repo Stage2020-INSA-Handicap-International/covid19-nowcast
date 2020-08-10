@@ -31,8 +31,8 @@
     <div class="title">To</div>
     <div class = "combobox"><input id="selected-end-date" type="date"></div>
 
-    <button v-on:click="sendRequest()">LAUNCH ANALYSIS</button>
-    <button v-on:click="get()">GET</button>           
+    <button v-on:click="sendRequest()"><p class="title-2">LAUNCH ANALYSIS</p></button>
+    <!--<button v-on:click="get()">GET</button>-->           
   </div>
 </template>
 
@@ -87,15 +87,7 @@ export default {
             alert( "[GlobalSettings]Data Loaded: " + JSON.stringify(data) );
             //eventBus.$emit('launchDefaultAnalysis');
 
-          });
-          /*
-      $.ajaxSetup({
-          crossDomain: true,
-          xhrFields: {
-              withCredentials: true
-          }
-      });   
-      */         
+          });        
       
       
     },
@@ -130,6 +122,10 @@ export default {
     font-size:20px;
   }
 
+  .title-2 {
+    padding:10px;
+  }
+
   .combobox select, input {
     width:150px;
     height:30px;
@@ -138,12 +134,26 @@ export default {
     border-radius:6px;
   } 
 
+
   button {
     background-color:#FFFFFF;
     font-weight:bold;
     color:#5D9DC1;
     border: transparent;
     border-radius:6px;
+  }
+
+  select, textarea {
+    font-size:13px;
+    padding-left:5px;
+    padding-right:5px;
+  }
+
+  input[type="date"], textarea {
+    text-align: center;
+    font-size:13px;
+    padding-left:5px;
+    padding-right:5px;
   }
 
 
