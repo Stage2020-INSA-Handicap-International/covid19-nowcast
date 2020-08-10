@@ -259,7 +259,10 @@ class GraphAnalysisView (View):
                 and all([sess_key in request.session.keys() and params[key]==request.session[sess_key] for key, sess_key in keys.items()]):
             graph_data=request.session["graph_data"]
         else:
-            texts_data=[t for t in request.session["category_data"] if t["topic_id"]==params["topic"]["topic_id"]]
+            if params["topic"]["all"]==True:
+                texts_data=request.session["category_data"]
+            else:
+                texts_data=[t for t in request.session["category_data"] if t["topic_id"]==params["topic"]["topic_id"]]
             texts_data=[{k:v for k,v in t.items() if k in ["created_at","sentiment"]} for t in texts_data]
             cases_data=covid19_api.get_countries_info([request.session["country"]["Slug"]])[request.session["country"]["Slug"]]
             graph_data={"data":texts_data,"cases":cases_data}
