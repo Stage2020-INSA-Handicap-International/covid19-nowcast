@@ -28,11 +28,11 @@ def hydrate(tweets):
     tweets=twarc.hydrate([tw["id_str"] for tw in tweets])
     return tweets
 
-def collect_twitter_data(country,lang,date_from,date_to):
+def collect_twitter_data(country,lang,date_from,date_to,count):
     #data=util.import_params("../output/topics_india_tw0.json")["tweets"]
     api=authenticate()
     raw_query="{country} AND (corona OR coronavirus OR virus OR covid-19 OR covid19)".format(country=country["Country"])
-    full_query = "q={formatted_query}&result_type=recent&since={date_from}&lang={lang}&until={date_to}&count=2".format(formatted_query=urllib.parse.quote(raw_query, safe=''),lang=lang,date_from=date_from,date_to=date_to)
+    full_query = "q={formatted_query}&result_type=recent&since={date_from}&lang={lang}&until={date_to}&count={count}".format(formatted_query=urllib.parse.quote(raw_query, safe=''),lang=lang,date_from=date_from,date_to=date_to,count=count)
     data=api.GetSearch(raw_query=full_query)
     data=[{"id_str":t.id_str,"created_at":datetime.strftime(datetime.strptime(str(t.created_at),"%a %b %d %H:%M:%S %z %Y"),"%Y-%m-%dT%H:%M:%SZ"),"full_text":t.text} for t in data]
     

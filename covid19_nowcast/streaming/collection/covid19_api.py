@@ -2,7 +2,7 @@ import requests
 import json
 from datetime import datetime
 from covid19_nowcast import util
-def get_countries_info(countries, entries = ["Date", "Confirmed", "Deaths", "Recovered", "Active"]):
+def get_countries_info(countries, date_from, date_to, entries = ["Date", "Confirmed", "Deaths", "Recovered", "Active"]):
     """
     Searches api.covid19api.com for COVID-19 cases
     Input:
@@ -12,7 +12,7 @@ def get_countries_info(countries, entries = ["Date", "Confirmed", "Deaths", "Rec
     Output:
         - countries_covid19: an entry to a dictionary containing entries named after all elements of *countries*, which each contain a dictionary containing all correponding keys:info in *entries* 
     """
-    country_info = {country:json.loads(requests.get("https://api.covid19api.com/dayone/country/"+country.lower()).text) for country in countries}
+    country_info = {country:json.loads(requests.get("https://api.covid19api.com/country/{}?from={}&to={}".format(country.lower(),date_from,date_to)).text) for country in countries}
     for country in country_info.values():
         for situation in country:
             situation["Date"]= datetime.strftime(datetime.date(datetime.strptime(situation["Date"], '%Y-%m-%dT%H:%M:%SZ')),'%Y-%m-%dT00:00:00Z')
