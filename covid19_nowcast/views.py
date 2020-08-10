@@ -17,6 +17,7 @@ from covid19_nowcast.streaming import CollectionManager
 from covid19_nowcast.analysis import AnalysisManager
 from covid19_nowcast.streaming.preparation import PreprocessManager
 from covid19_nowcast.user_interface import visualisation
+from covid19_nowcast.streaming.collection import covid19_api
 def index(request):
     #return render_to_response('index.html')
     return render(request,'index.html')
@@ -137,7 +138,7 @@ class TopicAnalysisView (View):
             request.session["category_data"]=tweets
 
         # Session management
-        request.session["nb_topics"]=params["nb_topics"]
+        request.session["nb_topics"]=len(topics)
 
         request.session["topics"]=topics
         request.session["modified_category_topics"]=False
@@ -151,7 +152,12 @@ class TopicExamplesView (View):
         """
         {
             "topic":int>=0 and <nb_topics,
-            "nb_examples":int>0
+            "nb_examples":int>0,
+            "graph":{
+                "nb_words":int,
+                "min_font_size":int,
+                "max_font_size":int
+            }
         }
         """
         params=json.loads(request.body)
@@ -177,6 +183,14 @@ class TopicExamplesView (View):
             assert params[key]>=0, "\"{}\" is not >=0".format(key)
             assert params["topic"] < request.session["nb_topics"], "Topic index {} is out of bounds ({} topics)".format(params["topic"],request.session["nb_topics"])
 
+            key="graph"
+            check_missing(key, params.keys())
+            check_type(key,params[key],dict)
+            subkeys=["nb_words","min_font_size","max_font_size"]
+            for k in subkeys:
+                check_missing(k, params[key].keys())
+                check_type(k,params[key][k],int)
+                assert params[key][k]>0, "\"{}__{}\" is not >0".format(key,k)
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
 
@@ -187,10 +201,10 @@ class TopicExamplesView (View):
         examples=analysis.topics.top_topic_tweets_by_proba(tweets,topic_indices,topics, params["nb_examples"])[params["topic"]]["top_tweets"]
         examples=[e["full_text"] for e in examples]
         topic_texts=[t["preproc_text"] for t in tweets if t["topic_id"]==params["topic"]]
-        graph=visualisation.n_gram_graph(topic_texts)
+        graph=visualisation.n_gram_graph(topic_texts,params["graph"]["nb_words"],params["graph"]["min_font_size"],params["graph"]["max_font_size"])
         with open(graph, "rb") as img_file:
             graph = str(base64.b64encode(img_file.read()))[2:-1]
-            print(str(graph)[2:-1])
+        
         # Session management
         request.session["examples"]=examples
         request.session["topic"]=params["topic"]
@@ -204,11 +218,7 @@ class GraphAnalysisView (View):
     def post(self, request):
         """
             {
-                "sentiments":{"positive":bool, "negative":bool, "neutral":bool},
-                "cases":{"enabled":bool, "rolling":bool},
-                "trends":bool,
-                "topic":int in topic classifier classes,
-                "period":str in ["day","week","month"]
+                "topic":{"all":bool,"topic_id":int<nb_topics and >=0}
             }
         """
         params=json.loads(request.body)
@@ -217,55 +227,50 @@ class GraphAnalysisView (View):
         try:
             assert request.session.get("data",None) is not None, "Data hasn't been collected yet"
             assert request.session.get("category_data",None) is not None, "Data hasn't been categorized yet"
-            assert request.session.get("topics", None) is not None or params.get("topic","All") == "All", "Topic analysis hasn't been executed yet, but topic selection was requested"
+            assert request.session.get("topics", None) is not None or params.get("topic",{"all":True})["all"] == True, "Topic analysis hasn't been executed yet, but topic selection was requested"
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=409, reason="Conflict: "+str(e))
 
-        keys={"sentiments":dict, "cases":dict, "trends":bool, "topic":int, "period":str}
+        keys={"topic":dict}
         try:
             for key, t in keys.items():
                 check_missing(key, params.keys())
                 check_type(key, params[key], t)
 
-            items={
-                    "sentiments":["positive", "negative", "neutral"],
-                    "cases":["enabled","rolling"]
-                }
-            for key, value in items.items():
-                for val_key in value:
-                    check_missing(val_key, params[key].keys())
-                    check_type(value,params[key][val_key], bool)
+            key="topic"
+            subkeys={"all":bool,"topic_id":int}
+            for k,t in subkeys.items():
+                check_missing(k, params[key].keys())
+                check_type(k,params[key][k],t)
 
-            assert params["period"] in ["day","week","month"]
-
-            assert params["topic"] >= 0, "Topic index {} is out of bounds (should be >=0)".format(params["topic"])
-            assert params["topic"] < request.session["nb_topics"], "Topic index {} is out of bounds ({} topics)".format(params["topic"],request.session["nb_topics"])
+            assert params["topic"]["topic_id"] >= 0, "Topic index {} is out of bounds (should be >=0)".format(params["topic"]["topic_id"])
+            assert params["topic"]["topic_id"] < request.session["nb_topics"], "Topic index {} is out of bounds ({} topics)".format(params["topic"]["topic_id"],request.session["nb_topics"])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
 
         # Request processing
-        graph_img=None
-        if request.session.get("graph",None) is not None \
+        graph_data=None
+        keys={"topic":"graph_topic"}
+        if request.session.get("graph_data",None) is not None \
                 and request.session.get("modified_category_graph",False)==False \
                 and request.session.get("modified_topics",False)==False \
-                and all([key in request.session.keys() and params[key]==request.session[key] for key in keys.keys()]):
-            graph_img=request.session["graph"]
+                and all([sess_key in request.session.keys() and params[key]==request.session[sess_key] for key, sess_key in keys.items()]):
+            graph_data=request.session["graph_data"]
         else:
-            graph_img=None # <!> execute function 
+            texts_data=[t for t in request.session["category_data"] if t["topic_id"]==params["topic"]["topic_id"]]
+            texts_data=[{k:v for k,v in t.items() if k in ["created_at","sentiment"]} for t in texts_data]
+            cases_data=covid19_api.get_countries_info([request.session["country"]["Slug"]])[request.session["country"]["Slug"]]
+            graph_data={"data":texts_data,"cases":cases_data}
             
         # Session management
-        request.session["sentiments"]=params["sentiments"]
-        request.session["cases"]=params["cases"]
-        request.session["trends"]=params["trends"]
         request.session["graph_topic"]=params["topic"]
-        request.session["period"]=params["period"]
 
         request.session["modified_category_graph"]=False
         request.session["modified_topics"]=False
-        request.session["graph"]=graph_img
+        request.session["graph_data"]=graph_data
 
-        #response=HttpResponse(graph_img, content_type="image/jpeg")
-        response=HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=501)
+        #response=HttpResponse(graph_data, content_type="image/jpeg")
+        response=HttpResponse(json.dumps({**graph_data},ensure_ascii=False),status=200)
         return response
 
 class CategoryView (View):

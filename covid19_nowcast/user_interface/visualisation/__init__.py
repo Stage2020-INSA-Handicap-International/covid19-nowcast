@@ -5,12 +5,15 @@ def generate_graph():
     pass
 
 def n_gram_graph(texts, n_words=20, min_size=11, max_size=32):
-    tfidf= TfidfVectorizer(ngram_range=(2,2))
-    graph = tfidf.fit_transform(texts[:1000])
-    feature_array = np.array(tfidf.get_feature_names())
-    tfidf_sorting = np.argsort(graph.toarray()).flatten()[::-1]
-    top_n = feature_array[tfidf_sorting][:n_words]
-    top_n=[ng.split(" ") for ng in top_n]
+    if texts!=[]:
+        tfidf= TfidfVectorizer(ngram_range=(2,2))
+        graph = tfidf.fit_transform(texts[:1000])
+        feature_array = np.array(tfidf.get_feature_names())
+        tfidf_sorting = np.argsort(graph.toarray()).flatten()[::-1]
+        top_n = feature_array[tfidf_sorting][:n_words]
+        top_n=[ng.split(" ") for ng in top_n]
+    else:
+        top_n=[]
     dot=Digraph("N-gram cloud",format="png",filename="ngram_cloud")
     ratio={}
     for index,bigram in enumerate(top_n):
