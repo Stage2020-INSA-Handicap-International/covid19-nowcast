@@ -87,15 +87,7 @@ export default {
             alert( "[GlobalSettings]Data Loaded: " + JSON.stringify(data) );
             //eventBus.$emit('launchDefaultAnalysis');
 
-          });
-          /*
-      $.ajaxSetup({
-          crossDomain: true,
-          xhrFields: {
-              withCredentials: true
-          }
-      });   
-      */         
+          });        
       
       
     },

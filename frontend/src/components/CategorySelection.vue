@@ -6,7 +6,8 @@
       <select id="selected-category" v-on:change="sendRequest()">
         <option v-for="category in categories" v-bind:key="category.id">{{category}}</option>
       </select>
-    </div>          
+    </div>
+    <div class="title-2">Number of Tweets : {{this.nb_tweets}}</div>         
   </div>
 </template>
 
@@ -19,7 +20,8 @@
     data: function() {
       return {
         'current_category' : 'All',
-        'categories' : ['All','Business', 'Food', 'Health', 'Politics', 'Science', 'Sports', 'Tech', 'Travel']
+        'categories' : ['All','Business', 'Food', 'Health', 'Politics', 'Science', 'Sports', 'Tech', 'Travel'],
+        'nb_tweets':0
       }
     },
 
@@ -32,18 +34,21 @@
         {
           "category":this.current_category
         })
+        var vm = this;
         //Launch the HTTP POST Request to the server
         $.post( "http://127.0.0.1:8000/category/", request_body)
-            .done(function( data ) {
-              alert( "Data Loaded: " + JSON.stringify(data) );
-              //eventBus.$emit('launchTopicAnalysis');
+            .done(function( data) {
+              console.log( "[CategorySelection] Data Loaded: " + JSON.stringify(data) );
+              data = JSON.parse(data);
+              vm.nb_tweets = data['count'];
+              console.log("nb_tweets = "+vm.nb_tweets);
+              eventBus.$emit('launchTopicAnalysis');
             });      
       },
     },
 
     created() {
       eventBus.$on('launchDefaultAnalysis', () => {
-        alert('coucou depuis category');
         this.sendRequest();
       })
     }
@@ -61,6 +66,13 @@
     color:#4786A9;
     font-size:20px;
     padding-right:20px;
+  }
+
+  .title-2 {
+    color:#4786A9;
+    font-size:20px;
+    padding-right:20px;
+    padding-left:30px;
   }
 
   .combobox select {

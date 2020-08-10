@@ -4,7 +4,7 @@
     <div class="container-2">
       <div class="title-1">Topic Analysis</div>
       <div class="title-2">Number of Topics</div>
-      <div class = "combobox"><input id="selected-nb-topics" type="number" value="3" min="1"/></div>
+      <div class = "combobox"><input id="selected-nb-topics" type="number" value="3" min="1" v-on:change="notifyGraphAnalysis()"/></div>
       <button v-on:click="sendTopicListRequest()">APPLY</button>
       <!--<button v-on:click="get()">GET</button>-->          
     </div>
@@ -26,7 +26,7 @@
       <div class="container-5 topic-box">
         <div class="container-6">
           <div class="title-4">Topic Examples</div>
-          <div>Topic <input id="selected-topic-for-examples" type="number" value="0" min="0" :max='nb_topics - 1'/></div>
+          <div>Topic <input id="selected-topic-for-examples" type="number" value="0" min="0" :max='nb_topics - 1' /></div>
           <div> Number of Examples <input id="selected-nb-examples" type="number" value="3" min="1"/></div>
        </div>
        <div class="container-7">
@@ -86,7 +86,29 @@
             for(var i =0; i<vm.topics.length; i++) {
               vm.topics[i] = vm.topics[i].join(', ');
             }
-            eventBus.$emit('getTopicExamples');
+            //If there are no topics it means there are no tweets, therefore there's no need to try to get examples
+            if(vm.topics.length !== 0) {
+              eventBus.$emit('getTopicExamples');
+            }
+            else {
+              //Clear examples view
+              vm.examples = [];
+
+              //Clear n_grams view
+
+              $('#canvas').html('');
+              var canvas = document.getElementById("canvas");
+              var context = canvas.getContext("2d");
+              // Store the current transformation matrix
+              context.save();
+              // Use the identity matrix while clearing the canvas
+              context.setTransform(1, 0, 0, 1, 0, 0);
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              // Restore the transform
+              context.restore();
+              //ctx.clearRect(0,0,canvas.width,canvas.height);
+            }
+            
 
           });
     },
@@ -107,7 +129,7 @@
       //Launch the HTTP POST Request to the server
       $.post( "http://127.0.0.1:8000/examples/", request_body)
           .done( function(data) {
-            alert( "[Examples] Data Loaded: " + data );
+            //alert( "[Examples] Data Loaded: " + data );
             data = JSON.parse(data);
             //Set examples
             vm.examples = data["examples"];
@@ -138,6 +160,11 @@
       }
 
     },  
+    notifyGraphAnalysis: function() {
+      var input_nb_topics = document.getElementById("selected-nb-topics").value;
+      this.nb_topics = parseInt(input_nb_topics,10);
+      eventBus.$emit('nbTopicsChange',this.nb_topics);
+    },
 
   },
 
@@ -184,11 +211,14 @@
   .container-4 {
     display:flex;
     flex-direction: column;
+    
   }
 
   .container-5 {
     display:flex;
     flex-direction: column;
+    flex-grow:1;
+
   }
 
   .container-6 {
@@ -202,7 +232,7 @@
     
   }
   .scrollbar {
-    height:800px;
+    max-height:1000px;
     overflow-y:auto;
   }
 
