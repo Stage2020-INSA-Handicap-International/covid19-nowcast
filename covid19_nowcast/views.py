@@ -37,7 +37,8 @@ class CollectorView (View):
                 "source":str in ["twitter"],
                 "lang":str in ["fr","en"],
                 "date_from":str in %Y-%m-%d format,
-                "date_to":str in %Y-%m-%d format
+                "date_to":str in %Y-%m-%d format,
+                "count":int>0
             }
         """
         params=json.loads(request.body)
@@ -46,6 +47,7 @@ class CollectorView (View):
         date_keys=["date_from","date_to"]
         keys=["country","source","lang"]
         keys.extend(date_keys)
+        keys.append("count")
         try:
             for key in keys:
                 check_missing(key,params.keys())
@@ -55,6 +57,12 @@ class CollectorView (View):
             available_languages=["fr","en"]
             assert params[key] in available_languages, "lang=\"{}\" not in available languages={}".format(params["lang"], available_languages)
             available_countries=covid19_api.get_countries()
+
+            key="count"
+            check_missing(key,params.keys())
+            check_type(key, params[key], int)
+            assert params[key]>0, "\"{}\" is not >0".format(key)
+
             found_country=False
             for country in available_countries:
                 if params["country"] in country.values():
@@ -84,7 +92,7 @@ class CollectorView (View):
         # Request processing
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
-            tweets=CollectionManager.collect_sts_data(params["country"], params["source"], params["lang"], params["date_from"], params["date_to"])
+            tweets=CollectionManager.collect_sts_data(params["country"], params["source"], params["lang"], params["date_from"], params["date_to"], params["count"])
             tweets=PreprocessManager.preprocess(tweets)
             tweets=AnalysisManager.analyze(tweets)
             #tweets = "données bidons"
@@ -96,6 +104,7 @@ class CollectorView (View):
         request.session["date_from"]=params["date_from"]
         request.session["date_to"]=params["date_to"]
         request.session["lang"]=params["lang"]
+        request.session["count"]=params["count"]
 
 
         response=HttpResponse(json.dumps({"count":len(request.session["data"]),"request":params},ensure_ascii=False),status=200)
@@ -245,9 +254,9 @@ class GraphAnalysisView (View):
             for k,t in subkeys.items():
                 check_missing(k, params[key].keys())
                 check_type(k,params[key][k],t)
-
-            assert params["topic"]["topic_id"] >= 0, "Topic index {} is out of bounds (should be >=0)".format(params["topic"]["topic_id"])
-            assert params["topic"]["topic_id"] < request.session["nb_topics"], "Topic index {} is out of bounds ({} topics)".format(params["topic"]["topic_id"],request.session["nb_topics"])
+            if params["topic"]["all"]==False:
+                assert params["topic"]["topic_id"] >= 0, "Topic index {} is out of bounds (should be >=0)".format(params["topic"]["topic_id"])
+                assert params["topic"]["topic_id"] < request.session["nb_topics"], "Topic index {} is out of bounds ({} topics)".format(params["topic"]["topic_id"],request.session["nb_topics"])
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
 
@@ -265,7 +274,7 @@ class GraphAnalysisView (View):
             else:
                 texts_data=[t for t in request.session["category_data"] if t["topic_id"]==params["topic"]["topic_id"]]
             texts_data=[{k:v for k,v in t.items() if k in ["created_at","sentiment"]} for t in texts_data]
-            cases_data=covid19_api.get_countries_info([request.session["country"]["Slug"]])[request.session["country"]["Slug"]]
+            cases_data=covid19_api.get_countries_info([request.session["country"]["Slug"]],request.session["date_from"]+"T00:00:00Z",request.session["date_to"]+"T00:00:00Z")[request.session["country"]["Slug"]]
             graph_data={"data":texts_data,"cases":cases_data}
             
         # Session management

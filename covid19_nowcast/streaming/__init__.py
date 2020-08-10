@@ -11,8 +11,7 @@ from covid19_nowcast import util
 
 class CollectionManager():
     @staticmethod
-    def collect_sts_data(country,source,lang,date_from,date_to):
-
+    def collect_sts_data(country,source,lang,date_from,date_to,count):
         data=None
         db_time_subsets=DBTimeSubset(country["ISO2"],source,lang)
         present_subsets,missing_subsets=db_time_subsets.subsets_status(date_from,date_to)
@@ -30,7 +29,7 @@ class CollectionManager():
                 bar.update(i)
                 for date_from,date_to in missing_subsets.to_tuples():
                     if source=="twitter":
-                        data.extend(collect_twitter_data(country,lang,date_from,date_to))
+                        data.extend(collect_twitter_data(country,lang,date_from,date_to,count))
                     i+=1
                     bar.update(i)
         data=db_time_subsets.insert_data(data,missing_subsets)
