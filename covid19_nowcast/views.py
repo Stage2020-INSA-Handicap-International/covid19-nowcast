@@ -14,6 +14,7 @@ from covid19_nowcast.streaming.collection import covid19_api
 from covid19_nowcast import util, analysis
 from covid19_nowcast.user_interface import visualisation
 from covid19_nowcast.streaming import CollectionManager
+from covid19_nowcast.streaming import storage
 from covid19_nowcast.analysis import AnalysisManager
 from covid19_nowcast.streaming.preparation import PreprocessManager
 from covid19_nowcast.user_interface import visualisation
@@ -47,7 +48,6 @@ class CollectorView (View):
         date_keys=["date_from","date_to"]
         keys=["country","source","lang"]
         keys.extend(date_keys)
-        keys.append("count")
         try:
             for key in keys:
                 check_missing(key,params.keys())
@@ -143,6 +143,8 @@ class TopicAnalysisView (View):
             tweets=request.session["category_data"]
             if tweets!=[]:
                 tweets,topics=analysis.topics.topicalize_tweets(tweets, params["nb_topics"])
+                alarm_words=storage.get_alarm_words()
+                topics=analysis.topics.tag_alarm_words(topics, alarm_words)
             request.session["modified_topics"]=True
             request.session["category_data"]=tweets
 
@@ -165,7 +167,8 @@ class TopicExamplesView (View):
             "graph":{
                 "nb_words":int,
                 "min_font_size":int,
-                "max_font_size":int
+                "max_font_size":int,
+                "type":str in ["alarm","relevant"]
             }
         }
         """
