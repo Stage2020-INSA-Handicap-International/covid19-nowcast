@@ -39,7 +39,7 @@
         default_labels: [],
         default_cases: [],
         default_type :'line',
-        default_unit: 'week',
+        default_unit: 'day',
         default_title:'',
         colors: ['red', 'blue', 'limegreen', 'black', 'orange', 'indigo'],
         tags: ['negative', 'neutral', 'positive', 'confirmed cases', 'deaths', 'recovered']
@@ -72,14 +72,15 @@
         var cases = response['cases']
         // console.log([1, 2].concat([3,4]))
         var analysis = []
+        var num_cases = []
         var dates = []
         var len = 3
         var tag_count = new Array(len).fill(0)
-        var case_count = []
+        var case_count = new Array(len).fill(0)
 
         if (this.default_unit == 'week') {
           var transform = (date) => moment(date).isoWeek()
-          var reverse = (number) => moment('2020').add(number, 'weeks')
+          var reverse = (number) => moment('2020').day("Monday").add(number-1, 'weeks')
         } 
         else if (this.default_unit == 'month'){
           transform = (date) => moment(date).month()
@@ -90,6 +91,7 @@
           reverse = (number) => number
        }
 
+      /*
       dates.push(transform(new Date(cases[0].Date).toDateString("yyyy-MM-dd")))
       var tweet=0
       for (var j=0; j<cases.length; j++){
@@ -108,11 +110,40 @@
         if (j<cases.length-1) dates.push(transform(new Date(cases[j+1].Date).toDateString("yyyy-MM-dd")))
         tag_count = new Array(len).fill(0)
       }
+      */
+
+      var tweet=0
+      for (var j=0; j<cases.length; j++){
+        if (dates.indexOf(transform(new Date(cases[j].Date).toDateString("yyyy-MM-dd"))) == -1){
+          if(j>0) num_cases.push(case_count)
+          dates.push(transform(new Date(cases[j].Date).toDateString("yyyy-MM-dd")))
+          case_count = new Array(len).fill(0)
+
+          var cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+          var idx = dates.indexOf(transform(cur_date))
+          while (idx !== -1){
+            tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+            tweet=tweet+1
+            if (tweet < data.length){
+              cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+              idx = dates.indexOf(transform(new Date(cur_date)))
+            } else idx = -1
+          }
+          if(j<cases.length -1) analysis.push(tag_count)
+        }
+        case_count[0]+=cases[j].Confirmed
+        case_count[1]+=cases[j].Deaths
+        case_count[2]+=cases[j].Recovered
+        tag_count = new Array(len).fill(0)
+      }
+      num_cases.push(case_count)
+
+
 
       while (tweet < data.length){
         if (dates.indexOf(transform(new Date(data[tweet].created_at).toDateString("yyyy-MM-dd"))) == -1){
           analysis.push(tag_count)
-          case_count.push([0, 0, 0])
+          num_cases.push([0, 0, 0])
           dates.push(transform(new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")))
           tag_count = new Array(len).fill(0)
         }
@@ -125,11 +156,11 @@
       console.log("Checking datas")
       console.log(dates)
       console.log(analysis)
-      console.log(case_count)
+      console.log(num_cases)
 
       this.default_labels = dates
       this.default_data = analysis
-      this.default_cases = case_count
+      this.default_cases = num_cases
       var tagged_dataset = [];
       for (var i = 0; i < len; i++) {
         tagged_dataset.push({
