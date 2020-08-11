@@ -1,8 +1,16 @@
 from django.urls import include, path
+from django.contrib import admin
+from django.urls import path
+from django.views.generic import TemplateView
+
 
 from . import views
 
 urlpatterns = [
+    path("",
+        TemplateView.as_view(template_name="application.html"),
+        name="app",
+    ),
     path(r'',views.index),
     path(r'collector/',views.CollectorView.as_view()),
     path(r'topics/',views.TopicAnalysisView.as_view()),
