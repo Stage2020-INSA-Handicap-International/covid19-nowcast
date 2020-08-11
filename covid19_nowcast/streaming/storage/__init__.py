@@ -256,3 +256,8 @@ class DBTimeSubset():
                     i+=1
                     bar.update(i)
         return data
+
+def get_alarm_words():
+    db=connect_database()
+    alarms_words=[word["word"] for word in db[col_alarm_words].find({},{"_id":0})]
+    return alarms_words

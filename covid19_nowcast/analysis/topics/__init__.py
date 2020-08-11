@@ -40,3 +40,10 @@ def top_topic_tweets_by_proba(tweets, topic_indices, topics, nb_top_tweets=3):
                 topics[topic_index]["top_tweets"][-1]=tw
                 topics[topic_index]["top_tweets"]=sorted(topics[topic_index]["top_tweets"],key=lambda t: t["topic_proba"], reverse=True)
     return topics
+
+def tag_alarm_words(topics, alarm_words):
+    tagged_topics=[]
+    print(alarm_words)
+    for words in topics:
+        tagged_topics.append({word:word in alarm_words for word in words})
+    return tagged_topics
