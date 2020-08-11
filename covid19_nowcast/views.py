@@ -206,6 +206,12 @@ class TopicExamplesView (View):
                 check_missing(k, params[key].keys())
                 check_type(k,params[key][k],int)
                 assert params[key][k]>0, "\"{}__{}\" is not >0".format(key,k)
+
+            subkey="type"
+            check_missing(subkey, params[key].keys())
+            available_graph_types=["alarm","relevant"]
+            check_type(subkey,params[key][subkey],str)
+            assert params[key][subkey] in available_graph_types, "Unknown graph type {}: type not in {}".format(subkey,available_graph_types)
         except AssertionError as e:
             return HttpResponse(json.dumps({"request":params},ensure_ascii=False),status=400, reason="BAD REQUEST: "+str(e))
 
@@ -213,10 +219,14 @@ class TopicExamplesView (View):
         tweets=request.session["category_data"]
         topic_indices=[t["topic_id"] for t in tweets]
         topics=request.session["topics"]
-        examples=analysis.topics.top_topic_tweets_by_proba(tweets,topic_indices,topics, params["nb_examples"])[params["topic"]]["top_tweets"]
+        examples=analysis.topics.top_topic_tweets_by_proba(tweets,topic_indices,[list(topic.keys()) for topic in topics], params["nb_examples"])[params["topic"]]["top_tweets"]
         examples=[e["full_text"] for e in examples]
         topic_texts=[t["preproc_text"] for t in tweets if t["topic_id"]==params["topic"]]
-        graph=visualisation.n_gram_graph(topic_texts,params["graph"]["nb_words"],params["graph"]["min_font_size"],params["graph"]["max_font_size"])
+        alarm_words=storage.get_alarm_words()
+        if params["graph"]["type"]=="alarm":
+            graph=visualisation.n_gram_graph(topic_texts,alarm_words,params["graph"]["nb_words"],params["graph"]["min_font_size"],params["graph"]["max_font_size"])
+        elif params["graph"]["type"]=="relevant":
+            graph=visualisation.alarm_graph(topic_texts,alarm_words,params["graph"]["nb_words"],params["graph"]["min_font_size"],params["graph"]["max_font_size"])
         with open(graph, "rb") as img_file:
             graph = str(base64.b64encode(img_file.read()))[2:-1]
         
