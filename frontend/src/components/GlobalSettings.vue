@@ -78,7 +78,8 @@ export default {
         "source":this.selected_source,
         "lang":this.selected_language,
         "date_from":this.selected_start_date,
-        "date_to":this.selected_end_date
+        "date_to":this.selected_end_date,
+        "count":100
       })
 
       //Launch the HTTP POST Request to the server    
