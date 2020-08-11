@@ -124,7 +124,12 @@
       var request_body = JSON.stringify(
       {
         "topic":this.selected_topic_for_examples,
-        "nb_examples":this.selected_nb_examples
+        "nb_examples":this.selected_nb_examples,
+        "graph":{
+            "nb_words":5,
+            "min_font_size":10,
+            "max_font_size":15
+        }
       }) 
       //Launch the HTTP POST Request to the server
       $.post( "http://127.0.0.1:8000/examples/", request_body)
