@@ -13,6 +13,12 @@
             <div class = "combobox"><input id="selected-topic-for-graph" type="number" value="0" min="0" :max='nb_topics - 1' /></div>
             <div> All <input id="all-checkbox" type="checkbox"/></div>
         </div>
+        <div class="container-5 ">
+            <div class="title-2">Timeframe</div>
+            <select class="combobox-2" id="selected-timeframe" v-on:change="changeTimeFrame()">
+              <option v-for="timeframe in timeframes" v-bind:key="timeframe.id">{{timeframe}}</option>
+            </select>
+        </div>        
         <div><button v-on:click="sendGraphRequest()">FILTER</button></div>   
     </div>
     </div>
@@ -32,6 +38,7 @@
         nb_topics: 3,
         selected_topic:'0',
         all_checkbox:false,
+        timeframes:['Weekly','Daily','Monthly'],
         myChart: [],
         data:[],
         arrayColumn : (arr, n) => arr.map(x => x[n]),
@@ -64,7 +71,17 @@
               //alert( "[TopicAnalysis] Data Loaded: " + data );
               data = JSON.parse(data);
               vm.draw_graph(data);
-            });
+              
+
+            });     
+      },
+
+      changeTimeFrame: function() {
+        var timeframe = document.getElementById("selected-timeframe").value;
+        var converter = {'Weekly':'week','Daily':'day','Monthly':'month'};
+        this.default_unit = converter[timeframe]
+        console.log('default_unit = '+this.default_unit)
+        this.sendGraphRequest();
       },    
 
       draw_graph: function(response) {
@@ -233,6 +250,9 @@
         //console.log('[GraphAnalysis] received nbTopicsChange event');
         this.nb_topics = new_nb_topics;
       });
+      eventBus.$on('launchGraphAnalysis', () => {
+        this.sendGraphRequest();
+      });      
     },
 
 
@@ -264,8 +284,9 @@
   }   
   .container-4 {
     display:flex;
-    /*background-color: blue;*/
-
+  }   
+  .container-5 {
+    display:flex;
   }   
   
   .graph-chart {
@@ -306,6 +327,15 @@
     border: transparent;
     border-radius:6px;
   } 
+
+  .combobox-2 {
+    width:100px;
+    height:30px;
+    background-color:white;
+    border: transparent;
+    border-radius:6px;
+    padding-left:20px;
+  }
 
   button {
     width:150px;

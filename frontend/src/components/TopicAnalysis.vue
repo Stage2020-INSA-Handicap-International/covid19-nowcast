@@ -21,8 +21,14 @@
           </li>
         </div>
         <div class="topic-box">
-          <div class="title-4">N-GRAMS</div>
-          <!--<img :src='"data:image/png;base64, "+n_grams_img' alt="n-gram diagram image">-->
+          <div class="container-bis">
+            <div class="title-4">N-GRAMS</div>
+            <div> Number of words <input id="selected-nb-ngrams" type="number" value="5" min="1"/></div>
+            <div class="margin-left"> Type <select id="selected-ngram-type">
+                          <option v-for="type in ngram_types" v-bind:key="type.id">{{type}}</option>
+                      </select>
+            </div>
+          </div>
           <canvas id="canvas" width=600></canvas>
         </div>
       </div>
@@ -54,6 +60,9 @@
          nb_topics : 3,
         'selected_topic_for_examples':0,
         'selected_nb_examples':3,
+        'selected_nb_ngrams':5,
+         ngram_types:['relevant','alarmant'],
+         current_ngram_type:'relevant',
          topics_dict: [],
          examples: [],
          n_grams_img:[],
@@ -117,7 +126,10 @@
       var input_topic_for_examples = document.getElementById("selected-topic-for-examples").value;
       this.selected_topic_for_examples = parseInt(input_topic_for_examples,10);
       var input_nb_examples = document.getElementById("selected-nb-examples").value;
-      this.selected_nb_examples = parseInt(input_nb_examples,10);   
+      this.selected_nb_examples = parseInt(input_nb_examples,10);
+      var input_nb_ngrams = document.getElementById("selected-nb-ngrams").value;
+      this.selected_nb_ngrams = parseInt(input_nb_ngrams,10);      
+         
       
       //Prepare the json object that will serve as the HTTP POST Request's body
       var vm = this;
@@ -126,7 +138,7 @@
         "topic":this.selected_topic_for_examples,
         "nb_examples":this.selected_nb_examples,
         "graph":{
-            "nb_words":5,
+            "nb_words":vm.selected_nb_ngrams,
             "min_font_size":10,
             "max_font_size":15
         }
@@ -235,6 +247,12 @@
     display:flex;
     flex-direction: column;
     
+  }
+  .container-bis {
+    display:flex;
+  }  
+  .margin-left {
+    margin-left:15px;
   }
   .scrollbar {
     max-height:1000px;
