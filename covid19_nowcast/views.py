@@ -94,8 +94,8 @@ class CollectorView (View):
             request.session.flush() # invalidate the entire session because the dataset is different
             tweets=CollectionManager.collect_sts_data(params["country"], params["source"], params["lang"], params["date_from"], params["date_to"], params["count"])
             tweets=PreprocessManager.preprocess(tweets)
-            tweets=AnalysisManager.analyze(tweets)
-            #tweets = "données bidons"
+            tweets=AnalysisManager.analyze(tweets,25)
+            
             request.session["data"]=tweets
 
         # Session management

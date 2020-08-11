@@ -3,7 +3,7 @@ import covid19_nowcast.streaming.storage
 import covid19_nowcast.streaming.preparation
 import covid19_nowcast.streaming.models
 
-from covid19_nowcast.streaming.collection import collect_twitter_data
+from covid19_nowcast.streaming.collection import collect_twitter_standard_data
 from covid19_nowcast.streaming.collection import hydrate
 from covid19_nowcast.streaming.storage import DBTimeSubset
 import progressbar
@@ -29,7 +29,7 @@ class CollectionManager():
                 bar.update(i)
                 for date_from,date_to in missing_subsets.to_tuples():
                     if source=="twitter":
-                        data.extend(collect_twitter_data(country,lang,date_from,date_to,count))
+                        data.extend(collect_twitter_standard_data(country,lang,date_from,date_to,count))
                     i+=1
                     bar.update(i)
         data=db_time_subsets.insert_data(data,missing_subsets)
