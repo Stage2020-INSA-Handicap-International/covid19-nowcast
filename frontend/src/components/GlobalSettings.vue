@@ -12,7 +12,7 @@
     <div class="title">Source</div>
     <div class = "combobox">
       <select id="selected-source">
-        <option>-- Select a Source --</option>
+        <option> Twitter </option>
         <option v-for="source in sources" v-bind:key="source.id">{{source}}</option>
       </select>
     </div> 
@@ -30,6 +30,9 @@
 
     <div class="title">To</div>
     <div class = "combobox"><input id="selected-end-date" type="date"></div>
+
+    <div class="title">Tweets</div>
+    <div class = "combobox2"><input id="selected-nb-tweets" type="number" value="100" min="10" step="10"></div>    
 
     <button v-on:click="sendRequest()"><p class="title-2">LAUNCH ANALYSIS</p></button>
     <!--<button v-on:click="get()">GET</button>-->           
@@ -53,7 +56,7 @@ export default {
       'selected_end_date' : '', 
       'server_response' : [],
 
-      'sources' : ['Twitter','Facebook'],
+      'sources' : [],
       'languages' : ["English","French"],
       'countries' : ['Afghanistan', 'Algeria', 'Bangladesh', 'Belgium', 'Benin', 'Bolivia', 'Burkina Faso', 'Cambodia', 'Canada', 'Cape Verde', 'Central African Republic', 'Chad', 'China', 'Colombia', 'Cuba', 'Egypt', 'Ethiopia', 'France', 'Germany', 'Guinea-Bissau', 'Haiti', 'India', 'Indonesia', 'Iraq', 'Jordan', 'Kenya', 'Lao PDR', 'Lebanon', 'Libya', 'Luxembourg', 'Madagascar', 'Mali', 'Morocco', 'Mozambique', 'Myanmar', 'Nepal', 'Niger', 'Pakistan', 'Philippines', 'Rwanda', 'Senegal', 'Sierra Leone', 'Somalia', 'South Sudan', 'Sri Lanka', 'Switzerland', 'Thailand', 'Togo', 'Tunisia', 'United Kingdom', 'United States of America', 'Viet Nam', 'Yemen'].sort()
 
@@ -133,8 +136,17 @@ export default {
     background-color:#EEEEEE;
     border: transparent;
     border-radius:6px;
+    text-align:center;
   } 
 
+  .combobox2 input {
+    width:50px;
+    height:30px;
+    background-color:#EEEEEE;
+    border: transparent;
+    border-radius:6px;
+    text-align:center;
+  }  
 
   button {
     background-color:#FFFFFF;
@@ -142,6 +154,7 @@ export default {
     color:#5D9DC1;
     border: transparent;
     border-radius:6px;
+    margin-left:15px;
   }
 
   select, textarea {
