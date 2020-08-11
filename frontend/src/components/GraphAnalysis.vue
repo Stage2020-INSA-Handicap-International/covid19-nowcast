@@ -32,6 +32,7 @@
         nb_topics: 3,
         selected_topic:'0',
         all_checkbox:false,
+        myChart: [],
         data:[],
         arrayColumn : (arr, n) => arr.map(x => x[n]),
         default_data: [],
@@ -115,8 +116,16 @@
       if(dates.length == 1){
             this.default_type = 'bar'
       }
+
+      // if the chart is not undefined (e.g. it has been created)
+      // then destory the old one so we can create a new one later
+      if (this.myChart && this.myChart instanceof Chart) {
+        this.myChart.destroy();
+        console.log("destroyed myChart")
+      }
+
       var ctx = document.getElementById('graphChart').getContext('2d');
-      var myChart = new Chart(ctx, {
+      this.myChart = new Chart(ctx, {
           type: this.default_type,
           label: 'Sentiment',
           data: {
@@ -141,7 +150,7 @@
               }
           }
       });
-      console.log(myChart);
+      console.log(this.myChart);
       }      
     },
 
