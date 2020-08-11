@@ -43,6 +43,7 @@
               vm.nb_tweets = data['count'];
               console.log("nb_tweets = "+vm.nb_tweets);
               eventBus.$emit('launchTopicAnalysis');
+              eventBus.$emit('launchGraphAnalysis');
             });      
       },
     },

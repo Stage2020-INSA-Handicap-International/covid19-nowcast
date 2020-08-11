@@ -42,7 +42,7 @@
 <script>
 //import axios from 'axios'
 import $ from 'jquery'
-//import {eventBus} from "../main.js"
+import {eventBus} from "../main.js"
 
 export default {
   name: 'GlobalSettings',
@@ -89,7 +89,7 @@ export default {
       $.post( "http://127.0.0.1:8000/collector/", request_body)
           .done(function( data) {
             alert( "[GlobalSettings]Data Loaded: " + JSON.stringify(data) );
-            //eventBus.$emit('launchDefaultAnalysis');
+            eventBus.$emit('launchDefaultAnalysis');
 
           });        
       

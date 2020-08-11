@@ -174,6 +174,9 @@
         //console.log('[GraphAnalysis] received nbTopicsChange event');
         this.nb_topics = new_nb_topics;
       });
+      eventBus.$on('launchGraphAnalysis', () => {
+        this.sendGraphRequest();
+      });      
     },
 
 
