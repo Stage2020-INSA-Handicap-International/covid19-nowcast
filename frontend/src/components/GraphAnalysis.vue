@@ -177,7 +177,6 @@
 
   .container-2 {
     display:flex;
-    flex-grow:1;
     /*background-color: red;*/
     
   }  
@@ -186,6 +185,7 @@
     display:flex;
     flex-direction: column;
     align-items:center;
+    flex-grow:1;
     /*background-color: yellow;*/
   }   
   .container-4 {
