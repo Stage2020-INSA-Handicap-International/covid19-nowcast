@@ -55,6 +55,7 @@ export default {
       'selected_start_date' : '', 
       'selected_end_date' : '', 
       'server_response' : [],
+      'selected_nb_tweets':100,
 
       'sources' : [],
       'languages' : ["English","French"],
@@ -74,6 +75,10 @@ export default {
 
       var lang_converter = {'French':'fr','English':'en'};
       this.selected_language = lang_converter[this.selected_language];
+
+      var input_nb_tweets = document.getElementById("selected-nb-tweets").value;
+      this.selected_nb_tweets = parseInt(input_nb_tweets,10);
+      console.log('selected_nb_tweets '+this.selected_nb_tweets)
       //Prepare the json object that will serve as the HTTP POST Request's body
       var request_body = JSON.stringify(
       {
@@ -82,7 +87,7 @@ export default {
         "lang":this.selected_language,
         "date_from":this.selected_start_date,
         "date_to":this.selected_end_date,
-        "count":100
+        "count":this.selected_nb_tweets
       })
 
       //Launch the HTTP POST Request to the server    
