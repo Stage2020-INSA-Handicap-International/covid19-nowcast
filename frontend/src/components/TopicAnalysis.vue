@@ -13,13 +13,22 @@
       <div class="container-4">
         <div id="topic-list" class="topic-box">
           <p class="title-3"> Topic List </p>
-          <li v-for="topic in topics" v-bind:key="topic.id">
-            {{topic}}
+          <li v-for="dico in dicos" v-bind:key="dico.id">
+            <span v-for="(alarm,word) in dico" v-bind:key="word">
+              <span v-if="alarm == true"><b>{{word}} </b></span>
+              <span v-else>{{word}} </span>   
+            </span>     
           </li>
         </div>
         <div class="topic-box">
-          <div class="title-4">N-GRAMS</div>
-          <!--<img :src='"data:image/png;base64, "+n_grams_img' alt="n-gram diagram image">-->
+          <div class="container-bis">
+            <div class="title-4">N-GRAMS</div>
+            <div> Number of words <input id="selected-nb-ngrams" type="number" value="5" min="1"/></div>
+            <div class="margin-left"> Type <select id="selected-ngram-type">
+                          <option v-for="type in ngram_types" v-bind:key="type.id">{{type}}</option>
+                      </select>
+            </div>
+          </div>
           <canvas id="canvas" width=600></canvas>
         </div>
       </div>
@@ -51,14 +60,17 @@
          nb_topics : 3,
         'selected_topic_for_examples':0,
         'selected_nb_examples':3,
-         topics : [],
+        'selected_nb_ngrams':5,
+         ngram_types:['relevant','alarmant'],
+         current_ngram_type:'relevant',
+         topics_dict: [],
          examples: [],
          n_grams_img:[],
       }
     },
     watch: {
       // whenever topics change, this function will run
-      topics: function (newTopics, oldTopics) {
+      topics_dict: function (newTopics, oldTopics) {
         console.log('newTopics : '+ newTopics + '- oldTopics : '+oldTopics)
         console.log("TOPICS HAVE CHANGED")
         //this.answer = 'Waiting for you to stop typing...'
@@ -82,12 +94,9 @@
           .done( function(data) {
             //alert( "[TopicAnalysis] Data Loaded: " + data );
             data = JSON.parse(data);
-            vm.topics = data["topics"];
-            for(var i =0; i<vm.topics.length; i++) {
-              vm.topics[i] = vm.topics[i].join(', ');
-            }
+            vm.topics_dict = data["topics"];
             //If there are no topics it means there are no tweets, therefore there's no need to try to get examples
-            if(vm.topics.length !== 0) {
+            if(vm.topics_dict.length !== 0) {
               eventBus.$emit('getTopicExamples');
             }
             else {
@@ -117,7 +126,10 @@
       var input_topic_for_examples = document.getElementById("selected-topic-for-examples").value;
       this.selected_topic_for_examples = parseInt(input_topic_for_examples,10);
       var input_nb_examples = document.getElementById("selected-nb-examples").value;
-      this.selected_nb_examples = parseInt(input_nb_examples,10);   
+      this.selected_nb_examples = parseInt(input_nb_examples,10);
+      var input_nb_ngrams = document.getElementById("selected-nb-ngrams").value;
+      this.selected_nb_ngrams = parseInt(input_nb_ngrams,10);      
+         
       
       //Prepare the json object that will serve as the HTTP POST Request's body
       var vm = this;
@@ -126,7 +138,7 @@
         "topic":this.selected_topic_for_examples,
         "nb_examples":this.selected_nb_examples,
         "graph":{
-            "nb_words":5,
+            "nb_words":vm.selected_nb_ngrams,
             "min_font_size":10,
             "max_font_size":15
         }
@@ -235,6 +247,12 @@
     display:flex;
     flex-direction: column;
     
+  }
+  .container-bis {
+    display:flex;
+  }  
+  .margin-left {
+    margin-left:15px;
   }
   .scrollbar {
     max-height:1000px;

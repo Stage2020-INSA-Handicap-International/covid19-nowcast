@@ -53,6 +53,7 @@ class CollectorView (View):
                 check_missing(key,params.keys())
                 check_type(key, params[key], str)
 
+            keys.append("count")
             key="lang"
             available_languages=["fr","en"]
             assert params[key] in available_languages, "lang=\"{}\" not in available languages={}".format(params["lang"], available_languages)

@@ -1,32 +1,32 @@
 digraph "N-gram cloud" {
 	node [color=transparent fontname=helvetica]
-	node [fontsize=13]
-	coronavirus
+	node [fontsize=14]
+	post
 	node [fontsize=15]
-	worried
-	coronavirus -> worried
+	ebola
+	post -> ebola
 	node [color=transparent fontname=helvetica]
 	node [fontsize=14]
-	large
+	flight
 	node [fontsize=14]
-	kindly
-	large -> kindly
+	destination
+	flight -> destination
 	node [color=transparent fontname=helvetica]
 	node [fontsize=13]
-	article
-	node [fontsize=13]
-	coronavirus
-	article -> coronavirus
+	leone
+	node [fontsize=14]
+	post
+	leone -> post
 	node [color=transparent fontname=helvetica]
 	node [fontsize=12]
-	panic
-	node [fontsize=13]
-	coronavirus
-	panic -> coronavirus
+	investment
+	node [fontsize=12]
+	sierra
+	investment -> sierra
 	node [color=transparent fontname=helvetica]
 	node [fontsize=11]
-	read
+	kenya
 	node [fontsize=11]
-	detailed
-	read -> detailed
+	surprised
+	kenya -> surprised
 }
