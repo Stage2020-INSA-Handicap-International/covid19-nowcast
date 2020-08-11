@@ -165,7 +165,7 @@ def analyse(test_loader, device, model):
 
     return pred
 
-def predict(data_to_predict, prediction_key):
+def predict(data_to_predict, prediction_key, batch_size=1):
     data=None
     if type(data_to_predict) is str:
         data = pd.read_json(data_to_predict)
@@ -195,7 +195,7 @@ def predict(data_to_predict, prediction_key):
 
     Xtest = torch.tensor(input_ids2)
     Ytest = torch.tensor(labels)
-    batch_size = 1
+
     test_data = TensorDataset(Xtest, Ytest)
     test_loader = DataLoader(test_data, batch_size=batch_size)
 
