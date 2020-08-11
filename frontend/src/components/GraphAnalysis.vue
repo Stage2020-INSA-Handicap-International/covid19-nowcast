@@ -37,12 +37,12 @@
         arrayColumn : (arr, n) => arr.map(x => x[n]),
         default_data: [],
         default_labels: [],
+        default_cases: [],
         default_type :'line',
         default_unit: 'week',
         default_title:'',
-        colors: ['red', 'blue', 'limegreen'],
-        tags: ['negative', 'neutral', 'positive']
-         
+        colors: ['red', 'blue', 'limegreen', 'black', 'orange', 'indigo'],
+        tags: ['negative', 'neutral', 'positive', 'confirmed cases', 'deaths', 'recovered']
       }
     },
 
@@ -64,20 +64,21 @@
               //alert( "[TopicAnalysis] Data Loaded: " + data );
               data = JSON.parse(data);
               vm.draw_graph(data);
-              
-
             });
       },    
 
       draw_graph: function(response) {
         var data = response['data']
+        var cases = response['cases']
+        // console.log([1, 2].concat([3,4]))
         var analysis = []
         var dates = []
-        var len = this.tags.length
+        var len = 3
         var tag_count = new Array(len).fill(0)
+        var case_count = []
 
         if (this.default_unit == 'week') {
-          var transform = (date) => moment(date).week()
+          var transform = (date) => moment(date).isoWeek()
           var reverse = (number) => moment('2020').add(number, 'weeks')
         } 
         else if (this.default_unit == 'month'){
@@ -89,28 +90,64 @@
           reverse = (number) => number
        }
 
-      dates.push(transform(new Date(data[0].created_at).toDateString("yyyy-MM-dd")))
-      for (i in data) {
-        if (dates.indexOf(transform(new Date(data[i].created_at).toDateString("yyyy-MM-dd"))) == -1){
+      dates.push(transform(new Date(cases[0].Date).toDateString("yyyy-MM-dd")))
+      var tweet=0
+      for (var j=0; j<cases.length; j++){
+        var cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+        var idx = dates.indexOf(transform(cur_date))
+        while (idx !== -1){
+          tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+          tweet=tweet+1
+          if (tweet < data.length){
+            cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+            idx = dates.indexOf(transform(new Date(cur_date)))
+          } else idx = -1
+        }
+        case_count.push([cases[j].Confirmed,cases[j].Deaths,cases[j].Recovered])
+        if (j<cases.length-1) analysis.push(tag_count)
+        if (j<cases.length-1) dates.push(transform(new Date(cases[j+1].Date).toDateString("yyyy-MM-dd")))
+        tag_count = new Array(len).fill(0)
+      }
+
+      while (tweet < data.length){
+        if (dates.indexOf(transform(new Date(data[tweet].created_at).toDateString("yyyy-MM-dd"))) == -1){
           analysis.push(tag_count)
-          dates.push(transform(new Date(data[i].created_at).toDateString("yyyy-MM-dd")))
+          case_count.push([0, 0, 0])
+          dates.push(transform(new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")))
           tag_count = new Array(len).fill(0)
         }
-        tag_count[this.tags.indexOf(data[i].sentiment)]++
+        tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+        tweet++
       }
-      console.log(dates)
       analysis.push(tag_count)
       dates = dates.map(date => new Date(reverse(date)))
 
-        this.default_labels = dates
-        this.default_data = analysis
-        var tagged_dataset = [];
-        for (var i = 0; i < len; i++) {
-          tagged_dataset.push({
-                label: this.tags[i],
-                data: this.arrayColumn(this.default_data,i),
-                borderColor: this.colors[i],
-                borderWidth: 1
+      console.log("Checking datas")
+      console.log(dates)
+      console.log(analysis)
+      console.log(case_count)
+
+      this.default_labels = dates
+      this.default_data = analysis
+      this.default_cases = case_count
+      var tagged_dataset = [];
+      for (var i = 0; i < len; i++) {
+        tagged_dataset.push({
+              label: this.tags[i],
+              data: this.arrayColumn(this.default_data,i),
+              borderColor: this.colors[i],
+              borderWidth: 1,
+              yAxisID: 'sentiment_count'
+          });
+        }
+        var cases_dataset = [];
+        for (var k = 3; k < len+3; k++) {
+          cases_dataset.push({
+                label: this.tags[k],
+                data: this.arrayColumn(this.default_cases,k-3),
+                borderColor: this.colors[k],
+                borderWidth: 1,
+                yAxisID: 'cases_count'
             });
         }
       if(dates.length == 1){
@@ -121,16 +158,14 @@
       // then destory the old one so we can create a new one later
       if (this.myChart && this.myChart instanceof Chart) {
         this.myChart.destroy();
-        console.log("destroyed myChart")
       }
-
       var ctx = document.getElementById('graphChart').getContext('2d');
       this.myChart = new Chart(ctx, {
           type: this.default_type,
           label: 'Sentiment',
           data: {
               labels: this.default_labels,
-              datasets: tagged_dataset
+              datasets: tagged_dataset.concat(cases_dataset)
           },
           options: {
               scales: {
@@ -139,6 +174,15 @@
                       time: {
                           unit: this.default_unit
                       }
+                  }],
+                  yAxes: [{
+                      id: 'sentiment_count',
+                      type: 'linear',
+                      position: 'left',
+                  }, {
+                      id: 'cases_count',
+                      type: 'linear',
+                      position: 'right',
                   }]
               },
               legend: {
@@ -150,7 +194,6 @@
               }
           }
       });
-      console.log(this.myChart);
       }      
     },
 
