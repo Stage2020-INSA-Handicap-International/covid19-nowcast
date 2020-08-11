@@ -13,8 +13,11 @@
       <div class="container-4">
         <div id="topic-list" class="topic-box">
           <p class="title-3"> Topic List </p>
-          <li v-for="topic in topics" v-bind:key="topic.id">
-            {{topic}}
+          <li v-for="dico in dicos" v-bind:key="dico.id">
+            <span v-for="(alarm,word) in dico" v-bind:key="word">
+              <span v-if="alarm == true"><b>{{word}} </b></span>
+              <span v-else>{{word}} </span>   
+            </span>     
           </li>
         </div>
         <div class="topic-box">
@@ -51,14 +54,14 @@
          nb_topics : 3,
         'selected_topic_for_examples':0,
         'selected_nb_examples':3,
-         topics : [],
+         topics_dict: [],
          examples: [],
          n_grams_img:[],
       }
     },
     watch: {
       // whenever topics change, this function will run
-      topics: function (newTopics, oldTopics) {
+      topics_dict: function (newTopics, oldTopics) {
         console.log('newTopics : '+ newTopics + '- oldTopics : '+oldTopics)
         console.log("TOPICS HAVE CHANGED")
         //this.answer = 'Waiting for you to stop typing...'
@@ -82,12 +85,9 @@
           .done( function(data) {
             //alert( "[TopicAnalysis] Data Loaded: " + data );
             data = JSON.parse(data);
-            vm.topics = data["topics"];
-            for(var i =0; i<vm.topics.length; i++) {
-              vm.topics[i] = vm.topics[i].join(', ');
-            }
+            vm.topics_dict = data["topics"];
             //If there are no topics it means there are no tweets, therefore there's no need to try to get examples
-            if(vm.topics.length !== 0) {
+            if(vm.topics_dict.length !== 0) {
               eventBus.$emit('getTopicExamples');
             }
             else {

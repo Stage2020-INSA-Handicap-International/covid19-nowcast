@@ -47,12 +47,12 @@ class CollectorView (View):
         date_keys=["date_from","date_to"]
         keys=["country","source","lang"]
         keys.extend(date_keys)
-        keys.append("count")
         try:
             for key in keys:
                 check_missing(key,params.keys())
                 check_type(key, params[key], str)
 
+            keys.append("count")
             key="lang"
             available_languages=["fr","en"]
             assert params[key] in available_languages, "lang=\"{}\" not in available languages={}".format(params["lang"], available_languages)
