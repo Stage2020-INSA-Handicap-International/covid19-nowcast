@@ -29,8 +29,71 @@ def hydrate(tweets):
     tweets=twarc.hydrate([tw["id_str"] for tw in tweets])
     return tweets
 
+def collect_twitter_data(country,lang,date_from,date_to,count):
+    data=[]
+    begin_date=datetime.strptime(date_from,"%Y-%m-%d")
+    end_date=datetime.strptime(date_to,"%Y-%m-%d")
+    delta=timedelta(seconds=(end_date-begin_date).total_seconds()).days
+
+    today=datetime.strftime(datetime.today(),"%Y-%m-%d")
+    # Separate request timerange between 1:{intersection with "30 days before today"} and the 2:rest
+    date_from_full_arch,date_cut_30daysfullarch,date_to_30days=separate_timerange(date_from,date_to,today,days_offset=-30)
+    if date_from_full_arch is not None:
+        sub_begin_date=datetime.strptime(date_from_full_arch,"%Y-%m-%d")
+        sub_end_date=datetime.strptime(date_cut_30daysfullarch,"%Y-%m-%d")
+        sub_delta=timedelta(seconds=(sub_end_date-sub_begin_date).total_seconds()).days
+        ratio=sub_delta/delta
+        count_full_arch=int(ratio*count)
+        if count_full_arch>0:
+            data.extend(collect_twitter_fullarchive_data(country,lang,date_from_full_arch,date_cut_30daysfullarch,count_full_arch))
+
+    # Separate request timerange between 1:{intersection with "7 days before today"} and the 2:rest
+    if date_to_30days is not None:
+        date_from_month,date_cut_30_7days,date_to_7days=separate_timerange(date_cut_30daysfullarch,date_to_30days,today,days_offset=-7)
+        if date_from_month is not None:
+            sub_begin_date=datetime.strptime(date_from_month,"%Y-%m-%d")
+            sub_end_date=datetime.strptime(date_cut_30_7days,"%Y-%m-%d")
+            sub_delta=timedelta(seconds=(sub_end_date-sub_begin_date).total_seconds()).days
+            ratio=sub_delta/delta
+            count_month=int(ratio*count)
+            if count_month>0:
+                data.extend(collect_twitter_30days_data(country,lang,date_from_month,date_cut_30_7days,count_month))
+
+        if date_to_7days is not None:
+            sub_begin_date=datetime.strptime(date_cut_30_7days,"%Y-%m-%d")
+            sub_end_date=datetime.strptime(date_to_7days,"%Y-%m-%d")
+            sub_delta=timedelta(seconds=(sub_end_date-sub_begin_date).total_seconds()).days
+            ratio=sub_delta/delta
+            count_7days=int(ratio*count)
+            if count_7days>0:
+                data.extend(collect_twitter_standard_data(country,lang,date_cut_30_7days,date_to_7days,count_7days))
+
+    return data
+
+def separate_timerange(date_from, date_to, date_ref, days_offset):
+    date_from_bef=None
+    date_cut=None
+    date_to_after=None
+
+    cut_date=datetime.strptime(date_ref,"%Y-%m-%d")+timedelta(days=days_offset)
+    cut_date=datetime.strftime(cut_date,"%Y-%m-%d")
+    print("cut",cut_date)
+    if date_from>=cut_date:
+        date_cut=date_from
+        date_to_after=date_to
+    elif date_to<=cut_date:
+        date_from_bef=date_from
+        date_cut=date_to
+    else:
+        date_from_bef=date_from
+        date_cut=cut_date
+        date_to_after=date_to
+
+    assert not(date_from_bef is None and date_to_after is None)
+    return date_from_bef, date_cut, date_to_after
+
 def collect_twitter_standard_data(country,lang,date_from,date_to,count):
-    #data=util.import_params("../output/topics_india_tw0.json")["tweets"]
+    print("standard",date_from,date_to)
     api=authenticate()
     raw_query="{country} AND (corona OR coronavirus OR virus OR covid-19 OR covid19)".format(country=country["Country"])
 
@@ -50,7 +113,7 @@ def collect_twitter_standard_data(country,lang,date_from,date_to,count):
         batches.append(100 if nb_tweets > 100 else nb_tweets)
         nb_tweets-=100
     assert len(batches)==nb_batches
-
+    print(nb_tweets,nb_batches,nb_days,batches)
     delta=date_end-date_begin
     batch_delta=timedelta(seconds=delta.total_seconds()/nb_batches)
 
@@ -69,3 +132,12 @@ def collect_twitter_standard_data(country,lang,date_from,date_to,count):
     
     return data
 
+def collect_twitter_30days_data(country,lang,date_from,date_to,count):
+    data=[]
+    print("30days",date_from,date_to)
+    return data
+
+def collect_twitter_fullarchive_data(country,lang,date_from,date_to,count):
+    data=[]
+    print("full",date_from,date_to)
+    return data

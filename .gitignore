@@ -8,3 +8,5 @@ output
 covid19_nowcast/streaming/collection/geckodriver.log
 geckodriver.log
 __pycache__
+ngram_cloud
+ngram_cloud.png
