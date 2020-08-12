@@ -54,6 +54,11 @@
     },
 
     methods : {
+
+      sortByDate: function(a, b) {
+          return new Date(a[0].created_at) - new Date(b[0].created_at);
+      },
+
       sendGraphRequest: function () {
         //Save the parameters
         var input_nb_topic = document.getElementById("selected-topic-for-graph").value;
@@ -98,7 +103,7 @@
           }
         }
 
-        console.log(data)
+        data = Object.values(data).sort((a, b) => new Date(a.created_at)>new Date(b.created_at));
 
         var analysis = []
         var num_cases = []
@@ -108,7 +113,7 @@
         var case_count = new Array(len).fill(0)
 
         if (this.default_unit == 'week') {
-          var transform = (date) => moment(date).isoWeek()
+          var transform = (date) => moment(date).isoWeek()-1
           var reverse = (number) => moment('2020').day("Monday").add(number, 'weeks')
         } 
         else if (this.default_unit == 'month'){
@@ -135,12 +140,12 @@
               idx = dates.indexOf(transform(cur_date))
             } else idx = -1
           }
-          if(j>0) analysis.push(tag_count)
+          if(j<cases.length-1) analysis.push(tag_count)
         }
         case_count[0]=cases[j].Confirmed
         case_count[1]=cases[j].Deaths
         case_count[2]=cases[j].Recovered
-        tag_count = new Array(len).fill(0)
+        if(j<cases.length-1) tag_count = new Array(len).fill(0)
       }
       num_cases.push(case_count)
       while (tweet < data.length){
@@ -157,10 +162,10 @@
       analysis.push(tag_count)
       dates = dates.map(date => new Date(reverse(date)))
 
-      // console.log("Checking datas")
-      // console.log(dates)
-      // console.log(analysis)
-      // console.log(num_cases)
+      console.log("Checking datas")
+      console.log(dates)
+      console.log(analysis)
+      console.log(num_cases)
 
       this.default_labels = dates
       this.default_data = analysis
@@ -203,30 +208,30 @@
               datasets: tagged_dataset.concat(cases_dataset)
           },
           options: {
-              scales: {
-                  xAxes: [{
-                      type: 'time',
-                      time: {
-                          unit: this.default_unit
-                      }
-                  }],
-                  yAxes: [{
-                      id: 'sentiment_count',
-                      type: 'linear',
-                      position: 'left',
-                  }, {
-                      id: 'cases_count',
-                      type: 'linear',
-                      position: 'right',
-                  }]
-              },
-              legend: {
-                position: 'right'
-              },
-              title: {
-                  display: true,
-                  text: this.default_title
-              }
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: this.default_unit
+                    }
+                }],
+                yAxes: [{
+                    id: 'sentiment_count',
+                    type: 'linear',
+                    position: 'left',
+                }, {
+                    id: 'cases_count',
+                    type: 'linear',
+                    position: 'right',
+                }]
+            },
+            legend: {
+              position: 'right'
+            },
+            title: {
+                display: true,
+                text: this.default_title
+            },
           }
       });
       }      
