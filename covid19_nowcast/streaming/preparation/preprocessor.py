@@ -35,14 +35,24 @@ class Preprocessor(object):
 
     #Tokenization, Lowercasing, Lemmatization, Stopword Removal
     @staticmethod
-    def preprocess(tweets_list, **kwargs):
-        nlp = spacy.load("en_core_web_sm")
+    def preprocess(tweets_list, country,lang,**kwargs):
+        if lang == 'fr':
+            nlp = spacy.load("fr_core_news_sm")
+        else:
+            nlp = spacy.load("en_core_web_sm")
         tokens = []
         for i in progressbar.progressbar(range(len(tweets_list)),prefix="Preprocessing :"):
             doc = nlp(str(tweets_list[i]))
             #Remove stop words and non-alpha words
             tweet_tokens = [str(token.lemma_).lower() for token in doc if (not token.is_stop and token.is_alpha)]
-            tokens.append(tweet_tokens)
+            #Remove covid-related words and country-related words
+            misc_keywords = ['amp','rt']
+            country_keywords = [country,country.lower(),country.upper()]
+            covid_keywords = ['covid','covid-19','covid19','coronavirus','corona','virus','pandemic']
+            keywords = misc_keywords + country_keywords + covid_keywords
+            tweet_tokens = Preprocessor.delete_words(tweet_tokens,keywords)
+            #Append tokens
+            tokens.append(tweet_tokens) 
         return tokens
 
     #Normalization (e.g 'b4' -> 'before')
@@ -80,10 +90,9 @@ class Preprocessor(object):
     #Used to filter out unwanted words such as hashtag labels or obvious words (e.g "covid-19" and such)
     @staticmethod
     def delete_words(tokens,words):
-        for token_list in tokens:
-            for word in words:
-                if word in token_list:
-                    token_list.remove(word)
+        for word in words:
+            if word in tokens:
+                tokens.remove(word)
         return tokens
 
     #Filter out tokens by their frequency

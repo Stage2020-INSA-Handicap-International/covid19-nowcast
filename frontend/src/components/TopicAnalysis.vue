@@ -80,6 +80,7 @@
 
   methods : {
     sendTopicListRequest: function () {
+      console.log("[TopicAnalysis] sendTopicListRequest")
       //Save the parameters
       var input_nb_topics = document.getElementById("selected-nb-topics").value;
       this.nb_topics = parseInt(input_nb_topics,10);
@@ -93,9 +94,10 @@
       $.post( "http://127.0.0.1:8000/topics/", request_body)
           .done( function(data) {
             //alert( "[TopicAnalysis] Data Loaded: " + data );
+            console.log( "[TopicAnalysis] Data Loaded: ");
             data = JSON.parse(data);
             vm.topics_dict = data["topics"];
-            console.log("topics = "+data["topics"]);
+            //console.log("topics = "+data["topics"]);
             //If there are no topics it means there are no tweets, therefore there's no need to try to get examples
             if(vm.topics_dict.length !== 0) {
               eventBus.$emit('getTopicExamples');
@@ -127,6 +129,11 @@
       //Save the parameters
       var input_topic_for_examples = document.getElementById("selected-topic-for-examples").value;
       this.selected_topic_for_examples = parseInt(input_topic_for_examples,10);
+      if(this.selected_topic_for_examples >= this.nb_topics) {
+        this.selected_topic_for_examples = 0
+        var html_input = document.getElementById("selected-topic-for-examples")
+        html_input.value = 0
+      }
       var input_nb_examples = document.getElementById("selected-nb-examples").value;
       this.selected_nb_examples = parseInt(input_nb_examples,10);
       var input_nb_ngrams = document.getElementById("selected-nb-ngrams").value;
@@ -159,7 +166,6 @@
             vm.n_grams_img = data["graph"]
             //console.log("this.n_grams_img = "+vm.n_grams_img)
             //console.log("[TopicAnalysis] Graph = "+data["graph"])
-            vm.resize_img()
             eventBus.$emit('launchGraphAnalysis');
 
           }); 
@@ -198,11 +204,13 @@
   },
 
   created() {
-    eventBus.$on('launchTopicAnalysis', () => {
-      this.sendTopicListRequest();
+    var vm = this;
+    eventBus.$on('launchTopicAnalysis', function() {
+      console.log( "[TopicAnalysis] eventBus.on.launchTopicAnalysis");
+      vm.sendTopicListRequest();
     });
     eventBus.$on('getTopicExamples', () => {
-      this.sendTopicExamplesRequest();
+      vm.sendTopicExamplesRequest();
     })
   }
 }
