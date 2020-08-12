@@ -1,32 +1,42 @@
 digraph "N-gram cloud" {
 	node [color=transparent fontname=helvetica]
-	node [fontsize=15]
-	include
-	node [fontsize=15]
-	face
-	include -> face
-	node [color=transparent fontname=helvetica]
 	node [fontsize=14]
-	combat
-	node [fontsize=14]
-	global
-	combat -> global
+	node [fontcolor=black]
+	iraq
+	node [fontsize=13]
+	node [fontcolor=black]
+	syria
+	iraq -> syria
 	node [color=transparent fontname=helvetica]
 	node [fontsize=13]
-	national
-	node [fontsize=12]
-	government
-	national -> government
+	node [fontcolor=black]
+	iran
+	node [fontsize=14]
+	node [fontcolor=black]
+	iraq
+	iran -> iraq
 	node [color=transparent fontname=helvetica]
+	node [fontsize=13]
+	node [fontcolor=black]
+	people
+	node [fontsize=13]
+	node [fontcolor=black]
+	iran
+	people -> iran
+	node [color=transparent fontname=helvetica]
+	node [fontsize=13]
+	node [fontcolor=black]
+	syria
 	node [fontsize=12]
-	government
-	node [fontsize=12]
-	distribute
-	government -> distribute
+	node [fontcolor=black]
+	amp
+	syria -> amp
 	node [color=transparent fontname=helvetica]
 	node [fontsize=11]
-	pandemic
+	node [fontcolor=black]
+	global
 	node [fontsize=11]
-	office
-	pandemic -> office
+	node [fontcolor=black]
+	virus
+	global -> virus
 }

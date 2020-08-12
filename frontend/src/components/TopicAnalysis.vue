@@ -13,9 +13,9 @@
       <div class="container-4">
         <div id="topic-list" class="topic-box">
           <p class="title-3"> Topic List </p>
-          <li v-for="dico in dicos" v-bind:key="dico.id">
+          <li v-for="dico in topics_dict" v-bind:key="dico.id">
             <span v-for="(alarm,word) in dico" v-bind:key="word">
-              <span v-if="alarm == true"><b>{{word}} </b></span>
+              <span v-if="alarm == true"><span class="alarming-word">{{word}} </span></span>
               <span v-else>{{word}} </span>   
             </span>     
           </li>
@@ -29,6 +29,7 @@
                       </select>
             </div>
           </div>
+          <!--<img :src='"data:image/png;base64, "+n_grams_img' alt="n-gram diagram image">-->
           <canvas id="canvas" width=600></canvas>
         </div>
       </div>
@@ -61,8 +62,8 @@
         'selected_topic_for_examples':0,
         'selected_nb_examples':3,
         'selected_nb_ngrams':5,
-         ngram_types:['relevant','alarmant'],
-         current_ngram_type:'relevant',
+         ngram_types:['Relevant','Alarming'],
+         current_ngram_type:'Relevant',
          topics_dict: [],
          examples: [],
          n_grams_img:[],
@@ -70,12 +71,11 @@
     },
     watch: {
       // whenever topics change, this function will run
+      /*
       topics_dict: function (newTopics, oldTopics) {
         console.log('newTopics : '+ newTopics + '- oldTopics : '+oldTopics)
-        console.log("TOPICS HAVE CHANGED")
-        //this.answer = 'Waiting for you to stop typing...'
-        //this.debouncedGetAnswer()
       }
+      */
     },
 
   methods : {
@@ -95,9 +95,11 @@
             //alert( "[TopicAnalysis] Data Loaded: " + data );
             data = JSON.parse(data);
             vm.topics_dict = data["topics"];
+            console.log("topics = "+data["topics"]);
             //If there are no topics it means there are no tweets, therefore there's no need to try to get examples
             if(vm.topics_dict.length !== 0) {
               eventBus.$emit('getTopicExamples');
+              //eventBus.$emit('launchGraphAnalysis');
             }
             else {
               //Clear examples view
@@ -128,7 +130,10 @@
       var input_nb_examples = document.getElementById("selected-nb-examples").value;
       this.selected_nb_examples = parseInt(input_nb_examples,10);
       var input_nb_ngrams = document.getElementById("selected-nb-ngrams").value;
-      this.selected_nb_ngrams = parseInt(input_nb_ngrams,10);      
+      this.selected_nb_ngrams = parseInt(input_nb_ngrams,10); 
+      var input_ngrams_type = document.getElementById("selected-ngram-type").value; 
+      var converter = {'Alarming':'alarm','Relevant':'relevant'};
+      this.current_ngram_type = converter[input_ngrams_type];
          
       
       //Prepare the json object that will serve as the HTTP POST Request's body
@@ -140,7 +145,8 @@
         "graph":{
             "nb_words":vm.selected_nb_ngrams,
             "min_font_size":10,
-            "max_font_size":15
+            "max_font_size":15,
+            "type":vm.current_ngram_type
         }
       }) 
       //Launch the HTTP POST Request to the server
@@ -151,7 +157,10 @@
             //Set examples
             vm.examples = data["examples"];
             vm.n_grams_img = data["graph"]
+            //console.log("this.n_grams_img = "+vm.n_grams_img)
+            //console.log("[TopicAnalysis] Graph = "+data["graph"])
             vm.resize_img()
+
           }); 
     },
     get: function () {
@@ -174,7 +183,9 @@
 
           ctx.drawImage(img, 0, 0, img.width,    img.height,     // source rectangle
                          0, 0, canvas.width, canvas.height);
+          console.log('draw image')
       }
+
 
     },  
     notifyGraphAnalysis: function() {
@@ -251,6 +262,11 @@
   .container-bis {
     display:flex;
   }  
+
+  .alarming-word {
+    font-weight:bold;
+    color:red;
+  }
   .margin-left {
     margin-left:15px;
   }
