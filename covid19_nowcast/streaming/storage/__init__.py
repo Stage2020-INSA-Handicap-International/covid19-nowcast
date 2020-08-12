@@ -3,6 +3,7 @@ from covid19_nowcast.streaming.storage.config_mongodb import *
 from covid19_nowcast.streaming.storage import tweets 
 import copy
 import progressbar
+from datetime import datetime, timedelta
 def init_database(connection_url=connection_url, db_name=db_name):
     db=pymongo.MongoClient(connection_url)[db_name]
     tweets.init_collection(db)
@@ -258,6 +259,14 @@ class DBTimeSubset():
         return data
 
     def fit_subsets_on_data(self,subsets,data):
+        if data!=[]:
+            dates=[datetime.strptime(tw["created_at"],"%Y-%m-%d") for tw in data]
+            timesubsets=TimeSubsets([TimeInterval(datetime.strftime(curr_date,"%Y-%m-%d"),datetime.strftime(curr_date+timedelta(days=1),"%Y-%m-%d")) for curr_date in dates[:-1]])
+            timesubset=TimeSubsets([TimeInterval(datetime.strftime(dates[-1],"%Y-%m-%d"),datetime.strftime(dates[-1]+timedelta(days=1),"%Y-%m-%d"))])
+            timesubsets=timesubsets.union(timesubset)
+            subsets=timesubsets
+        else: 
+            subsets=TimeSubsets([])
         return subsets
 
 def get_alarm_words():
