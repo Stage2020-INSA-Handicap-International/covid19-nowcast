@@ -98,15 +98,6 @@
         //var all_cases = response['cases']
         var cases = response['cases']
         var rolling_cases_dataset = []
-        // var date1 = new Date("2020-06-01T00:00:00Z")
-        // var date2 = new Date("2020-08-20T00:00:00Z")
-
-        /*for (var c in all_cases){
-          if (new Date(all_cases[c].Date) >= date1 && new Date(all_cases[c].Date) <= date2 )
-          {
-            cases.push(all_cases[c])
-          }
-        }*/
 
         data = Object.values(data).sort((a, b) => new Date(a.created_at)>new Date(b.created_at));
 
@@ -200,7 +191,7 @@
         idx = dates.indexOf(transform(cur_date))
         if (idx == -1){
           analysis.push(tag_count)
-          num_cases.push([0, 0, 0])
+          num_cases.push([null, null, null])
           cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
           idx = dates.indexOf(transform(cur_date))
           dates.push(transform(cur_date))
@@ -216,12 +207,22 @@
         all_tweets[a] = analysis[a][0] + analysis[a][1] + analysis[a][2]
       }
 
-      console.log("Checking datas")
-      console.log(data)
-      console.log(dates)
-      console.log(analysis)
-      console.log(num_cases)
-      console.log(all_tweets)
+      var index1 = all_tweets.findIndex(function(number) {
+        return number > 0;
+      });
+
+      console.log(index1)
+
+      var date1 = dates[index1-1]
+      console.log(date1)
+
+
+      // console.log("Checking datas")
+      // console.log(data)
+      // console.log(dates)
+      // console.log(analysis)
+      // console.log(num_cases)
+      // console.log(all_tweets)
 
       this.default_labels = dates
       this.default_data = analysis
@@ -280,6 +281,9 @@
                     type: 'time',
                     time: {
                         unit: this.default_unit
+                    },
+                    ticks: {
+                        min: date1
                     }
                 }],
                 yAxes: [{

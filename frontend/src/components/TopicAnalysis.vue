@@ -23,7 +23,7 @@
         <div class="topic-box">
           <div class="container-bis">
             <div class="title-4">N-GRAMS</div>
-            <div> Number of words <input id="selected-nb-ngrams" type="number" value="5" min="1"/></div>
+            <div> Number of bi-grams <input id="selected-nb-ngrams" type="number" value="5" min="1"/></div>
             <div class="margin-left"> Type <select id="selected-ngram-type">
                           <option v-for="type in ngram_types" v-bind:key="type.id">{{type}}</option>
                       </select>
