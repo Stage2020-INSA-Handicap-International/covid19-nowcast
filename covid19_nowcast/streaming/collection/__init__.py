@@ -152,7 +152,7 @@ def collect_twitter_30days_data(country,lang,date_from,date_to,count):
                   max_results=10,
                   **premium_search_args)
     print(rs)
-    data=[{"id_str":tw["id_str"],"created_at":tw["created_at"],"full_text":tw["text"]} for tw in rs.stream()]
+    data=[{"id_str":tw["id_str"],"created_at":datetime.strftime(datetime.strptime(str(tw["created_at"]),"%a %b %d %H:%M:%S %z %Y"),"%Y-%m-%dT%H:%M:%SZ"),"full_text":tw["text"]} for tw in rs.stream()]
     return data
 
 def collect_twitter_fullarchive_data(country,lang,date_from,date_to,count):
@@ -170,5 +170,5 @@ def collect_twitter_fullarchive_data(country,lang,date_from,date_to,count):
                   max_results=10,
                   **premium_search_args)
     print(rs)
-    data=[{"id_str":tw["id_str"],"created_at":tw["created_at"],"full_text":tw["text"]} for tw in rs.stream()]
+    data=[{"id_str":tw["id_str"],"created_at":datetime.strftime(datetime.strptime(str(tw["created_at"]),"%a %b %d %H:%M:%S %z %Y"),"%Y-%m-%dT%H:%M:%SZ"),"full_text":tw["text"]} for tw in rs.stream()]
     return data
