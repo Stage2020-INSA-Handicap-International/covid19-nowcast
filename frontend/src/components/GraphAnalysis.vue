@@ -107,6 +107,7 @@
 
         var analysis = []
         var num_cases = []
+        var all_tweets = new Array(cases.length).fill(0)
         var dates = []
         var len = 3
         var tag_count = new Array(len).fill(null)
@@ -134,6 +135,7 @@
           var idx = dates.indexOf(transform(cur_date))
           while (idx != -1){
             tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+            all_tweets[idx]+=1
             tweet=tweet+1
             if (tweet < data.length){
               cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
@@ -149,14 +151,17 @@
       }
       num_cases.push(case_count)
       while (tweet < data.length){
-        if (dates.indexOf(transform(cur_date)) == -1){
+        idx = dates.indexOf(transform(cur_date))
+        if (idx == -1){
           analysis.push(tag_count)
           num_cases.push([0, 0, 0])
           cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+          idx = dates.indexOf(transform(cur_date))
           dates.push(transform(cur_date))
           tag_count = new Array(len).fill(0)
         }
         tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+        all_tweets[idx]+=1
         tweet++
       }
       analysis.push(tag_count)
@@ -166,6 +171,7 @@
       console.log(dates)
       console.log(analysis)
       console.log(num_cases)
+      console.log(all_tweets)
 
       this.default_labels = dates
       this.default_data = analysis
@@ -190,8 +196,16 @@
                 yAxisID: 'cases_count'
             });
         }
+        var all_tweets_dataset = [{
+                label: 'all tweets',
+                data: all_tweets,
+                borderColor: 'grey',
+                borderWidth: 1,
+                yAxisID: 'sentiment_count',
+                hidden: true
+            }];
       if(dates.length == 1){
-            this.default_type = 'bar'
+            this.default_type = 'scatter'
       } else this.default_type = 'line'
 
       // if the chart is not undefined (e.g. it has been created)
@@ -205,7 +219,7 @@
           label: 'Sentiment',
           data: {
               labels: this.default_labels,
-              datasets: tagged_dataset.concat(cases_dataset)
+              datasets: tagged_dataset.concat(cases_dataset).concat(all_tweets_dataset)
           },
           options: {
             scales: {
