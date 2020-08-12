@@ -93,8 +93,8 @@ class CollectorView (View):
         if not all(key in request.session and params[key]==request.session[key] for key in keys):
             request.session.flush() # invalidate the entire session because the dataset is different
             tweets=CollectionManager.collect_sts_data(params["country"], params["source"], params["lang"], params["date_from"], params["date_to"], params["count"])
-            tweets=PreprocessManager.preprocess(tweets)
-            tweets=AnalysisManager.analyze(tweets,25)
+            tweets=PreprocessManager.preprocess(tweets,params["country"]["Country"],params["lang"])
+            tweets=AnalysisManager.analyze(tweets,5)
             
             request.session["data"]=tweets
 
