@@ -26,6 +26,7 @@ def n_gram_graph(texts, alarm_words, n_words=20, min_size=11, max_size=32):
         ratio[b].append(index)
     ratio={key:np.average(value)/len(top_n) for key,value in ratio.items()}
 
+    edges=[]
     for index,bigram in enumerate(top_n):
         a,b=bigram
         dot.attr('node', color='transparent', fontname="helvetica")
@@ -43,7 +44,9 @@ def n_gram_graph(texts, alarm_words, n_words=20, min_size=11, max_size=32):
         else:
             dot.attr('node',fontcolor="black")
             dot.node(b)
-        dot.edge(a,b)
+        if (a,b) not in edges:
+            dot.edge(a,b)
+            edges.append((a,b))
     filename=dot.render()
     return filename
 
@@ -67,13 +70,15 @@ def alarm_graph(texts, alarm_words, nb_surround_words=5, min_size=11, max_size=3
     top_n=[]
     for a,b in alarm_bigrams:
         if a in alarm_words:
-            if surround_counter[a]<nb_surround_words:
-                top_n.append([a,b])
-            surround_counter[a]+=1
+            if (a,b) not in top_n:
+                if surround_counter[a]<nb_surround_words:
+                    top_n.append((a,b))
+                surround_counter[a]+=1
         if b in alarm_words:
-            if surround_counter[b]<nb_surround_words:
-                top_n.append([a,b])
-            surround_counter[b]+=1
+            if (a,b) not in top_n:
+                if surround_counter[b]<nb_surround_words:
+                    top_n.append((a,b))
+                surround_counter[b]+=1
 
     dot=Digraph("N-gram cloud",format="png",filename="ngram_cloud")
     ratio={}

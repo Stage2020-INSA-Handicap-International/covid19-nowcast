@@ -223,9 +223,9 @@ class TopicExamplesView (View):
         examples=[e["full_text"] for e in examples]
         topic_texts=[t["preproc_text"] for t in tweets if t["topic_id"]==params["topic"]]
         alarm_words=storage.get_alarm_words()
-        if params["graph"]["type"]=="alarm":
+        if params["graph"]["type"]=="relevant":
             graph=visualisation.n_gram_graph(topic_texts,alarm_words,params["graph"]["nb_words"],params["graph"]["min_font_size"],params["graph"]["max_font_size"])
-        elif params["graph"]["type"]=="relevant":
+        elif params["graph"]["type"]=="alarm":
             graph=visualisation.alarm_graph(topic_texts,alarm_words,params["graph"]["nb_words"],params["graph"]["min_font_size"],params["graph"]["max_font_size"])
         with open(graph, "rb") as img_file:
             graph = str(base64.b64encode(img_file.read()))[2:-1]
