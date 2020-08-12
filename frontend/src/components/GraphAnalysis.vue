@@ -19,7 +19,7 @@
               <option v-for="timeframe in timeframes" v-bind:key="timeframe.id">{{timeframe}}</option>
             </select>
         </div>        
-        <div><button v-on:click="sendGraphRequest()">FILTER</button></div>   
+        <div><button v-on:click="sendGraphRequest()">LAUNCH</button></div>   
     </div>
     </div>
   </div>
@@ -140,10 +140,11 @@
           rolling_cases_dataset = [{
             label: this.default_rolling_option+' Case (± 3days)',
                 data: rolling_cases,
-                borderColor: 'drakgrey',
+                borderColor: 'darkgrey',
                 borderWidth: 1,
                 yAxisID: 'cases_count',
-                hidden: true
+                hidden: true,
+                fill: false
           }]
        }
       var tweet=0
@@ -204,7 +205,8 @@
               data: this.arrayColumn(this.default_data,i),
               borderColor: this.colors[i],
               borderWidth: 1,
-              yAxisID: 'sentiment_count'
+              yAxisID: 'sentiment_count',
+              fill: false
           });
         }
         var cases_dataset = [];
@@ -214,16 +216,18 @@
                 data: this.arrayColumn(this.default_cases,k-3),
                 borderColor: this.colors[k],
                 borderWidth: 1,
-                yAxisID: 'cases_count'
+                yAxisID: 'cases_count',
+                fill: false
             });
         }
         var all_tweets_dataset = [{
-                label: 'all tweets',
+                label: 'tweet count',
                 data: all_tweets,
                 borderColor: 'grey',
                 borderWidth: 1,
                 yAxisID: 'sentiment_count',
-                hidden: true
+                hidden: true,
+                fill: false
             }];
       if(dates.length == 1){
             this.default_type = 'line'
