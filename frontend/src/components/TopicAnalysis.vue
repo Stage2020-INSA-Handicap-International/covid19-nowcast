@@ -160,6 +160,7 @@
             //console.log("this.n_grams_img = "+vm.n_grams_img)
             //console.log("[TopicAnalysis] Graph = "+data["graph"])
             vm.resize_img()
+            eventBus.$emit('launchGraphAnalysis');
 
           }); 
     },

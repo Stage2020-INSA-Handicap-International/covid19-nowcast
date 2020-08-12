@@ -2,41 +2,41 @@ digraph "N-gram cloud" {
 	node [color=transparent fontname=helvetica]
 	node [fontsize=14]
 	node [fontcolor=black]
-	iraq
+	virus
 	node [fontsize=13]
 	node [fontcolor=black]
-	syria
-	iraq -> syria
+	case
+	virus -> case
 	node [color=transparent fontname=helvetica]
-	node [fontsize=13]
-	node [fontcolor=black]
-	iran
-	node [fontsize=14]
-	node [fontcolor=black]
-	iraq
-	iran -> iraq
-	node [color=transparent fontname=helvetica]
-	node [fontsize=13]
-	node [fontcolor=black]
-	people
-	node [fontsize=13]
-	node [fontcolor=black]
-	iran
-	people -> iran
-	node [color=transparent fontname=helvetica]
-	node [fontsize=13]
-	node [fontcolor=black]
-	syria
 	node [fontsize=12]
 	node [fontcolor=black]
-	amp
-	syria -> amp
-	node [color=transparent fontname=helvetica]
-	node [fontsize=11]
-	node [fontcolor=black]
-	global
-	node [fontsize=11]
+	daily
+	node [fontsize=14]
 	node [fontcolor=black]
 	virus
-	global -> virus
+	daily -> virus
+	node [color=transparent fontname=helvetica]
+	node [fontsize=13]
+	node [fontcolor=black]
+	report
+	node [fontsize=12]
+	node [fontcolor=black]
+	highest
+	report -> highest
+	node [color=transparent fontname=helvetica]
+	node [fontsize=13]
+	node [fontcolor=black]
+	case
+	node [fontsize=12]
+	node [fontcolor=black]
+	count
+	case -> count
+	node [color=transparent fontname=helvetica]
+	node [fontsize=12]
+	node [fontcolor=black]
+	highest
+	node [fontsize=12]
+	node [fontcolor=black]
+	daily
+	highest -> daily
 }
