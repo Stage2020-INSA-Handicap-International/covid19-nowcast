@@ -48,6 +48,7 @@
         default_type :'line',
         default_unit: 'week',
         default_title:'',
+        default_rolling_option: 'Confirmed',
         colors: ['red', 'blue', 'limegreen', 'black', 'orange', 'indigo'],
         tags: ['negative', 'neutral', 'positive', 'confirmed cases', 'deaths', 'recovered']
       }
@@ -76,8 +77,6 @@
               //alert( "[TopicAnalysis] Data Loaded: " + data );
               data = JSON.parse(data);
               vm.draw_graph(data);
-              
-
             });     
       },
 
@@ -93,6 +92,7 @@
         var data = response['data']
         var all_cases = response['cases']
         var cases = []
+        var rolling_cases_dataset = []
         var date1 = new Date("2020-06-01T00:00:00Z")
         var date2 = new Date("2020-08-20T00:00:00Z")
 
@@ -107,6 +107,7 @@
 
         var analysis = []
         var num_cases = []
+        var all_tweets = new Array(cases.length).fill(0)
         var dates = []
         var len = 3
         var tag_count = new Array(len).fill(null)
@@ -123,6 +124,27 @@
        else { 
           transform = (date) => date
           reverse = (number) => number
+          var rolling_cases = []
+          if (this.default_rolling_option == 'Confirmed') 
+          { 
+            var role_option = (o) => o.Confirmed
+          }
+          else role_option = (o) => o.Deaths
+          rolling_cases.push(role_option(cases[0]))
+          for (var m = 1; m < cases.length-1; m++)
+            {
+                var mean = (role_option(cases[m]) + role_option(cases[m-1]) + role_option(cases[m+1]))/3.0;
+                rolling_cases.push(mean);
+            }
+          rolling_cases.push(role_option(cases[cases.length-1]))
+          rolling_cases_dataset = [{
+            label: this.default_rolling_option+' Case (± 3days)',
+                data: rolling_cases,
+                borderColor: 'drakgrey',
+                borderWidth: 1,
+                yAxisID: 'cases_count',
+                hidden: true
+          }]
        }
       var tweet=0
       for (var j=0; j<cases.length; j++){
@@ -134,6 +156,7 @@
           var idx = dates.indexOf(transform(cur_date))
           while (idx != -1){
             tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+            all_tweets[idx]+=1
             tweet=tweet+1
             if (tweet < data.length){
               cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
@@ -149,23 +172,27 @@
       }
       num_cases.push(case_count)
       while (tweet < data.length){
-        if (dates.indexOf(transform(cur_date)) == -1){
+        idx = dates.indexOf(transform(cur_date))
+        if (idx == -1){
           analysis.push(tag_count)
           num_cases.push([0, 0, 0])
           cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+          idx = dates.indexOf(transform(cur_date))
           dates.push(transform(cur_date))
           tag_count = new Array(len).fill(0)
         }
         tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+        all_tweets[idx]+=1
         tweet++
       }
       analysis.push(tag_count)
       dates = dates.map(date => new Date(reverse(date)))
 
-      console.log("Checking datas")
-      console.log(dates)
-      console.log(analysis)
-      console.log(num_cases)
+      // console.log("Checking datas")
+      // console.log(dates)
+      // console.log(analysis)
+      // console.log(num_cases)
+      // console.log(all_tweets)
 
       this.default_labels = dates
       this.default_data = analysis
@@ -190,8 +217,16 @@
                 yAxisID: 'cases_count'
             });
         }
+        var all_tweets_dataset = [{
+                label: 'all tweets',
+                data: all_tweets,
+                borderColor: 'grey',
+                borderWidth: 1,
+                yAxisID: 'sentiment_count',
+                hidden: true
+            }];
       if(dates.length == 1){
-            this.default_type = 'bar'
+            this.default_type = 'scatter'
       } else this.default_type = 'line'
 
       // if the chart is not undefined (e.g. it has been created)
@@ -205,7 +240,7 @@
           label: 'Sentiment',
           data: {
               labels: this.default_labels,
-              datasets: tagged_dataset.concat(cases_dataset)
+              datasets: tagged_dataset.concat(all_tweets_dataset).concat(cases_dataset).concat(rolling_cases_dataset)
           },
           options: {
             scales: {
