@@ -257,6 +257,9 @@ class DBTimeSubset():
                     bar.update(i)
         return data
 
+    def fit_subsets_on_data(self,subsets,data):
+        return subsets
+
 def get_alarm_words():
     db=connect_database()
     alarms_words=[word["word"] for word in db[col_alarm_words].find({},{"_id":0})]

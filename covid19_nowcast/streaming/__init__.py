@@ -32,7 +32,7 @@ class CollectionManager():
                         data.extend(collect_twitter_data(country,lang,date_from,date_to,count))
                     i+=1
                     bar.update(i)
+        missing_subsets=db_time_subsets.fit_subsets_on_data(missing_subsets,data)
         data=db_time_subsets.insert_data(data,missing_subsets)
 
-        #data=util.import_params("covid19_nowcast/util/2020_tweets.json")
         return data
