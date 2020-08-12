@@ -98,6 +98,8 @@
           }
         }
 
+        console.log(data)
+
         var analysis = []
         var num_cases = []
         var dates = []
@@ -110,7 +112,7 @@
           var reverse = (number) => moment('2020').day("Monday").add(number, 'weeks')
         } 
         else if (this.default_unit == 'month'){
-          transform = (date) => moment(date).month()+1
+          transform = (date) => moment(date).month()
           reverse = (number) => moment('2020').add(number, 'month')
        } 
        else { 
@@ -135,9 +137,9 @@
           }
           if(j>0) analysis.push(tag_count)
         }
-        case_count[0]+=cases[j].Confirmed
-        case_count[1]+=cases[j].Deaths
-        case_count[2]+=cases[j].Recovered
+        case_count[0]=cases[j].Confirmed
+        case_count[1]=cases[j].Deaths
+        case_count[2]=cases[j].Recovered
         tag_count = new Array(len).fill(0)
       }
       num_cases.push(case_count)
@@ -185,7 +187,7 @@
         }
       if(dates.length == 1){
             this.default_type = 'bar'
-      }
+      } else this.default_type = 'line'
 
       // if the chart is not undefined (e.g. it has been created)
       // then destory the old one so we can create a new one later
