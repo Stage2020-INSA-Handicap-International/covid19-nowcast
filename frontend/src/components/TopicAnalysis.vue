@@ -129,7 +129,7 @@
       //Save the parameters
       var input_topic_for_examples = document.getElementById("selected-topic-for-examples").value;
       this.selected_topic_for_examples = parseInt(input_topic_for_examples,10);
-      if(this.selected_topic_for_examples >= this.nb_topics) {
+      if(this.selected_topic_for_examples > this.nb_topics) {
         this.selected_topic_for_examples = 0
         var html_input = document.getElementById("selected-topic-for-examples")
         html_input.value = 0
