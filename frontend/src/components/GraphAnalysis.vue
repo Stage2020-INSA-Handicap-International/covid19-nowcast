@@ -90,18 +90,18 @@
 
       draw_graph: function(response) {
         var data = response['data']
-        var all_cases = response['cases']
-        var cases = []
+        //var all_cases = response['cases']
+        var cases = response['cases']
         var rolling_cases_dataset = []
-        var date1 = new Date("2020-06-01T00:00:00Z")
-        var date2 = new Date("2020-08-20T00:00:00Z")
+        // var date1 = new Date("2020-06-01T00:00:00Z")
+        // var date2 = new Date("2020-08-20T00:00:00Z")
 
-        for (var c in all_cases){
+        /*for (var c in all_cases){
           if (new Date(all_cases[c].Date) >= date1 && new Date(all_cases[c].Date) <= date2 )
           {
             cases.push(all_cases[c])
           }
-        }
+        }*/
 
         data = Object.values(data).sort((a, b) => new Date(a.created_at)>new Date(b.created_at));
 
@@ -226,7 +226,7 @@
                 hidden: true
             }];
       if(dates.length == 1){
-            this.default_type = 'scatter'
+            this.default_type = 'line'
       } else this.default_type = 'line'
 
       // if the chart is not undefined (e.g. it has been created)
