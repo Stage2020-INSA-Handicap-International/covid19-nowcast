@@ -165,8 +165,11 @@
             vm.examples = data["examples"];
             vm.n_grams_img = data["graph"]
             //console.log("this.n_grams_img = "+vm.n_grams_img)
-            //console.log("[TopicAnalysis] Graph = "+data["graph"])
+            console.log("[TopicAnalysis] Graph = "+data["graph"])
             eventBus.$emit('launchGraphAnalysis');
+            vm.resize_img();
+            
+
 
           }); 
     },
