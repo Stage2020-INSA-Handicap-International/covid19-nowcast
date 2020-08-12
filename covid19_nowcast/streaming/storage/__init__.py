@@ -260,7 +260,7 @@ class DBTimeSubset():
 
     def fit_subsets_on_data(self,subsets,data):
         if data!=[]:
-            dates=[datetime.strptime(tw["created_at"],"%Y-%m-%d") for tw in data]
+            dates=[datetime.strptime(tw["created_at"],"%Y-%m-%dT%H:%M:%SZ") for tw in data]
             timesubsets=TimeSubsets([TimeInterval(datetime.strftime(curr_date,"%Y-%m-%d"),datetime.strftime(curr_date+timedelta(days=1),"%Y-%m-%d")) for curr_date in dates[:-1]])
             timesubset=TimeSubsets([TimeInterval(datetime.strftime(dates[-1],"%Y-%m-%d"),datetime.strftime(dates[-1]+timedelta(days=1),"%Y-%m-%d"))])
             timesubsets=timesubsets.union(timesubset)
