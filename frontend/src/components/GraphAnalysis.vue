@@ -74,7 +74,6 @@
         var vm = this;
         $.post( "http://127.0.0.1:8000/graph/", request_body)
             .done( function(data) {
-              //alert( "[TopicAnalysis] Data Loaded: " + data );
               data = JSON.parse(data);
               vm.draw_graph(data);
             });     
@@ -95,12 +94,19 @@
 
       draw_graph: function(response) {
         var data = response['data']
-        //var all_cases = response['cases']
         var cases = response['cases']
         var rolling_cases_dataset = []
 
-        data = Object.values(data).sort((a, b) => new Date(a.created_at)>new Date(b.created_at));
+        data = Object.values(data).sort((a, b) => new Date(a.created_at)>new Date(b.created_at)); // Sort date in data (ascending)
 
+
+        /**  Init variables
+         * Our variables are seperated in two categories : counters and arrays per timeframe
+         * tag_count counts the number of labels tweets per timeframe : tag_count[0] -> neg, [1] -> neut, [2] -> pos
+         * case_count counts the cases per timeframe : case_count[0] -> Confirmed, [1] -> Deaths, [2] -> Recovered
+         * analysis, num_cases and all_tweets are arrays of all the data concatenated
+         * dates is an array of all the dates found in data and cases (it is dynamically generated)
+         */
         var analysis = []
         var num_cases = []
         var all_tweets = new Array(cases.length).fill(0)
@@ -109,6 +115,10 @@
         var tag_count = new Array(len).fill(null)
         var case_count = new Array(len).fill(0)
 
+        /** Transformation from days to desired timeframe
+         * In order to filter the information to our current timeframe, we first convert our day to the desired timeframe (week or month)
+         * and then reverse the transformation in order to get the start of week or month.
+         */
         if (this.default_unit == 'week') {
           var transform = (date) => moment(date).isoWeek()-1
           var reverse = (number) => moment('2020').day("Monday").add(number, 'weeks')
@@ -120,73 +130,99 @@
         else { 
           transform = (date) => date
           reverse = (number) => number
-          var rolling_cases = []
-          if (this.default_rolling_option == 'Confirmed') 
-          { 
-            var role_option = (o) => o.Confirmed
-          }
-          else role_option = (o) => o.Deaths
-          rolling_cases.push(role_option(cases[0]))
-          for (var m = 1; m < cases.length-1; m++)
-            {
-                var mean = (role_option(cases[m]) + role_option(cases[m-1]) + role_option(cases[m+1]))/3.0;
-                rolling_cases.push(mean);
-            }
-          rolling_cases.push(role_option(cases[cases.length-1]))
-          rolling_cases_dataset = [{
-            label: this.default_rolling_option+' Case (± 3days)',
-                data: rolling_cases,
-                borderColor: 'darkgrey',
-                borderWidth: 1,
-                yAxisID: 'cases_count',
-                hidden: true,
-                fill: false
-          }]
-        }
-        var tweet=0
-        var cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
-        var idx = dates.indexOf(transform(cur_date))
-        var continu = this.compare_dates(new Date(cur_date), new Date((new Date(cases[0].Date).toDateString("yyyy-MM-dd"))))
-        if(continu) dates.push(transform(cur_date))
-        while(continu && tweet < data.length) {
-          idx = dates.indexOf(transform(cur_date))
-          if (idx == -1){
-            analysis.push(tag_count)
-            num_cases.push([0, 0, 0])
-            dates.push(transform(cur_date))
-            tag_count = new Array(len).fill(0)
-          }
-          tag_count[this.tags.indexOf(data[tweet].sentiment)]++
-          tweet++
-          cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
-          continu = this.compare_dates(new Date(cur_date), new Date((new Date(cases[0].Date).toDateString("yyyy-MM-dd"))))
-        }
-        analysis.push(tag_count)
 
-        for (var j=0; j<cases.length; j++){
-          if (dates.indexOf(transform(new Date(cases[j].Date).toDateString("yyyy-MM-dd"))) == -1){
-            if(j>0) num_cases.push(case_count)
-            dates.push(transform(new Date(cases[j].Date).toDateString("yyyy-MM-dd")))
-            case_count = new Array(len).fill(0)
-            // cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
-            idx = dates.indexOf(transform(cur_date))
-            while (idx != -1 && tweet < data.length){
-              tag_count[this.tags.indexOf(data[tweet].sentiment)]++
-              tweet=tweet+1
-              if (tweet < data.length){
-                cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
-                idx = dates.indexOf(transform(cur_date))
-              } else idx = -1
-            }
-            if(j<cases.length-1) analysis.push(tag_count)
-          }
-          case_count[0]=cases[j].Confirmed
-          case_count[1]=cases[j].Deaths
-          case_count[2]=cases[j].Recovered
-          if(j<cases.length-1) tag_count = new Array(len).fill(0)
+        /** Calculate rolling average
+         * Rolling Average is only calculated if selected timeframe is day.
+         */
+        var rolling_cases = []
+        if (this.default_rolling_option == 'Confirmed') 
+        { 
+          var role_option = (o) => o.Confirmed
         }
+        else role_option = (o) => o.Deaths
+        rolling_cases.push(role_option(cases[0]))
+        for (var m = 1; m < cases.length-1; m++)
+          {
+              var mean = (role_option(cases[m]) + role_option(cases[m-1]) + role_option(cases[m+1]))/3.0;
+              rolling_cases.push(mean);
+          }
+        rolling_cases.push(role_option(cases[cases.length-1]))
+        rolling_cases_dataset = [{
+          label: this.default_rolling_option+' Case (± 3days)',
+              data: rolling_cases,
+              borderColor: 'darkgrey',
+              borderWidth: 1,
+              yAxisID: 'cases_count',
+              hidden: true,
+              fill: false
+        }]
+      }
+
+      /// Processing data for the graph ///
+      /** Init variables
+       * tweet is the current tweet counter
+       * cur_date is the date in the first none processed data
+       * idx is the index of the curr_date in dates (it allows us to know if we have already seen this date or not)
+       */
+      var tweet=0
+      var cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+      var idx = dates.indexOf(transform(cur_date))
+
+      /** Check if we have data before our first case
+       * continu is a variable that checks if we have tweets prior to the first case
+       * if we do, we add the curr_date to our dates and process the data
+       */
+      var continu = this.compare_dates(new Date(cur_date), new Date((new Date(cases[0].Date).toDateString("yyyy-MM-dd"))))
+      if(continu) dates.push(transform(cur_date))
+      while(continu && tweet < data.length) {
+        idx = dates.indexOf(transform(cur_date))
+        if (idx == -1){ //curr_date was not already found (not in dates)
+          // add vars to our arrays and init var
+          analysis.push(tag_count)
+          num_cases.push([0, 0, 0])
+          dates.push(transform(cur_date))
+          tag_count = new Array(len).fill(0)
+        }
+        // process data
+        tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+        tweet++
+        cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+        continu = this.compare_dates(new Date(cur_date), new Date((new Date(cases[0].Date).toDateString("yyyy-MM-dd"))))
+      }
+      analysis.push(tag_count)
+
+      /** Processing data within cases
+       * 1. Check if cases[j] timeframe has already been found (is in dates)
+       * 2a. If not, add it to dates
+       * 3a. While data[tweet] timeframe is found : process data
+       * 2b. Else add vars to our arrays and init var
+       */
+      for (var j=0; j<cases.length; j++){
+        if (dates.indexOf(transform(new Date(cases[j].Date).toDateString("yyyy-MM-dd"))) == -1){
+          if(j>0) num_cases.push(case_count)
+          dates.push(transform(new Date(cases[j].Date).toDateString("yyyy-MM-dd")))
+          case_count = new Array(len).fill(0)
+          idx = dates.indexOf(transform(cur_date))
+          while (idx != -1 && tweet < data.length){
+            tag_count[this.tags.indexOf(data[tweet].sentiment)]++
+            tweet=tweet+1
+            if (tweet < data.length){
+              cur_date = new Date(data[tweet].created_at).toDateString("yyyy-MM-dd")
+              idx = dates.indexOf(transform(cur_date))
+            } else idx = -1
+          }
+          if(j<cases.length-1) analysis.push(tag_count)
+        }
+        case_count[0]=cases[j].Confirmed
+        case_count[1]=cases[j].Deaths
+        case_count[2]=cases[j].Recovered
+        if(j<cases.length-1) tag_count = new Array(len).fill(0)
+      }
       num_cases.push(case_count)
 
+      /** Check if we have data after our last case
+       * if we do, we add the curr_date to our dates and process the data
+       */
       while (tweet < data.length){
         idx = dates.indexOf(transform(cur_date))
         if (idx == -1){
@@ -201,32 +237,28 @@
         tweet++
       }
       analysis.push(tag_count)
+
+      // Convert the dates to start of week, day or month
       dates = dates.map(date => new Date(reverse(date)))
 
+      // Create our all_tweets array
       for(var a in analysis){
         all_tweets[a] = analysis[a][0] + analysis[a][1] + analysis[a][2]
       }
 
+      // Find the first labeled twwet
       var index1 = all_tweets.findIndex(function(number) {
         return number > 0;
       });
-
-      console.log(index1)
-
+      // Set the first date of our graph as the date of the first labeled tweet
       var date1 = dates[index1-1]
-      console.log(date1)
 
-
-      // console.log("Checking datas")
-      // console.log(data)
-      // console.log(dates)
-      // console.log(analysis)
-      // console.log(num_cases)
-      // console.log(all_tweets)
-
+      /// Generating Graph ///
       this.default_labels = dates
       this.default_data = analysis
       this.default_cases = num_cases
+
+      // Sentiment dataset used for chart
       var tagged_dataset = [];
       for (var i = 0; i < len; i++) {
         tagged_dataset.push({
@@ -238,6 +270,7 @@
               fill: false
           });
         }
+        // Cases dataset used for chart
         var cases_dataset = [];
         for (var k = 3; k < len+3; k++) {
           cases_dataset.push({
@@ -249,6 +282,7 @@
                 fill: false
             });
         }
+        // All tweets dataset used for chart
         var all_tweets_dataset = [{
                 label: 'tweet count',
                 data: all_tweets,
@@ -267,6 +301,7 @@
       if (this.myChart && this.myChart instanceof Chart) {
         this.myChart.destroy();
       }
+      // Creating chart
       var ctx = document.getElementById('graphChart').getContext('2d');
       this.myChart = new Chart(ctx, {
           type: this.default_type,
@@ -283,7 +318,7 @@
                         unit: this.default_unit
                     },
                     ticks: {
-                        min: date1
+                        min: date1 // Used to remove everything before a certain date
                     }
                 }],
                 yAxes: [{
@@ -310,7 +345,6 @@
 
     created() {
       eventBus.$on('nbTopicsChange', (new_nb_topics) => {
-        //console.log('[GraphAnalysis] received nbTopicsChange event');
         this.nb_topics = new_nb_topics;
       });
       eventBus.$on('launchGraphAnalysis', () => {
