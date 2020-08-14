@@ -19,9 +19,6 @@ from covid19_nowcast.analysis import AnalysisManager
 from covid19_nowcast.streaming.preparation import PreprocessManager
 from covid19_nowcast.user_interface import visualisation
 from covid19_nowcast.streaming.collection import covid19_api
-def index(request):
-    #return render_to_response('index.html')
-    return render(request,'index.html')
 
 def check_type(key, value, t):
     assert type(value) is t, "{} = {} is not {}".format(key,value,t.__name__)
