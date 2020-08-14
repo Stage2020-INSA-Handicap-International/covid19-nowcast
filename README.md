@@ -1,24 +1,24 @@
 # covid19-nowcast-africa
-Projet de detections et d'analyse de la propagation du COVID-19 en Afrique grace aux reseaux sociaux méné par [BETTINGER Matthieu](), [HAFID Salim]() et [SADER Bruno]() pour Handicap International en colaboration avec La Fondation INSA.
+Detect and analyze the spread of COVID-19 in Africa thanks to social networks led by [BETTINGER Matthieu] (), [HAFID Salim] () and [SADER Bruno] () for Humanity & Inclusion in collaboration with the Foundation INSA.
 
-# Sommaire
-# Phase de recherche
-# Corpus et crawler
-Mentionner qu'on a crée des crawlers mais qu'on n'utilise que l'API officielle pour l'app web
-# Analyse Volumétrique
-# Analyse de Topics
-# Analyse de Sentiments
-# Categorisation
-# Analyses Croisées
-# Developement de l'app web
+# Summary
+# Research phase
+# Corpus and crawler
+// Mentionner qu'on a crée des crawlers mais qu'on n'utilise que l'API officielle pour l'app web
+# Volumetric Analysis
+# Topic Analysis
+# Sentimental Analysis
+# Categorization
+# Cross Analysis
+# Web app developement
 # Backend
-## Fonctionnement du serveur
+## Server operation
 ## Collection Manager
 ## etc
 # Frontend
-## API utilisées
-## Fonctionnement et workflow
-## Topic
-## Graphe
+## Used APIs
+## Operation and workflows
+## Topics
+## Graphs
 ## etc
-# Setup et installation
+# Setup and installation
