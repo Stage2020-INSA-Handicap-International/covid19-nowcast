@@ -48,7 +48,7 @@
     },
 
     created() {
-      eventBus.$on('launchDefaultAnalysis', () => {
+      eventBus.$on('launchDefaultAnalysis', function() {
         this.sendRequest();
       })
     }

@@ -13,6 +13,13 @@
       <div class="container-4">
         <div id="topic-list" class="topic-box">
           <p class="title-3"> Topic List </p>
+          <div id="topic-list-spinner">
+            <pixel-spinner
+              :animation-duration="2000"
+              :size="70"
+              color="#5D9DC1"
+            />
+          </div>
           <li v-for="dico in topics_dict" v-bind:key="dico.id">
             <span v-for="(alarm,word) in dico" v-bind:key="word">
               <span v-if="alarm == true"><span class="alarming-word">{{word}} </span></span>
@@ -30,6 +37,13 @@
             </div>
           </div>
           <!--<img :src='"data:image/png;base64, "+n_grams_img' alt="n-gram diagram image">-->
+          <div id="topic-ngrams-spinner">
+            <pixel-spinner
+              :animation-duration="2000"
+              :size="70"
+              color="#5D9DC1"
+            />
+          </div>
           <canvas id="canvas" width=600></canvas>
         </div>
       </div>
@@ -40,6 +54,13 @@
           <div> Number of Examples <input id="selected-nb-examples" type="number" value="3" min="1"/></div>
        </div>
        <div class="container-7">
+        <div id="topic-examples-spinner">
+          <pixel-spinner
+            :animation-duration="2000"
+            :size="70"
+            color="#5D9DC1"
+          />
+        </div>
         <div class = "scrollbar">
             <div class="tweet-example" v-for="example in examples" v-bind:key="example.id">{{example}}</div>
         </div>
@@ -53,9 +74,13 @@
 <script>
   import $ from 'jquery'
   import {eventBus} from "../main.js"
+  import { PixelSpinner } from 'epic-spinners'
 
   export default {
     name: 'TopicAnalysis',
+    components: {
+      PixelSpinner
+    },
     data: function() {
       return {
          nb_topics : 3,
@@ -81,6 +106,12 @@
   methods : {
     sendTopicListRequest: function () {
       console.log("[TopicAnalysis] sendTopicListRequest")
+      //Empty all views : topic list, topic examples and ngrams
+      this.topics_dict = []
+      this.examples = []
+      this.clear_ngrams_view
+      //Display the loading spinner
+      document.getElementById("topic-list-spinner").style.display = 'flex';
       //Save the parameters
       var input_nb_topics = document.getElementById("selected-nb-topics").value;
       this.nb_topics = parseInt(input_nb_topics,10);
@@ -93,6 +124,8 @@
       var vm = this;
       $.post( "http://127.0.0.1:8000/topics/", request_body)
           .done( function(data) {
+            //Hide the loading spinner
+            document.getElementById("topic-list-spinner").style.display = 'none';
             //alert( "[TopicAnalysis] Data Loaded: " + data );
             console.log( "[TopicAnalysis] Data Loaded: ");
             data = JSON.parse(data);
@@ -100,32 +133,30 @@
             //console.log("topics = "+data["topics"]);
             //If there are no topics it means there are no tweets, therefore there's no need to try to get examples
             if(vm.topics_dict.length !== 0) {
+              console.log("[TopicAnalysis][/topics/ done] About to emit 'getTopicsExamples'")
               eventBus.$emit('getTopicExamples');
+              console.log("[TopicAnalysis][/topics/ done] Right after emitting 'getTopicsExamples'")
               //eventBus.$emit('launchGraphAnalysis');
             }
             else {
               //Clear examples view
               vm.examples = [];
-
               //Clear n_grams view
-
-              $('#canvas').html('');
-              var canvas = document.getElementById("canvas");
-              var context = canvas.getContext("2d");
-              // Store the current transformation matrix
-              context.save();
-              // Use the identity matrix while clearing the canvas
-              context.setTransform(1, 0, 0, 1, 0, 0);
-              context.clearRect(0, 0, canvas.width, canvas.height);
-              // Restore the transform
-              context.restore();
-              //ctx.clearRect(0,0,canvas.width,canvas.height);
+              vm.clear_ngrams_view();
             }
             
 
           });
     },
     sendTopicExamplesRequest: function() {
+      //Clear examples view
+      this.examples = []  
+      //Clear n_grams view
+      this.clear_ngrams_view();
+      //Display the examples loading spinner
+      document.getElementById("topic-examples-spinner").style.display = 'flex';
+      //Display the ngrams loading spinner
+      document.getElementById("topic-ngrams-spinner").style.display = 'flex';      
       //Save the parameters
       var input_topic_for_examples = document.getElementById("selected-topic-for-examples").value;
       this.selected_topic_for_examples = parseInt(input_topic_for_examples,10);
@@ -159,14 +190,16 @@
       //Launch the HTTP POST Request to the server
       $.post( "http://127.0.0.1:8000/examples/", request_body)
           .done( function(data) {
+            //Hide the examples loading spinner
+            document.getElementById("topic-examples-spinner").style.display = 'none';
+            //Hide the ngrams loading spinner
+            document.getElementById("topic-ngrams-spinner").style.display = 'none';            
             //alert( "[Examples] Data Loaded: " + data );
             data = JSON.parse(data);
             //Set examples
             vm.examples = data["examples"];
             vm.n_grams_img = data["graph"]
-            //console.log("this.n_grams_img = "+vm.n_grams_img)
-            console.log("[TopicAnalysis] Graph = "+data["graph"])
-            //eventBus.$emit('launchGraphAnalysis');
+            eventBus.$emit('launchGraphAnalysis');
             vm.resize_img();
             
 
@@ -193,15 +226,27 @@
 
           ctx.drawImage(img, 0, 0, img.width,    img.height,     // source rectangle
                          0, 0, canvas.width, canvas.height);
-          console.log('draw image')
       }
 
 
-    },  
+    }, 
+    clear_ngrams_view: function() {
+      $('#canvas').html('');
+      var canvas = document.getElementById("canvas");
+      var context = canvas.getContext("2d");
+      // Store the current transformation matrix
+      context.save();
+      // Use the identity matrix while clearing the canvas
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      // Restore the transform
+      context.restore();
+    },
+
     notifyGraphAnalysis: function() {
       var input_nb_topics = document.getElementById("selected-nb-topics").value;
       this.nb_topics = parseInt(input_nb_topics,10);
-      eventBus.$emit('nbTopicsChange',this.nb_topics);
+      eventBus.$emit('nbTopicsChange',this.nb_topics); 
     },
 
   },
@@ -212,8 +257,10 @@
       console.log( "[TopicAnalysis] eventBus.on.launchTopicAnalysis");
       vm.sendTopicListRequest();
     });
-    eventBus.$on('getTopicExamples', () => {
+    eventBus.$on('getTopicExamples', function() {
+      console.log("[TopicAnalysis][created() eventBus.on(getTopicExamples)] About to run sendTopicExamplesRequest")
       vm.sendTopicExamplesRequest();
+      console.log("[TopicAnalysis][created() eventBus.on(getTopicExamples)] Right after running sendTopicExamplesRequest") 
     })
   }
 }
@@ -273,6 +320,20 @@
   }
   .container-bis {
     display:flex;
+  }  
+
+  #topic-list-spinner {
+    display: none;
+    justify-content: center;
+  }
+  #topic-examples-spinner {
+    display: none;
+    justify-content: center;
+  }  
+
+  #topic-ngrams-spinner {
+    display: none;
+    justify-content: center;
   }  
 
   .alarming-word {

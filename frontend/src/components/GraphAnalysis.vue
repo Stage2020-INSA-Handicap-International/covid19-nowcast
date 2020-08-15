@@ -6,7 +6,9 @@
     </div>
     <!-- Graph Analysis Body -->
     <div class="container-2">
-      <div class="graph-chart"><canvas id="graphChart" width="1000" height="800"></canvas></div>
+      <div class="graph-chart">
+        <canvas id="graphChart" width="1000" height="800"></canvas>
+      </div>
       <div class="container-3 graph-parameters">
         <div class="container-4 ">
             <div class="title-2">Topics</div>
