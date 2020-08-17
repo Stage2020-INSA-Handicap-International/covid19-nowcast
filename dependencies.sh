@@ -1,5 +1,6 @@
 sudo apt-get install graphviz mongodb npm
 python3 -m pip install -r requirements
-npm install node-ipc
+python3 -m spacy download en_core_web_sm
+npm install node-ipc spinners
 npm install --save-dev webpack-bundle-tracker@0.4.3
 npm install --save chart.js jquery moment
