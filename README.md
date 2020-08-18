@@ -77,7 +77,7 @@ Add a new line setting the collection command to be run and its frequency:
 
 Pattern:
 
-<cron-frequency> cd <path-to-script> && ./collector.sh (>> <log-filepath> 2>&1)
+\<cron-frequency\> cd \<path-to-script\> && ./collector.sh (>> \<log-filepath\> 2>&1)
   
 Example:
 
