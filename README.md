@@ -59,10 +59,13 @@ Example:
   France,fr,,200
   India,en,,
 
-##### Data collection script
-  collector.sh launches collector.py with a .csv file as argument. This file shall follow the preceding data format.
+##### Data collection script
+
+collector.sh launches collector.py with a .csv file as argument. This file shall follow the preceding data format.
+
 ##### Data collection interface
-  collector.py launches /collector POST queries to the server.
+
+collector.py launches /collector POST queries to the server.
   See python collector.py -h output for detailled instructions on its standalone usage.
 
 #### Automation
