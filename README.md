@@ -52,25 +52,30 @@ sudo apt-get install cron
 #### Data collection
 ##### Data inputs
 A .csv can be used to instruct which data shall be collected.
+
 The format is a list of tuples as follows: 
-Country, Language, Source (opt, default=twitter), Count(opt, default=100/day)
+  Country, Language, Source (opt, default=twitter), Count(opt, default=100/day)
 Example:
-France,fr,,200
-India,en,,
+  France,fr,,200
+  India,en,,
+
 ##### Data collection script
-collector.sh launches collector.py with a .csv file as argument. This file shall follow the preceding data format.
+  collector.sh launches collector.py with a .csv file as argument. This file shall follow the preceding data format.
 ##### Data collection interface
-collector.py launches /collector POST queries to the server.
-See python collector.py -h output for detailled instructions on its standalone usage.
+  collector.py launches /collector POST queries to the server.
+  See python collector.py -h output for detailled instructions on its standalone usage.
 
 #### Automation
 The preceding files can be orchestrated to be automatically run using cron.
-
 Add a new cron job using:
-crontab -e
+  crontab -e
 
-Add a new line setting the collection command to be run and its frequency.
+Add a new line setting the collection command to be run and its frequency:
+
 Pattern:
+
 <cron-frequency> cd <path-to-script> && ./collector.sh (>> <log-filepath> 2>&1)
+  
 Example:
+
 @weekly cd ~/Documents/HI/covid19_nowcast_africa/covid19_autocollector && ./collector.sh >> ./collector.log 2>&1
