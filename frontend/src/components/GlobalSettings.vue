@@ -91,7 +91,7 @@ export default {
       })
 
       //Launch the HTTP POST Request to the server    
-      $.post( "http://127.0.0.1:8000/collector/", request_body)
+      $.post( "http://0.0.0.0:8000/collector/", request_body)
           .done(function( data) {
             alert( "[GlobalSettings]Data Loaded: " + JSON.stringify(data) );
             eventBus.$emit('launchDefaultAnalysis');
@@ -102,7 +102,7 @@ export default {
     },
     get: function () {
       //Launch the HTTP POST Request to the server
-      $.get( "http://127.0.0.1:8000/access/")
+      $.get( "http://0.0.0.0:8000/access/")
           .done(function( data ) {
             alert( "Data Loaded: " + JSON.stringify(data) );
           });      

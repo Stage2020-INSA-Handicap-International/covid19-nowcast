@@ -36,7 +36,7 @@
         })
         var vm = this;
         //Launch the HTTP POST Request to the server
-        $.post( "http://127.0.0.1:8000/category/", request_body)
+        $.post( "http://0.0.0.0:8000/category/", request_body)
             .done(function( data) {
               console.log( "[CategorySelection] Data Loaded: " + JSON.stringify(data) );
               data = JSON.parse(data);

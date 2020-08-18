@@ -91,7 +91,7 @@
       })
       //Launch the HTTP POST Request to the server
       var vm = this;
-      $.post( "http://127.0.0.1:8000/topics/", request_body)
+      $.post( "http://0.0.0.0:8000/topics/", request_body)
           .done( function(data) {
             //alert( "[TopicAnalysis] Data Loaded: " + data );
             console.log( "[TopicAnalysis] Data Loaded: ");
@@ -157,7 +157,7 @@
         }
       }) 
       //Launch the HTTP POST Request to the server
-      $.post( "http://127.0.0.1:8000/examples/", request_body)
+      $.post( "http://0.0.0.0:8000/examples/", request_body)
           .done( function(data) {
             //alert( "[Examples] Data Loaded: " + data );
             data = JSON.parse(data);
@@ -175,7 +175,7 @@
     },
     get: function () {
       //Launch the HTTP POST Request to the server
-      $.get( "http://127.0.0.1:8000/access/")
+      $.get( "http://0.0.0.0:8000/access/")
           .done(function( data ) {
             alert( "Data Loaded: " + JSON.stringify(data) );
           });      

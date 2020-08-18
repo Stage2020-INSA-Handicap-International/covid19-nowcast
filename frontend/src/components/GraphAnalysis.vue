@@ -72,7 +72,7 @@
         })
         //Launch the HTTP POST Request to the server
         var vm = this;
-        $.post( "http://127.0.0.1:8000/graph/", request_body)
+        $.post( "http://0.0.0.0:8000/graph/", request_body)
             .done( function(data) {
               data = JSON.parse(data);
               vm.draw_graph(data);
