@@ -61,7 +61,21 @@ The following API was built foremost for suiting specific data exchanges with ou
 ### Operation and workflows
 ### Topics
 ### Graphs
-### etc
+The web app allows the user to see the cross analysis over a defined period of time. The generated graph displays the tweet count, the sentiments count, the number of confirmed cases, deaths and recoveries collected from John Hopkins' COVID-19 data. The displayed data can be from a specific topic chosen by the user or from all of them. The timeframe can aswell be changed to daily, weekly or monthly allowing the user to easily evaluate trends. <br>
+
+| Timeframe | All Sentiments | No Sentiments | Only Topic 0 |
+| ------ | ------- | ------ | ------|
+| Daily | | | |
+| Weekly | | | |
+| Monthly | | | |
+
+The graph is generated thanks to [Chart.js](https://www.chartjs.org). The API facilitates the creation of graphs and has numerous built-in functionnalities.
+### Improvements
+Graph improvements : 
+- Change the hover function to show an example of a tweet of a given sentimenet and date.
+- Ability to select provinces and regions in countries that provide the information.
+- Ability to change daily rolling average from 3 to 7 days.
+- Mix topics
 # Setup and installation
 ## Weekly Data Collection Automation
 ### Prerequisites
