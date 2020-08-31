@@ -65,9 +65,9 @@ The web app allows the user to see the cross analysis over a defined period of t
 
 | Timeframe | All Sentiments | No Sentiments | Only Topic 0 |
 | ------ | ------- | ------ | ------|
-| Daily | | | |
-| Weekly | | | |
-| Monthly | | | |
+| Daily | <center><img src="images/daily-allsentiments.png"></center>| <center><img src="images/daily-nosentiments.png"></center>| <center><img src="images/daily-topic0.png"></center>|
+| Weekly |<center><img src="images/weekly-allsentiments.png"></center>| <center><img src="images/weekly-nosentiments.png"></center>| <center><img src="images/weekly-topic0.png"></center>|
+| Monthly |<center><img src="images/month-allsentiments.png"></center>| <center><img src="images/month-nosentiments.png"></center>| <center><img src="images/month-topic0.png"></center>|
 
 The graph is generated thanks to [Chart.js](https://www.chartjs.org). The API facilitates the creation of graphs and has numerous built-in functionnalities.
 ### Improvements
