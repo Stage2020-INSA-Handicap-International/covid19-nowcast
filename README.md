@@ -62,6 +62,7 @@ The following API was built foremost for suiting specific data exchanges with ou
 
 ## Frontend
 ### Used APIs
+Chart.js for the graph generation
 ### Operation and workflows
 ### Topics
 The web app automatically classifies the twitter corpus into N topics (N being a modifiable parameter). A topic consists of a list of the M most frequent/relevant words. For each topic, the web app also allows to view as many tweet examples that fall into that topic as wished.
