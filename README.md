@@ -6,7 +6,11 @@ Detect and analyze the spread of COVID-19 in Africa thanks to social networks le
 ## Corpus and crawler
 // Mentionner qu'on a crée des crawlers mais qu'on n'utilise que l'API officielle pour l'app web
 ## Volumetric Analysis
+The idea was to provide the user with a dynamic graph featuring multiple metrics that help better detect and analyze the spread of COVID-19 in HI's countries of intervention. By displaying multiple metrics on a single graph, one can visually see the correlations between metrics and infere useful information.
+See Web App Development > Frontend > Graphs for more details on the displayed metrics and the resulting feature.
 ## Topic Analysis
+The social media data being twitter data, it usually consists of a high number of tweets (i.e very short texts) that tackle the COVID-19 issue from a wide variety of angles. To ensure that the user gets a clear grasp of the different topics being talked about when talking about COVID-19 in a specific country, the tool provides a Topic Classification feature.
+See Web App Development > Frontend > Topics for more details on the resulting feature.
 ## Sentimental Analysis
 ### English 
 For the english sentiment analyser, we decided to use a XLNet ([XLNet: Generalized Autoregressive Pretraining for Language Understanding](https://arxiv.org/abs/1906.08237)). <br>
@@ -60,6 +64,7 @@ The following API was built foremost for suiting specific data exchanges with ou
 ### Used APIs
 ### Operation and workflows
 ### Topics
+The web app automatically classifies the twitter corpus into N topics (N being a modifiable parameter). A topic consists of a list of the M most frequent/relevant words. For each topic, the web app also allows to view as many tweet examples that fall into that topic as wished.
 ### Graphs
 The web app allows the user to see the cross analysis over a defined period of time. The generated graph displays the tweet count, the sentiments count, the number of confirmed cases, deaths and recoveries collected from John Hopkins' COVID-19 data. The displayed data can be from a specific topic chosen by the user or from all of them. The timeframe can aswell be changed to daily, weekly or monthly allowing the user to easily evaluate trends. <br>
 
