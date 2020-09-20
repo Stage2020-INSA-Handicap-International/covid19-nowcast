@@ -1,10 +1,14 @@
 # covid19-nowcast-africa
-Detect and analyze the spread of COVID-19 in Africa thanks to social networks led by [BETTINGER Matthieu](https://github.com/mbettinger), [HAFID Salim](https://github.com/SalimINSA) and [SADER Bruno](https://github.com/BrunoSader) for [Humanity & Inclusion](https://hi.org/) in collaboration with the [Fondation INSA Lyon](https://fondation.insa-lyon.fr/).
+Detect and analyze the spread of COVID-19 in Africa thanks to social networks led by [BETTINGER Matthieu](https://github.com/mbettinger), [HAFID Salim](https://github.com/SalimINSA) and [SADER Bruno](https://github.com/BrunoSader) for [Humanity & Inclusion](https://hi.org/) in collaboration with the [Institut Gaston Berger](https://institut-gaston-berger.insa-lyon.fr/).
 
 # Summary
 # Research phase
-## Corpus and crawler
-// Mentionner qu'on a crée des crawlers mais qu'on n'utilise que l'API officielle pour l'app web
+## Corpus and crawling
+Texts and documents forming the corpus are gathered from posts on social media, as well as articles from news websites for the usecase of category classification training.
+
+As of the time of writing, requests can be made to Twitter's Standard and Premium APIs (7 days, 30 days and full archive requests). Because of external complications, Facebook's GraphAPI could not be tested and therefore isn't handled yet.
+
+Category classification training has been done on articles with different manners of speech, available on news websites like the New York Times, Associated Press, BuzzFeedNews, and local news like HindustanTimes and KenyanNews.
 ## Volumetric Analysis
 The idea was to provide the user with a dynamic graph featuring multiple metrics that help better detect and analyze the spread of COVID-19 in HI's countries of intervention. By displaying multiple metrics on a single graph, one can visually see the correlations between metrics and infere useful information.
 See Web App Development > Frontend > Graphs for more details on the displayed metrics and the resulting feature.
@@ -83,6 +87,26 @@ Graph improvements :
 - Ability to change daily rolling average from 3 to 7 days.
 - Mix topics
 # Setup and installation
+## Main application
+### Prerequisites
+To install all dependencies, run:
+>sh dependencies.sh
+### Application launch
+#### Development Mode
+##### Frontend server
+The frontend server can be launched using:
+> npm run serve
+
+in the *frontend* directory.
+##### Backend server
+The backend server can be launched using:
+>python3 manage.py runserver 0.0.0.0:8000
+#### Production Mode
+Static files can be generated from the Vue.js project with:
+>npm run build
+
+These files in *frontend/dist* shall be made servable by the Django server.
+In this mode, only the Django server has to be launched using the same command as before.
 ## Weekly Data Collection Automation
 ### Prerequisites
 >sudo apt-get install cron
