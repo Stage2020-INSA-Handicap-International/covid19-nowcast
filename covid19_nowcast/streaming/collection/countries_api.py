@@ -1,6 +1,7 @@
 import requests
 import json
 import covid19_nowcast.util
+from requests.exceptions import Timeout
 def get_countries_info(countries, entries = ["alpha3Code", "name"], **kwargs):
     """
     Searches restcountries.eu for country infos
@@ -14,7 +15,10 @@ def get_countries_info(countries, entries = ["alpha3Code", "name"], **kwargs):
     Output:
         - countries_info: an entry to a dictionary containing entries named after all elements of *countries*, which each contain a dictionary containing all correponding keys:info in *entries* 
     """
-    countries_info = {country:json.loads(requests.get("https://restcountries.eu/rest/v2/name/"+country.lower()).text)[0] for country in countries}
+    try:
+        countries_info = {country:json.loads(requests.get("https://restcountries.eu/rest/v2/name/"+country.lower(),timeout=5).text)[0] for country in countries}
+    except Timeout:
+        countries_info = {}
     for country in countries_info.values():
         country = util.filter_keys(country,entries)
 

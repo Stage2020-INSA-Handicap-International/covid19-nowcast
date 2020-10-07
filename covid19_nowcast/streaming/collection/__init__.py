@@ -33,8 +33,16 @@ def hydrate(tweets):
 
 def collect_twitter_data(country,lang,date_from,date_to,count):
     data=[]
-    begin_date=datetime.strptime(date_from,"%Y-%m-%d")
-    end_date=datetime.strptime(date_to,"%Y-%m-%d")
+    try:
+        begin_date=datetime.strptime(date_from,"%Y-%m-%d")
+    except ValueError:
+        begin_date=datetime.strptime(date_from,"%Y-%m-%dT%H:%M:%SZ")
+        date_from=date_from[:10]
+    try:
+        end_date=datetime.strptime(date_to,"%Y-%m-%d")
+    except ValueError:
+        end_date=datetime.strptime(date_to,"%Y-%m-%dT%H:%M:%SZ")
+        date_to=date_to[:10]
     delta=timedelta(seconds=(end_date-begin_date).total_seconds()).days
 
     today=datetime.strftime(datetime.today(),"%Y-%m-%d")
