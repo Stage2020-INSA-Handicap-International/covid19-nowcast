@@ -153,11 +153,10 @@ def collect_twitter_30days_data(country,lang,date_from,date_to,count):
     print(premium_search_args)
 
     query = "{country} (corona OR coronavirus OR virus OR covid-19 OR covid19)".format(country=country["Country"])
-    rule = searchtweets.gen_rule_payload(query, results_per_call=10, from_date=date_from, to_date=date_to)
+    rule = searchtweets.gen_rule_payload(query, from_date=date_from, to_date=date_to)
     print(rule)
 
     rs = searchtweets.ResultStream(rule_payload=rule,
-                  max_results=10,
                   **premium_search_args)
     print(rs)
     data=[{"id_str":tw["id_str"],"created_at":datetime.strftime(datetime.strptime(str(tw["created_at"]),"%a %b %d %H:%M:%S %z %Y"),"%Y-%m-%dT%H:%M:%SZ"),"full_text":tw["text"]} for tw in rs.stream()]
@@ -171,11 +170,11 @@ def collect_twitter_fullarchive_data(country,lang,date_from,date_to,count):
                                        env_overwrite=False)
     print(premium_search_args)
     query = "{country} (corona OR coronavirus OR virus OR covid-19 OR covid19)".format(country=country["Country"])
-    rule = searchtweets.gen_rule_payload(query, results_per_call=10, from_date=date_from, to_date=date_to)
+    rule = searchtweets.gen_rule_payload(query, from_date=date_from, to_date=date_to)
     print(rule)
 
     rs = searchtweets.ResultStream(rule_payload=rule,
-                  max_results=10,
+                  
                   **premium_search_args)
     print(rs)
     data=[{"id_str":tw["id_str"],"created_at":datetime.strftime(datetime.strptime(str(tw["created_at"]),"%a %b %d %H:%M:%S %z %Y"),"%Y-%m-%dT%H:%M:%SZ"),"full_text":tw["text"]} for tw in rs.stream()]
