@@ -220,9 +220,9 @@
         }
         else 
         {
-          case_count[0]=cases[j].Confirmed-cases[j-1].Confirmed
-          case_count[1]=cases[j].Deaths-cases[j-1].Deaths
-          case_count[2]=cases[j].Recovered-cases[j-1].Recovered
+          case_count[0]+=cases[j].Confirmed-cases[j-1].Confirmed
+          case_count[1]+=cases[j].Deaths-cases[j-1].Deaths
+          case_count[2]+=cases[j].Recovered-cases[j-1].Recovered
         }
 
         if(j<cases.length-1) tag_count = new Array(len).fill(0)
