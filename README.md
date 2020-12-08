@@ -1,5 +1,5 @@
 # covid19-nowcast-africa
-Detect and analyze the spread of COVID-19 in Africa thanks to social networks led by [BETTINGER Matthieu](https://github.com/mbettinger), [HAFID Salim](https://github.com/SalimINSA) and [SADER Bruno](https://github.com/BrunoSader) for [Humanity & Inclusion](https://hi.org/) in collaboration with the [Institut Gaston Berger](https://institut-gaston-berger.insa-lyon.fr/).
+Detect and analyze the spread of COVID-19 in Africa thanks to social networks led by [BETTINGER Matthieu](https://github.com/mbettinger), [HAFID Salim](https://github.com/SalimHFX) and [SADER Bruno](https://github.com/BrunoSader) for [Humanity & Inclusion](https://hi.org/) in collaboration with the [Institut Gaston Berger](https://institut-gaston-berger.insa-lyon.fr/).
 
 # Summary
 # Research phase
